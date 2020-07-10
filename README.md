@@ -3,7 +3,7 @@ An app to make online education seamless and comprehensive with content sharing 
 
 **Client**: Runs the REACT app and sends call to backend server
 - To run client, cd into client folder and run npm install
-- Run npm init to start the client on localhost:3000
+- Run npm start to run the client on localhost:3000
 
 **Server:** Manages database, API calls and responds to client requests
 - To run server cd into server folder and run npm install
