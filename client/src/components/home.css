@@ -1,0 +1,11 @@
+body{
+  
+   background-image: url("../components/images/2394230.png");
+    /* Full height */
+   height: 100%;
+}
+
+.grad{
+    padding-top: 2em;
+    padding-right: 1em;
+}
