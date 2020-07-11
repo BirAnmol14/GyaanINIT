@@ -5,6 +5,7 @@ function SideNavbar(props){
   return(
      <div>
         <div class="sidenav">
+        <a href="/discuss/engineering">Discussion</a>
           <a href="/discuss/engineering/videolectures">Videos Lectures</a>
           <a href="#">Ebooks</a>
           <a href="#">Articles</a>

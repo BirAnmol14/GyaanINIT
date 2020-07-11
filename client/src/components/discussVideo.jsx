@@ -6,7 +6,7 @@ import Videoshow from './present.jsx';
 function discussVideo(){
     return(
         <div>
-            <Navbar brand='true' join='true' create='true' discuss='true' search='true'/>
+            <Navbar logged='true'  brand='true' join='true' create='true' discuss='true' search='true'/>
             <SideNavbar />
         
             <Videoshow />

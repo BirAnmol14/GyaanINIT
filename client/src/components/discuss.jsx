@@ -6,7 +6,7 @@ import Anounce from './announcement.jsx'
 function discuss(){
     return(
       <div>
-        <Navbar brand='true' join='true' create='true' discuss='true' search='true'/>
+        <Navbar logged='true' brand='true' join='true' create='true' discuss='true' search='true'/>
         <SideNavbar />
         <div class="panel-group" id="accordion">
           <Anounce />
