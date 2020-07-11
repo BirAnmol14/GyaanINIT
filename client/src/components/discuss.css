@@ -1,0 +1,61 @@
+ /* The sidebar menu */
+.sidenav {
+  height: 200%; /* Full-height: remove this if you want "auto" height */
+  width: 240px; /* Set the width of the sidebar */
+  position: absolute; /* Fixed Sidebar (stay in place on scroll) */
+  z-index: 1; /* Stay on top */
+  top: 1; /* Stay at the top */
+  left: 0;
+  background-color: #111; /* Black */
+  float:right;
+  padding-top: 20px;
+}
+
+/* The navigation menu links */
+.sidenav a {
+  padding: 16px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 25px;
+  color: #818181;
+  display: block;
+}
+
+/* When you mouse over the navigation links, change their color */
+.sidenav a:hover {
+  color: #f1f1f1;
+}
+
+/* Style page content */
+.main {
+
+  margin-left: 160px; /* Same as the width of the sidebar */
+  padding: 0px 10px;
+}
+
+/* On smaller screens, where height is less than 450px, change the style of the sidebar (less padding and a smaller font size) */
+@media screen and () {
+  .sidenav {padding-top: 15px;}
+  .sidenav a {font-size: 18px;}
+} 
+.rightcolumn {
+  float: Right;
+  width: 80%;
+  padding-left: 20px;
+  padding-right: 60px;
+  padding-bottom: 20px;
+}
+
+.card {
+  background-color: whitesmoke;
+  padding: 20px;
+  margin-top: 20px;
+  margin-left: 350px;
+  margin-right: 40px;
+}
+
+@media screen and (max-width: 800px) {
+  .rightcolumn {
+    width: 70%;
+    padding: 10;
+  }
+}
