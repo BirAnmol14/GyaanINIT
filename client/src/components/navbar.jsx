@@ -18,6 +18,9 @@ function Navbar(props){
           {props.join?<li className="nav-item">
             <a className="nav-link" href="/login">Join Meet</a>
           </li>:null}
+          {props.logged?<li className="nav-item">
+            <a className="nav-link" href="/pastmeets">Past Meets</a>
+          </li>:null}
           {props.discuss?<li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Discuss
