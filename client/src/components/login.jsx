@@ -1,5 +1,6 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
+import './login.css'
 
 function Login(){
     const [login,resetLogin]=React.useState({email:'',password:''});
@@ -24,8 +25,10 @@ function Login(){
     }
     return(
       <div>
+          
         <Navbar brand='true'/>
-        <div style={{backgroundColor:'#343A40',margin:'4em',padding:'2em',borderRadius:'20px'}}>
+        <div style={{backgroundColor:'#343A40',margin:'4em',padding:'2em',borderRadius:'20px',marginLeft: '30%',
+    marginRight: '30%', width: '40%'}}>
         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist" style={{backgroundColor:'#343A40'}}>
           <li className="nav-item" role="presentation">
             <a className="nav-link active" id="pills-login-tab" data-toggle="pill" href="#pills-login" role="tab" aria-controls="pills-login" aria-selected="true">Login</a>
@@ -51,7 +54,7 @@ function Login(){
           </div>
           <div className="row">
             <div className='col'>
-              <button type="submit" className="btn btn-danger" style={{marginTop:'1em'}} name='login'>Submit</button>
+              <button type="submit" className="btn btn-danger" style={{marginTop:'1em',backgroundColor:'#007bff',borderColor:'white'}} name='login'>Login</button>
             </div>
           </div>
           </form>
@@ -78,7 +81,7 @@ function Login(){
             </div>
             <div className="row">
               <div className='col'>
-                <button type="submit" className="btn btn-danger" style={{marginTop:'1em'}} name='register'>Submit</button>
+                <button type="submit" className="btn btn-danger" style={{marginTop:'1em',backgroundColor:'#007bff',borderColor:'white'}} name='register'>Submit</button>
               </div>
             </div>
             </form>
