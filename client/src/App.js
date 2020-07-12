@@ -7,6 +7,9 @@ import PastMeets from './components/pastmeets'
 import discuss from './components/discuss';
 import discussVideo from './components/discussVideo';
 import ebooks from './components/ebooks'
+import Article from './components/article'
+import Articlepage from './components/articlepage'
+import presentations from './components/presentations'
 
 function App() {
   return (
@@ -29,6 +32,9 @@ function App() {
     <Route path="/discuss/NEET/ebooks" exact component={ebooks}></Route>
     <Route path="/discuss/School/ebooks" exact component={ebooks}></Route>
     <Route path="/discuss/Medical/ebooks" exact component={ebooks}></Route>
+    <Route path="/discuss/engineering/articles" exact component={Article}></Route>
+    <Route path="/discuss/engineering/articles/post" exact component={Articlepage}></Route>
+    <Route path="/discuss/engineering/presentations" exact component={presentations}></Route>
   </Router>
   );
 }

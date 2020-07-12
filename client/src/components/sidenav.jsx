@@ -8,8 +8,8 @@ function SideNavbar(props){
         <a href="/discuss/engineering">Discussion</a>
           <a href="/discuss/engineering/videolectures">Videos Lectures</a>
           <a href="/discuss/engineering/ebooks">Ebooks</a>
-          <a href="#">Articles</a>
-          <a href="#">Presentations</a>
+          <a href="/discuss/engineering/articles">Articles</a>
+          <a href="/discuss/engineering/presentations">Presentations</a>
         </div>
 
         <div class="main">
