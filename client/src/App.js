@@ -6,6 +6,7 @@ import Login from './components/login';
 import PastMeets from './components/pastmeets'
 import discuss from './components/discuss';
 import discussVideo from './components/discussVideo';
+import ebooks from './components/ebooks'
 
 function App() {
   return (
@@ -23,7 +24,12 @@ function App() {
     <Route path="/discuss/NEET/videolectures" exact component={discussVideo}></Route>
     <Route path="/discuss/School/videolectures" exact component={discussVideo}></Route>
     <Route path="/discuss/Medical/videolectures" exact component={discussVideo}></Route>
-    </Router>
+    <Route path="/discuss/engineering/ebooks" exact component={ebooks}></Route>
+    <Route path="/discuss/JEE/ebooks" exact component={ebooks}></Route>
+    <Route path="/discuss/NEET/ebooks" exact component={ebooks}></Route>
+    <Route path="/discuss/School/ebooks" exact component={ebooks}></Route>
+    <Route path="/discuss/Medical/ebooks" exact component={ebooks}></Route>
+  </Router>
   );
 }
 
