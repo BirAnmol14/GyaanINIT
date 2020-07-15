@@ -3,16 +3,20 @@ import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
 import Articlepost from './articlePost.jsx'
 
+function getActive(){
+  var url=window.location.href.split('/');
+  return {name:url[url.length-2],url:window.location.href}
+}
 
 function Article(){
     return(
       <div>
-        <Navbar logged='true' brand='true' join='true' create='true' discuss='true' search='true'/>
+        <Navbar links={{active:getActive(),other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/login'},{name:'Create Meet',url:'/login'}]}} brand='true' discuss='true' search='true'/>
         <SideNavbar />
-          <Articlepost link="/discuss/engineering/articles/post" read="Read..."/>
-          <Articlepost link="/discuss/engineering/articles/post" read="Read..."/>
-          <Articlepost link="/discuss/engineering/articles/post" read="Read..."/>
-        
+          <Articlepost link="/discuss/Engineering/articles/post" read="Read..."/>
+          <Articlepost link="/discuss/Engineering/articles/post" read="Read..."/>
+          <Articlepost link="/discuss/Engineering/articles/post" read="Read..."/>
+
       </div>
     );
 

@@ -14,27 +14,27 @@ import presentations from './components/presentations'
 function App() {
   return (
     <Router>
-      <Route path="/pastmeets"  component={PastMeets}></Route>
+    <Route path="/pastmeets"  component={PastMeets}></Route>
     <Route path="/login" exact component={Login}></Route>
     <Route path="/" exact component={Home}></Route>
-    <Route path="/discuss/engineering" exact component={discuss}></Route>
+    <Route path="/discuss/Engineering" exact component={discuss}></Route>
     <Route path="/discuss/JEE" exact component={discuss}></Route>
     <Route path="/discuss/NEET" exact component={discuss}></Route>
     <Route path="/discuss/School" exact component={discuss}></Route>
     <Route path="/discuss/Medical" exact component={discuss}></Route>
-    <Route path="/discuss/engineering/videolectures" exact component={discussVideo}></Route>
+    <Route path="/discuss/Engineering/videolectures" exact component={discussVideo}></Route>
     <Route path="/discuss/JEE/videolectures" exact component={discussVideo}></Route>
     <Route path="/discuss/NEET/videolectures" exact component={discussVideo}></Route>
     <Route path="/discuss/School/videolectures" exact component={discussVideo}></Route>
     <Route path="/discuss/Medical/videolectures" exact component={discussVideo}></Route>
-    <Route path="/discuss/engineering/ebooks" exact component={ebooks}></Route>
+    <Route path="/discuss/Engineering/ebooks" exact component={ebooks}></Route>
     <Route path="/discuss/JEE/ebooks" exact component={ebooks}></Route>
     <Route path="/discuss/NEET/ebooks" exact component={ebooks}></Route>
     <Route path="/discuss/School/ebooks" exact component={ebooks}></Route>
     <Route path="/discuss/Medical/ebooks" exact component={ebooks}></Route>
-    <Route path="/discuss/engineering/articles" exact component={Article}></Route>
-    <Route path="/discuss/engineering/articles/post" exact component={Articlepage}></Route>
-    <Route path="/discuss/engineering/presentations" exact component={presentations}></Route>
+    <Route path="/discuss/Engineering/articles" exact component={Article}></Route>
+    <Route path="/discuss/Engineering/articles/post" exact component={Articlepage}></Route>
+    <Route path="/discuss/Engineering/presentations" exact component={presentations}></Route>
   </Router>
   );
 }

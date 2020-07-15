@@ -25,8 +25,8 @@ function Login(){
     }
     return(
       <div>
-          
-        <Navbar brand='true'/>
+
+        <Navbar brand='true' links={{active:{name:'Login',url:'/login'},other:[{name:'Home',url:'/'}]}}/>
         <div style={{backgroundColor:'#343A40',margin:'4em',padding:'2em',borderRadius:'20px',marginLeft: '30%',
     marginRight: '30%', width: '40%'}}>
         <ul className="nav nav-pills mb-3" id="pills-tab" role="tablist" style={{backgroundColor:'#343A40'}}>
