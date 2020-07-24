@@ -10,3 +10,14 @@ background-size:cover;
 -o-filter: blur(4px);
 filter: blur(4px);
 }
+
+input, textarea{
+    background-color:rgba(117, 114, 114, 0.795);
+    color: #FFF;
+    width: 500px;
+}
+
+.large-fontsize{
+    font-size: 3000px;
+}  
+    

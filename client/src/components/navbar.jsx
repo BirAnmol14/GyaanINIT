@@ -1,5 +1,6 @@
 import React from 'react';
 import logo from './logo.png';
+import profile from './profile.png';
 function Navbar(props){
   const [search,setSearch]=React.useState({text:''});
   function changeSearch(event){
@@ -48,8 +49,25 @@ function Navbar(props){
 
         {props.search?<form className="form-inline my-2 my-lg-0" onSubmit={submitSearch}>
           <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={search.text} onChange={changeSearch}/>
-          <button className="btn btn-outline-primary my-2 my-sm-0" type="submit">Search</button>
+          <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" >Search</button>
         </form>:null}
+
+
+        {(props.login !== 'true')?<form class="nav navbar-nav navbar-right">
+          <h5><a href="#"><span class="glyphicon glyphicon-log-in" style={{margin:'10px'}}></span> Login</a></h5>
+        </form>:<form class="dropdown pmd-dropdown pmd-user-info" style={{margin:'10px'}}>
+              <a href="javascript:void(0);" class="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                  <img class="mr-2" src={profile} width="40" height="40" alt="avatar" />
+                  <div class="media-body">
+                      <h5>Username</h5>
+                  </div>
+                  
+              </a>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                  <a class="dropdown-item" href="/profile/edit">Edit Profile</a>
+                  <a class="dropdown-item" href="javascript:void(0);">Logout</a>
+              </ul>
+          </form>}
 
       </div>
     </nav>

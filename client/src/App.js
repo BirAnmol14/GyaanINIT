@@ -10,6 +10,7 @@ import ebooks from './components/ebooks'
 import Article from './components/article'
 import Articlepage from './components/articlepage'
 import presentations from './components/presentations'
+import editProfile from './components/editprofilepage'
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
     <Route path="/discuss/Engineering/articles" exact component={Article}></Route>
     <Route path="/discuss/Engineering/articles/post" exact component={Articlepage}></Route>
     <Route path="/discuss/Engineering/presentations" exact component={presentations}></Route>
+    <Route path="/profile/edit" exact component={editProfile}></Route>
   </Router>
   );
 }
