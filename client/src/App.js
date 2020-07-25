@@ -36,7 +36,19 @@ function App() {
     <Route path="/discuss/Engineering/articles" exact component={Article}></Route>
     <Route path="/discuss/Engineering/articles/post" exact component={Articlepage}></Route>
     <Route path="/discuss/Engineering/presentations" exact component={presentations}></Route>
-    <Route path="/profile/edit" exact component={editProfile}></Route>
+    <Route path="/discuss/Medical/articles" exact component={Article}></Route>
+    <Route path="/discuss/Medical/articles/post" exact component={Articlepage}></Route>
+    <Route path="/discuss/Medical/presentations" exact component={presentations}></Route>
+    <Route path="/discuss/JEE/articles" exact component={Article}></Route>
+    <Route path="/discuss/JEE/articles/post" exact component={Articlepage}></Route>
+    <Route path="/discuss/JEE/presentations" exact component={presentations}></Route>
+    <Route path="/discuss/NEET/articles" exact component={Article}></Route>
+    <Route path="/discuss/NEET/articles/post" exact component={Articlepage}></Route>
+    <Route path="/discuss/NEET/presentations" exact component={presentations}></Route>
+    <Route path="/discuss/School/articles" exact component={Article}></Route>
+    <Route path="/discuss/School/articles/post" exact component={Articlepage}></Route>
+    <Route path="/discuss/School/presentations" exact component={presentations}></Route>
+     <Route path="/profile/edit" exact component={editProfile}></Route>
   </Router>
   );
 }

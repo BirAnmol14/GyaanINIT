@@ -27,7 +27,8 @@ function NestedBooks() {
   return (
       <div>
        <Navbar links={{active:getActive(),other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/login'},{name:'Create Meet',url:'/login'}]}} brand='true' discuss='true' search='true'/>
-            <SideNavbar />
+       <div style={{marginTop:"90px"}}>
+       <SideNavbar links={{active:{name:'eBooks'},other:[{name:'Posts',url:'/discuss/'+getActive().name},{name:'Videos',url:'/discuss/'+getActive().name+'/videolectures'},{name:'eBooks',url:'/discuss/'+getActive().name+'/ebooks'},{name:'Articles',url:'/discuss/'+getActive().name+'/articles'},{name:'Presentations',url:'/discuss/'+getActive().name+'/presentations'}]}}/>
     <div style={{marginLeft:"250px"}}className={classes.root}>
       <Grid container spacing={1}>
         <Book/>
@@ -36,7 +37,9 @@ function NestedBooks() {
         <Book/>
         <Book/>
         <Book/>
+        <Book/><Book/><Book/>
       </Grid>
+    </div>
     </div>
     </div>
   );

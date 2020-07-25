@@ -12,7 +12,7 @@ function Navbar(props){
     setSearch({text:''});
   }
   return(
-    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
         <span className="navbar-toggler-icon"></span>
       </button>
@@ -36,13 +36,17 @@ function Navbar(props){
             <a className="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Discuss
             </a>
+            
             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
+          
               <a className="dropdown-item" href="/discuss/Engineering">Engineering</a>
               <a className="dropdown-item" href="/discuss/Medical">Medical</a>
               <a className="dropdown-item" href="/discuss/JEE">JEE</a>
               <a className="dropdown-item" href="/discuss/NEET">NEET</a>
               <a className="dropdown-item" href="/discuss/School">School</a>
+            
             </div>
+          
           </li>:null}
 
         </ul>
