@@ -48,6 +48,11 @@ function Navbar(props){
             </div>
 
           </li>:null}
+          {(props.login === 'true')?
+           <a className="nav-link" href="/Dashboard" >
+           My Courses
+         </a>
+     :null}
 
         </ul>
 

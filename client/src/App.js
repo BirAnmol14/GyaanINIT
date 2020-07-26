@@ -11,8 +11,8 @@ import Article from './components/article'
 import Articlepage from './components/articlepage'
 import presentations from './components/presentations'
 import editProfile from './components/editprofilepage'
-
-
+import Dashboard from './components/dashboard'
+import DashboardTopic from './components/dashboardTopic'
 function App() {
   return (
     <Router>
@@ -50,6 +50,9 @@ function App() {
     <Route path="/discuss/School/articles/post" exact component={Articlepage}></Route>
     <Route path="/discuss/School/presentations" exact component={presentations}></Route>
     <Route path="/profile/edit" exact component={editProfile}></Route>
+    <Route path="/Dashboard" exact component={Dashboard}></Route>
+    <Route path="/Dashboard/:topic" exact component={DashboardTopic}></Route>
+  
   </Router>
   );
 }
