@@ -1,22 +1,22 @@
 import React from 'react';
 import "./discuss.css";
-import { useState } from 'react';
+
 
 function SideNavbar(props){
 
 
   return(
      <div>
-        <div class="sidenav">
+        <div className="sidenav">
         {
-            props.links.other.map(link=>{return (<li className="nav-item">
-            {props.links.active.name===link.name?<a className="nav-link active" id={link.name}  href={link.url}>{link.name}</a>:<a className="nav-link" id={link.name}  href={link.url}>{link.name}</a>}
+            props.links.other.map(link=>{return (<li className="nav-item" key={link.name} >
+            {props.links.active.name===link.name?<a className="nav-link active" key={link.name} id={link.name}  href={link.url}>{link.name}</a>:<a className="nav-link" key={link.name} id={link.name}  href={link.url}>{link.name}</a>}
           </li>)})
           }
-        
+
         </div>
 
-        <div class="main">
+        <div className="main">
           ...
         </div>
     </div>);

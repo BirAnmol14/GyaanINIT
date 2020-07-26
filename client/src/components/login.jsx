@@ -1,6 +1,8 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
-import './login.css'
+import './login.css';
+const login_endpoint='http://localhost:8080/login';
+const register_endpoint='http://localhost:8080/register';
 
 function Login(){
     const [login,resetLogin]=React.useState({email:'',password:''});
@@ -12,7 +14,22 @@ function Login(){
     function loginSub(event){
       event.preventDefault();
       alert('login attempt\n'+login.email+'\n'+login.password);
+      loginApi();
       resetLogin({email:'',password:''});
+    }
+    async function loginApi(){
+      const body=JSON.stringify({email:login.email,password:login.password});
+      const response = await fetch(login_endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body
+    })
+      const status=await response.status;
+      if(status===200){
+        alert(JSON.stringify(await response.json()));
+      }else{
+        alert('Error '+status);
+      }
     }
     function regChange(event){
       const {value,name}=event.target;
@@ -21,7 +38,22 @@ function Login(){
     function regSubmit(event){
       event.preventDefault();
       alert('Register attempt\n'+reg.name+"\n"+reg.email+'\n'+reg.password);
+      registerApi();
       setReg({email:'',password:'',name:''});
+    }
+    async function registerApi(){
+      const body=JSON.stringify({name: reg.name,email:reg.email,password:reg.password});
+      const response = await fetch(register_endpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: body
+    })
+      const status=await response.status;
+      if(status===200){
+        alert(JSON.stringify(await response.json()));
+      }else{
+        alert('Error '+status);
+      }
     }
     return(
       <div>

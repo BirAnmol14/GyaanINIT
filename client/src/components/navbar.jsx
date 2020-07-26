@@ -21,13 +21,13 @@ function Navbar(props){
       <div className="collapse navbar-collapse" id="navbarTogglerDemo03">
         <ul className="navbar-nav mr-auto mt-2 mt-lg-0">
 
-        {props.links.active?<li className="nav-item active">
+        {props.links.active?<li className="nav-item active" key={props.links.active.name}>
           <a className="nav-link" href={props.links.active.url}>{props.links.active.name}<span className="sr-only">(current)</span></a>
         </li>:null}
 
           {
-            props.links.other.map(link=>{return (<li className="nav-item">
-            <a className="nav-link" href={link.url}>{link.name}</a>
+            props.links.other.map(link=>{return (<li className="nav-item" key={link.name}>
+            <a className="nav-link" href={link.url} id={link.name}>{link.name}</a>
           </li>)})
           }
 
@@ -36,17 +36,17 @@ function Navbar(props){
             <a className="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Discuss
             </a>
-            
+
             <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-          
+
               <a className="dropdown-item" href="/discuss/Engineering">Engineering</a>
               <a className="dropdown-item" href="/discuss/Medical">Medical</a>
               <a className="dropdown-item" href="/discuss/JEE">JEE</a>
               <a className="dropdown-item" href="/discuss/NEET">NEET</a>
               <a className="dropdown-item" href="/discuss/School">School</a>
-            
+
             </div>
-          
+
           </li>:null}
 
         </ul>
@@ -57,19 +57,19 @@ function Navbar(props){
         </form>:null}
 
 
-        {(props.login !== 'true')?<form class="nav navbar-nav navbar-right">
-          <h5><a href="#"><span class="glyphicon glyphicon-log-in" style={{margin:'10px'}}></span> Login</a></h5>
-        </form>:<form class="dropdown pmd-dropdown pmd-user-info" style={{margin:'10px'}}>
-              <a href="javascript:void(0);" class="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
-                  <img class="mr-2" src={profile} width="40" height="40" alt="avatar" />
-                  <div class="media-body">
+        {(props.login !== 'true')?<form className="nav navbar-nav navbar-right">
+          <h5><a href="/"><span className="glyphicon glyphicon-log-in" style={{margin:'10px'}}></span> Login</a></h5>
+        </form>:<form className="dropdown pmd-dropdown pmd-user-info" style={{margin:'10px'}}>
+              <a href="javascript:void(0);" className="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
+                  <img className="mr-2" src={profile} width="40" height="40" alt="avatar" />
+                  <div className="media-body">
                       <h5>Username</h5>
                   </div>
-                  
+
               </a>
-              <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                  <a class="dropdown-item" href="/profile/edit">Edit Profile</a>
-                  <a class="dropdown-item" href="javascript:void(0);">Logout</a>
+              <ul className="dropdown-menu dropdown-menu-right" role="menu">
+                  <a className="dropdown-item" href="/profile/edit">Edit Profile</a>
+                  <a className="dropdown-item" href="javascript:void(0);">Logout</a>
               </ul>
           </form>}
 

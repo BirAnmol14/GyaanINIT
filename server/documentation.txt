@@ -1,0 +1,44 @@
+DOCUMENTATION FOR USING GyaanINIT API
+
+GET requests
+1. Get User Information
+  -END POINT: /getinfo?email={emailid}
+  -METHOD:'GET'
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - info: Object containing
+        -name: String
+        -email: String
+
+POST requests
+1. Registering a User
+  -END POINT: /register
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - name: String (mandatory)
+    - email: String(mandatory)
+    - password: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+
+2. Login a User
+  -END POINT: /login
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - email: String(mandatory)
+    - password: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
