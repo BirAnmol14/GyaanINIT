@@ -22,6 +22,19 @@ function DashboardTopic(){
        <Anounce/>
        <Anounce/>
        <Anounce/>
+       <div style={{marginLeft:"85%",marginRight:"0%"}}>
+        <br></br>
+<br>
+</br>       
+                                        
+                                        <div class="row">
+                                            <div class="col-md-12">
+                                            
+                                            <button type="button" class="btn btn-danger btn-lg m-1"><span class="glyphicon glyphicon-signal glyphsize green"></span>Leave Course </button>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        
 
         </div>
        
