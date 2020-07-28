@@ -9,7 +9,7 @@ An app to make online education seamless and comprehensive with content sharing 
 - To run server cd into server folder and run npm install
 - Create .env file and type PORT=8080, hit Enter/Return type REACT_URL='http://localhost:3000' hit Enter/Return and save the file (You can use any other ports also)
 - Read sercets_example.js and follow the instructions mentioned
-- Documentation.txt has been made available to give and idea about the api functioning
+- Documentation.txt has been made available to give an idea about the api functioning
 - Run node app.js to run this server on localhost:8080
 - You can "npm install nodemon" to run a development server and following this you can use nodmeon app.js instead of node app.js
 
