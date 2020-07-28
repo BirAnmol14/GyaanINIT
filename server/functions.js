@@ -9,7 +9,8 @@ module.exports={
   login:login,
   getUserInfo:getUserInfo,
   isLoggedIn:isLoggedIn,
-  logout:logout
+  logout:logout,
+  getAllUsers:getAllUsers
 }
 
 function User(name,email,password){
@@ -87,4 +88,12 @@ function logout(req){
   }else{
     return {status:false,message:"User was not logged in"}
   }
+}
+
+function getAllUsers(){
+  const users=[];
+  for(var i=0;i<registered_users.length;i++){
+    users.push(getUserInfo(registered_users[i].email).info);
+  }
+  return users;
 }

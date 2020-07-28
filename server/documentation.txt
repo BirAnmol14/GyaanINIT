@@ -33,6 +33,21 @@ GET requests
       - status: boolean
       - message: String
 
+4. Get A List Of All Registered Users
+  -END POINT: /api/users/getAllUsers
+  -METHOD: 'GET'
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA: A list of Objects
+      - [
+          {
+            email:
+            name:
+            uid:
+          },...
+        ]
+
 
 POST requests
 1. Registering a User

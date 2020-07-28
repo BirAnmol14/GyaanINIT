@@ -36,16 +36,9 @@ app.listen(process.env.PORT,(req,res)=>{
   console.log('Server Started on localhost: '+ process.env.PORT);
 });
 
+//GET requests
 app.get('/',(req,res)=>{
   res.send('Server Running');
-});
-
-app.post('/api/account/register',(req,res)=>{
-  func.register_user(req.body,res);
-});
-
-app.post('/api/account/login',(req,res)=>{
-  res.json(func.login(req,req.body,res));
 });
 
 app.get('/api/users/getinfo',(req,res)=>{
@@ -60,6 +53,19 @@ app.get('/api/account/verifyLoginStatus',(req,res)=>{
   res.json(func.isLoggedIn(req));
 });
 
+app.get('/api/users/getAllUsers',(req,res)=>{
+    res.json(func.getAllUsers());
+});
+
 app.get('/api/account/logout',(req,res)=>{
   res.json(func.logout(req));
+});
+
+//POST requests
+app.post('/api/account/register',(req,res)=>{
+  func.register_user(req.body,res);
+});
+
+app.post('/api/account/login',(req,res)=>{
+  res.json(func.login(req,req.body,res));
 });
