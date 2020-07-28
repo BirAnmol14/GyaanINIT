@@ -1,8 +1,11 @@
 import React from 'react';
 import "./discuss.css"
 
+
 function Anounce(){
+  
     return(
+
             <div className="mx-auto">
                 <div className="card text-center">
                 <div className="card-header">

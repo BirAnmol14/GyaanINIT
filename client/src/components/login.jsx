@@ -12,6 +12,7 @@ function Login(props){
       if(obj && obj.type && (obj.type==='join'||obj.type==='create')){
         return '/'+obj.type;
       }
+      
       return '/';
     }
     function loginChange(event){

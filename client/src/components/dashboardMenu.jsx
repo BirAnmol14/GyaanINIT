@@ -4,7 +4,7 @@ import "./dashboard.css"
 function Menu() {
     return (
         <div className="mx-auto">
-            <div class="container " style={{opacity:"0.97"}}>
+            <div class="container " style={{opacity:"0.99"}}>
 
                 <section>
 
