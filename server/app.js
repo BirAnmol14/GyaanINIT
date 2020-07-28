@@ -12,10 +12,23 @@ app.use(parser.urlencoded({
   extended: true
 }));
 
+app.use(session({
+  secret: secrets.string,
+  resave: false,
+  saveUninitialized: false,
+  //Remeber to initialise a session store
+  cookie: {
+    maxAge:24*60*60*1000,
+    httpOnly:true,
+    secure:false //Make true once https compliant
+  }
+}))
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", process.env.REACT_URL); // update to match the domain you will make the request from
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header("Access-Control-Allow-Credentials" , true);
+  res.header("Access-Control-Allow-Methods","GET, POST, OPTIONS");
   next();
 });
 
@@ -27,15 +40,15 @@ app.get('/',(req,res)=>{
   res.send('Server Running');
 });
 
-app.post('/register',(req,res)=>{
+app.post('/api/account/register',(req,res)=>{
   func.register_user(req.body,res);
 });
 
-app.post('/login',(req,res)=>{
-  res.json(func.login(req.body,res));
+app.post('/api/account/login',(req,res)=>{
+  res.json(func.login(req,req.body,res));
 });
 
-app.get('/getinfo',(req,res)=>{
+app.get('/api/users/getinfo',(req,res)=>{
   if(req.query.email){res.json(func.getUserInfo(req.query.email));}
   else{
     res.statusCode=400;
@@ -43,18 +56,10 @@ app.get('/getinfo',(req,res)=>{
   }
 });
 
-app.post('/verifyLoginStatus',(req,res)=>{
-  if(req.body && req.body.email){
-    res.json(func.isLoggedIn(req.body.email));
-  }else{
-    res.status(400).json('Bad query');
-  }
+app.get('/api/account/verifyLoginStatus',(req,res)=>{
+  res.json(func.isLoggedIn(req));
 });
 
-app.post('/logout',(req,res)=>{
-  if(req.body && req.body.email){
-    res.json(func.logout(req.body.email));
-  }else{
-    res.status(400).json('Bad query');
-  }
+app.get('/api/account/logout',(req,res)=>{
+  res.json(func.logout(req));
 });

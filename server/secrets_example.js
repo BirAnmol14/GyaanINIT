@@ -5,5 +5,4 @@ module.exports.string=long_string;
 To USE
 1. Make a copy of this file
 2. Rename the copy with the name secrets.js
-
 */

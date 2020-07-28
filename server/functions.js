@@ -3,7 +3,6 @@ const querystring = require('querystring');
 const md5=require('md5');
 
 const registered_users=[];
-var logged_in_users=[];
 
 module.exports={
   register_user:register_user,
@@ -33,15 +32,15 @@ function register_user(body,res){
   }
 }
 
-function login(body,res){
-  const present=isLoggedIn(body.email);
+function login(req,body,res){
+  const present=isLoggedIn(req);
   if(present.status){
     return {status:true,message:'Already Logged In',user:present.user};
   }else{
     const found=registered_users.find(user=>user.email===body.email);
     if(found && found.password===md5(body.password)){
       const data=getUserInfo(body.email).info;
-      logged_in_users.push(data);
+      req.session.user=data;
       return {status:true,message:"successfully logged in",user:data};
     }
     else if (found && found.password!==md5(body.password)){
@@ -63,27 +62,29 @@ function getUserInfo(email){
   }
 }
 
-function isLoggedIn(email){
+function isLoggedIn(req){
   var found=false;
   var user=null;
-  for(var i=0;i<logged_in_users.length;i++){
-    if(logged_in_users[i].email===email){
+  if(req.session && req.session.user){
       found=true;
-      user=logged_in_users[i];
-      break;
-    }
+      user=req.session.user;
   }
   return {status:found,user:user};
 }
 
-function logout(email){
-  if(isLoggedIn(email).status){
-
-    logged_in_users=logged_in_users.filter((user)=>{return user.email!==email});
-
-    return {status:true,message:"User logged out successfully"}
-  }
-  else{
+function logout(req){
+  if(req.session){
+    let user=req.session.user;
+    if(user){
+      req.session.user=null;
+      req.session.cookie.maxAge = -1;
+      req.session.destroy();
+      req.session = null;
+      return {status:true,message:"User logged out successfully"}
+    }else{
+      return {status:false,message:"User was not logged in"}
+    }
+  }else{
     return {status:false,message:"User was not logged in"}
   }
 }

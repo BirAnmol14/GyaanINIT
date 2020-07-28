@@ -23,8 +23,7 @@ function Login(props){
       const res=await loginApi();
       if(res.status===true){
         alert(res.message);
-        sessionStorage.setItem('gyaan-session', JSON.stringify(res.user));
-        alert(sessionStorage.getItem('gyaan-session'));
+        alert(JSON.stringify(res.user));
         const url=getNextUrl();
         window.location.href=url;
       }else{
@@ -40,6 +39,7 @@ function Login(props){
       const response = await fetch(ServerRoutes.login, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: body
     })
       const status=await response.status;
@@ -65,6 +65,7 @@ function Login(props){
       const response = await fetch(ServerRoutes.register, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: body
     })
       const status=await response.status;

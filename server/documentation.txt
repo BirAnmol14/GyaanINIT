@@ -2,7 +2,7 @@ DOCUMENTATION FOR USING GyaanINIT API
 
 GET requests
 1. Get User Information
-  -END POINT: /getinfo?email={emailid}
+  -END POINT: /api/users/getinfo?email={emailid}
   -METHOD:'GET'
   -RESPONSE:
     - statusCode:200
@@ -13,9 +13,30 @@ GET requests
         -name: String
         -email: String
 
+2. Verifying LoggedIn status
+  -END POINT: /api/account/verifyLoginStatus
+  -METHOD: 'GET'
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - user: Object
+
+3. Logout
+  -END POINT: /api/account/logout
+  -METHOD: 'GET'
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+
+
 POST requests
 1. Registering a User
-  -END POINT: /register
+  -END POINT: /api/account/register
   -HEADERS: "Content-Type": "application/json"
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:
@@ -30,7 +51,7 @@ POST requests
       - message: String
 
 2. Login a User
-  -END POINT: /login
+  -END POINT: /api/account/login
   -HEADERS: "Content-Type": "application/json"
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:
@@ -43,29 +64,3 @@ POST requests
       - status: boolean
       - message: String
       -user:Object (if status true)
-
-3. Verifying LoggedIn status
-  -END POINT: /verifyLoginStatus
-  -HEADERS: "Content-Type": "application/json"
-  -METHOD: 'POST'
-  -BODY/PAYLOAD SCHEMA:
-    - email: String(mandatory)
-  -RESPONSE:
-    - statusCode:200
-    - Content-Type:JSON
-    - SCHEMA:
-      - status: boolean
-      - user: Object
-
-4. Logout
-  -END POINT: /logout
-  -HEADERS: "Content-Type": "application/json"
-  -METHOD: 'POST'
-  -BODY/PAYLOAD SCHEMA:
-    - email: String(mandatory)
-  -RESPONSE:
-    - statusCode:200
-    - Content-Type:JSON
-    - SCHEMA:
-      - status: boolean
-      - message: String
