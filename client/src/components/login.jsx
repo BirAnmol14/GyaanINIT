@@ -1,34 +1,54 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
 import './login.css';
-const login_endpoint='http://localhost:8080/login';
-const register_endpoint='http://localhost:8080/register';
+import queryString from 'query-string';
+import ServerRoutes from './ServerRoutes.js';
 
-function Login(){
+function Login(props){
     const [login,resetLogin]=React.useState({email:'',password:''});
     const [reg,setReg]=React.useState({email:'',password:'',name:''});
+    function getNextUrl(){
+      const obj=queryString.parse(props.location.search);
+      if(obj && obj.type && (obj.type==='join'||obj.type==='create')){
+        return '/'+obj.type;
+      }
+      return '/';
+    }
     function loginChange(event){
       const {value,name}=event.target;
       resetLogin(prev=>{return ({...prev,[name]:value});});
     }
-    function loginSub(event){
+    async function loginSub(event){
       event.preventDefault();
-      alert('login attempt\n'+login.email+'\n'+login.password);
-      loginApi();
+      const res=await loginApi();
+      if(res.status===true){
+        alert(res.message);
+        sessionStorage.setItem('gyaan-session', JSON.stringify(res.user));
+        alert(sessionStorage.getItem('gyaan-session'));
+        const url=getNextUrl();
+        window.location.href=url;
+      }else{
+          alert(JSON.stringify(res));
+          if(res.message==='User not registered'){
+            document.getElementById('pills-register-tab').click();
+          }
+      }
       resetLogin({email:'',password:''});
     }
     async function loginApi(){
       const body=JSON.stringify({email:login.email,password:login.password});
-      const response = await fetch(login_endpoint, {
+      const response = await fetch(ServerRoutes.login, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: body
     })
       const status=await response.status;
       if(status===200){
-        alert(JSON.stringify(await response.json()));
+        const res=await response.json();
+        return res;
       }else{
         alert('Error '+status);
+        return {status:false,message:'Error Occurred'}
       }
     }
     function regChange(event){
@@ -37,20 +57,26 @@ function Login(){
     }
     function regSubmit(event){
       event.preventDefault();
-      alert('Register attempt\n'+reg.name+"\n"+reg.email+'\n'+reg.password);
       registerApi();
       setReg({email:'',password:'',name:''});
     }
     async function registerApi(){
       const body=JSON.stringify({name: reg.name,email:reg.email,password:reg.password});
-      const response = await fetch(register_endpoint, {
+      const response = await fetch(ServerRoutes.register, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: body
     })
       const status=await response.status;
       if(status===200){
-        alert(JSON.stringify(await response.json()));
+        var res=await response.json();
+        if(res.status){
+          alert(res.message+'\n Kindly Login');
+          document.getElementById('pills-login-tab').click();
+        }
+        else{
+          alert(JSON.stringify(res));
+        }
       }else{
         alert('Error '+status);
       }

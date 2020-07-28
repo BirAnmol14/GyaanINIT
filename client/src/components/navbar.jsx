@@ -63,7 +63,7 @@ function Navbar(props){
 
 
         {(props.login !== 'true')?<form className="nav navbar-nav navbar-right">
-          <h5><a href="/"><span className="glyphicon glyphicon-log-in" style={{margin:'10px'}}></span> Login</a></h5>
+          <h5></h5>
         </form>:<form className="dropdown pmd-dropdown pmd-user-info" style={{margin:'10px'}}>
               <a href="javascript:void(0);" className="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
                   <img className="mr-2" src={profile} width="40" height="40" alt="avatar" />

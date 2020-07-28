@@ -2,6 +2,8 @@ import React from 'react';
 import {BrowserRouter as Router,Route} from 'react-router-dom';
 import './App.css';
 import Home from './components/home';
+import Join from './components/join';
+import Create from './components/create.jsx';
 import Login from './components/login';
 import PastMeets from './components/pastmeets'
 import discuss from './components/discuss';
@@ -16,9 +18,11 @@ import DashboardTopic from './components/dashboardTopic'
 function App() {
   return (
     <Router>
-    <Route path="/pastmeets"  component={PastMeets}></Route>
-    <Route path="/login" exact component={Login}></Route>
     <Route path="/" exact component={Home}></Route>
+    <Route path="/pastmeets"  component={PastMeets}></Route>
+    <Route path="/login" component={Login}></Route>
+    <Route path='/join' exact component={Join}/>
+    <Route path='/create' exact component={Create}/>
     <Route path="/discuss/Engineering" exact component={discuss}></Route>
     <Route path="/discuss/JEE" exact component={discuss}></Route>
     <Route path="/discuss/NEET" exact component={discuss}></Route>
@@ -52,7 +56,7 @@ function App() {
     <Route path="/profile/edit" exact component={editProfile}></Route>
     <Route path="/Dashboard" exact component={Dashboard}></Route>
     <Route path="/Dashboard/:topic" exact component={DashboardTopic}></Route>
-  
+
   </Router>
   );
 }

@@ -42,3 +42,30 @@ POST requests
     - SCHEMA:
       - status: boolean
       - message: String
+      -user:Object (if status true)
+
+3. Verifying LoggedIn status
+  -END POINT: /verifyLoginStatus
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - email: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - user: Object
+
+4. Logout
+  -END POINT: /logout
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - email: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String

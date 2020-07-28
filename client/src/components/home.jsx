@@ -4,7 +4,7 @@ import './home.css';
 function Home(){
     return(
       <div>
-        <Navbar  links={{active:{name:'Home',url:'/'},other:[{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/login'},{name:'Create Meet',url:'/login'}]}}  brand='true' discuss='true' search='true' login='true'/>
+        <Navbar  links={{active:{name:'Home',url:'/'},other:[{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/login?type=join'},{name:'Create Meet',url:'/login?type=create'}]}}  brand='true' discuss='true' search='true' login='true'/>
         <div class="main_"><h2>Home</h2></div>
       </div>
     )
