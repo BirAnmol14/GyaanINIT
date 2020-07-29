@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
 import Menu from './dashboardMenu.jsx';
-import ServerRoutes from './ServerRoutes.js';
+
 
 function getActive() {
 

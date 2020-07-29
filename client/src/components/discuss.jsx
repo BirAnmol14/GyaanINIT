@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
-import ServerRoutes from './ServerRoutes.js';
+
 import Anounce from './announcement.jsx';
 
 function getActive(){

@@ -4,7 +4,7 @@ import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
 import Grid from '@material-ui/core/Grid';
 import Book from './book';
-import ServerRoutes from './ServerRoutes.js';
+
 function getActive(){
   var url=window.location.href.split('/');
   return {name:url[url.length-2],url:window.location.href}

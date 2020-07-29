@@ -3,7 +3,7 @@ import "./discuss.css"
 import logo from '../components/logo.png';
 import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
-import ServerRoutes from './ServerRoutes.js';
+
 function getActive(){
   var url=window.location.href.split('/');
   return {name:url[url.length-3],url:window.location.href}

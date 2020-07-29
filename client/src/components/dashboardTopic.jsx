@@ -3,7 +3,7 @@ import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
 import Anounce from './announcement.jsx';
 
-import ServerRoutes from './ServerRoutes.js';
+
 function getActive(){
 
   var url=window.location.href.split('/');

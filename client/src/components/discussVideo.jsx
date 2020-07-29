@@ -2,7 +2,7 @@ import React from 'react';
 import Navbar from './navbar.jsx';
 import SideNavbar from './sidenav.jsx';
 import Videoshow from './present.jsx';
-import ServerRoutes from './ServerRoutes.js';
+
 function getActive(){
   var url=window.location.href.split('/');
   return {name:url[url.length-2],url:window.location.href}

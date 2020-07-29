@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
-import ServerRoutes from './ServerRoutes.js';
+
 function PastMeets(props){
 
     return(
