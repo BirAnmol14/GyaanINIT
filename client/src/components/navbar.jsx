@@ -101,19 +101,17 @@ function Navbar(props) {
           <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" >Search</button>
         </form> : null}
 
-
+        
         {(props.login !== 'true') ? <form className="nav navbar-nav navbar-right">
         <p style={{textAlign:"right"}}>  <a href="/login">Login</a></p>
         </form> : <form className="dropdown pmd-dropdown pmd-user-info" style={{ margin: '10px' }}>
             <a href="javascript:void(0);" className="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
-              <img className="mr-2" src={profile} width="40" height="40" alt="avatar" />
-              <div className="media-body">
-                <h5>Username</h5>
-              </div>
-
+            <a className="navbar-brand" href="/"><img src={profile} alt='logo' style={{ borderRadius: '60px' }} width="50" height="50" />
+            
+            </a>
             </a>
             <ul className="dropdown-menu dropdown-menu-right" role="menu">
-              <a className="dropdown-item" href="/profile/edit">Edit Profile</a>
+              <a className="dropdown-item" href="/profile/">View Profile</a>
               <a  onClick={logout} className="dropdown-item" href="javascript:void(0);">Logout</a>
             </ul>
           </form>}

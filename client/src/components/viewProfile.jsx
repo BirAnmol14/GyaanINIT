@@ -1,25 +1,21 @@
 import React from 'react';
 import './login.css'
+import profile from './profile.png';
 
-// function getActive(){
-//   var url=window.location.href.split('/');
-//   return {name:url[url.length-1],url:window.location.href}
-// }
 
-function EditProfile(props){
+
+function ViewProfile(props){
     return(
       <div >
             <div class="container">
-                <div class = "d-flex justify-content-center" style={{marginTop:'140px'}}><h1>Edit Profile</h1></div>
-               
+                <div class = "d-flex justify-content-center" style={{marginTop:'140px'}}><h1>My Profile</h1></div>
+                <br />
                 <div class="row">
              
                 <div class="col-md-3">
                     <div class="text-center">
-                    <img src="//placehold.it/100" class="avatar img-circle" alt="avatar" style={{marginTop:'100px'}}/>
-                    <h6>Upload a different photo...</h6>
-                    
-                    <input type="file" class="form-control" />
+                        
+                    <img src={profile} class="avatar img-circle" alt="avatar" style={{marginTop:'100px',width:'150px'}}/>
                     </div>
                 </div>
                 
@@ -27,7 +23,7 @@ function EditProfile(props){
                 <div class="col-md-9 personal-info">
                     <div class="alert alert-info alert-dismissable" style={{width:'550px'}}>
                     <a href="/" class="panel-close close" data-dismiss="alert">×</a> 
-                    <i class="fa fa-coffee"></i>
+                    
                     This is an <strong>.alert</strong>. Use this to show important messages to the user.
                     </div>
                     <h3>Personal info</h3>
@@ -36,62 +32,43 @@ function EditProfile(props){
                     <div class="form-group">
                         <label class="col-lg-3 control-label">First Name:</label>
                         <div class="col-lg-8">
-                        <input class="input" type="form-control" value="User" />
+                        <input class="input" type="form-control" value="---User_Name---" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label">Middle Name:</label>
                         <div class="col-lg-8">
-                        <input class="input" type="text" value="" />
+                        <input class="input" type="text" value="---Middle_Name---" readOnly/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label">Last Name:</label>
                         <div class="col-lg-8">
-                        <input class="input" type="text" value="Name" />
+                        <input class="input" type="text" value="---Last_Name---" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label">Email:</label>
                         <div class="col-lg-8">
-                        <input class="input" type="text" value="" />
+                        <input class="input" type="text" value="---user@name.com----" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-lg-3 control-label">Country</label>
                         <div class="col-lg-8">
-                        <div class="ui-select">
-                            <select id="user_time_zone" class="input">
-                            <option value="India">India</option>
-                            <option value="US">US</option>
-                            </select>
-                        </div>
+                        <input class="input" type="text" value="India" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-md-3 control-label">Username:</label>
                         <div class="col-md-8">
-                        <input class="input" type="text" value="" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Password:</label>
-                        <div class="col-md-8">
-                        <input class="input" type="password" value="" />
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-md-3 control-label">Confirm password:</label>
-                        <div class="col-md-8">
-                        <input class="input" type="password" value="" />
+                        <input class="input" type="text" value="noobmaster" />
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="col-md-3 control-label"></label>
                         <div class="col-md-8">
-                        <input type="button" class="btn btn-primary" value="Save Changes" />
-                        <span></span>
-                        <a href="/profile"><input type="button" class="btn btn-default" value="Cancel" /></a> 
+                        <a href="/profile/edit"><input type="button" class="btn btn-primary" value="Edit" /></a>
                         </div>
                     </div>
                     </form>
@@ -106,4 +83,4 @@ function EditProfile(props){
 
 
 
-export default EditProfile;
+export default ViewProfile;

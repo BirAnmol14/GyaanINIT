@@ -12,10 +12,12 @@ import Ebooks from './components/ebooks'
 import Article from './components/article'
 import Articlepage from './components/articlepage'
 import EditProfile from './components/editprofilepage'
+import ViewProfile from './components/viewProfilePage'
 import Dashboard from './components/dashboard'
 import DashboardTopic from './components/dashboardTopic'
 import ServerRoutes from './components/ServerRoutes.js';
 import Presentations from './components/presentations';
+
 function App() {
   //login check and pass to render-props
   var [logged,setLogged]=React.useState('false');
@@ -88,6 +90,7 @@ function App() {
     <Route exact path="/discuss/School/articles/post" render={(props) => <Articlepage {...props} logged={logged} />}/>
     <Route exact path="/discuss/School/presentations" render={(props) => <Presentations {...props} logged={logged} />}/>
     <Route exact path="/profile/edit" render={(props) => <EditProfile {...props} logged={logged} />}/>
+    <Route exact path="/profile/" render={(props) => <ViewProfile {...props} logged={logged} />}/>
     <Route exact path="/Dashboard" render={(props) => <Dashboard {...props} logged={logged} />}/>
     <Route exact path="/Dashboard/:topic" render={(props) => <DashboardTopic {...props} logged={logged} />}/>
 

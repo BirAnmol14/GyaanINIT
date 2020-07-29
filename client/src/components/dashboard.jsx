@@ -24,8 +24,9 @@ function Dashboard(props) {
            props.logged.user.name:null}
            </h5>
            </center>
+           <div style={{backgroundColor:'hsla(0, 0%, 0%, 0.3)', width:'1200px',marginLeft:'160px'}}>
           <Menu />
-
+          </div>
 
 
         </div>

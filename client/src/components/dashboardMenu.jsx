@@ -3,7 +3,7 @@ import "./dashboard.css"
 
 function Menu() {
     return (
-        <div className="mx-auto">
+        <div className="mx-auto m-2">
             <div className="container " style={{opacity:"0.99"}}>
 
                 <section>
@@ -18,7 +18,7 @@ function Menu() {
                                 <div className="panel-body">
 
                                     <br />
-                                    <h3 className="panel-heading panel-heading"><span class="bg-light  text-dark border-primary">Updates</span></h3>
+                                    <h3 className="panel-heading panel-heading"><span class="text-dark border-primary">Updates</span></h3>
 
                                     <div className="container">
                                         <div className="row">
@@ -54,7 +54,7 @@ function Menu() {
                                     </div>
                                     <br />
 
-                                    <h3 className="panel-heading panel-heading"><span className="bg-light  text-dark border-primary">Lectures Scheduled</span></h3>
+                                    <h3 className="panel-heading panel-heading"><span className="text-dark border-primary">Lectures Scheduled</span></h3>
                                     <div className="list-group">
                                         <a href="#" className="list-group-item list-group-item-action">
                                             Cras justo odio
@@ -75,7 +75,7 @@ function Menu() {
 
 
                                     <br />
-                                    <h3 className="panel-heading panel-heading"><span className="bg-light  text-dark border-primary">My Courses</span></h3>
+                                    <h3 className="panel-heading panel-heading"><span className="text-dark border-primary">My Courses</span></h3>
 
                                     <div className="row">
                                         <div className="col-md-12">
@@ -131,7 +131,7 @@ function Menu() {
                                             </div>
                                             <br />
 
-                                            <h3 className="panel-heading panel-heading"><span className="bg-light  text-dark border-primary">My Networks</span></h3>
+                                            <h3 className="panel-heading panel-heading"><span className="text-dark border-primary">My Networks</span></h3>
 
 
                                             <div className="row">
