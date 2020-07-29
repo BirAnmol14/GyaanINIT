@@ -6,56 +6,90 @@ import Join from './components/join';
 import Create from './components/create.jsx';
 import Login from './components/login';
 import PastMeets from './components/pastmeets'
-import discuss from './components/discuss';
-import discussVideo from './components/discussVideo';
-import ebooks from './components/ebooks'
+import Discuss from './components/discuss';
+import DiscussVideo from './components/discussVideo';
+import Ebooks from './components/ebooks'
 import Article from './components/article'
 import Articlepage from './components/articlepage'
-import presentations from './components/presentations'
-import editProfile from './components/editprofilepage'
+import EditProfile from './components/editprofilepage'
 import Dashboard from './components/dashboard'
 import DashboardTopic from './components/dashboardTopic'
+import ServerRoutes from './components/ServerRoutes.js';
+import Presentations from './components/presentations';
 function App() {
+  //login check and pass to render-props
+  var [logged,setLogged]=React.useState('false');
+  async function loggedStatus(){
+    
+    
+    const response=await fetch(ServerRoutes.loggedIn,{
+      method: 'GET',
+      credentials: 'include'
+    })
+    const status=await response.status;
+    if(status===200){
+      const res=await response.json();
+      if(res.status===true){
+     
+      
+        setLogged({user:res.user,status:'true'});
+   
+        return;
+        
+        
+      }else{
+          setLogged('false');
+          return;
+      }
+    }else{
+      alert('Error '+status);
+    }
+  
+  }
+  React.useEffect(() => {
+    loggedStatus();
+  });
+
   return (
     <Router>
-    <Route path="/" exact component={Home}></Route>
-    <Route path="/pastmeets"  component={PastMeets}></Route>
-    <Route path="/login" component={Login}></Route>
-    <Route path='/join' exact component={Join}/>
-    <Route path='/create' exact component={Create}/>
-    <Route path="/discuss/Engineering" exact component={discuss}></Route>
-    <Route path="/discuss/JEE" exact component={discuss}></Route>
-    <Route path="/discuss/NEET" exact component={discuss}></Route>
-    <Route path="/discuss/School" exact component={discuss}></Route>
-    <Route path="/discuss/Medical" exact component={discuss}></Route>
-    <Route path="/discuss/Engineering/videolectures" exact component={discussVideo}></Route>
-    <Route path="/discuss/JEE/videolectures" exact component={discussVideo}></Route>
-    <Route path="/discuss/NEET/videolectures" exact component={discussVideo}></Route>
-    <Route path="/discuss/School/videolectures" exact component={discussVideo}></Route>
-    <Route path="/discuss/Medical/videolectures" exact component={discussVideo}></Route>
-    <Route path="/discuss/Engineering/ebooks" exact component={ebooks}></Route>
-    <Route path="/discuss/JEE/ebooks" exact component={ebooks}></Route>
-    <Route path="/discuss/NEET/ebooks" exact component={ebooks}></Route>
-    <Route path="/discuss/School/ebooks" exact component={ebooks}></Route>
-    <Route path="/discuss/Medical/ebooks" exact component={ebooks}></Route>
-    <Route path="/discuss/Engineering/articles" exact component={Article}></Route>
-    <Route path="/discuss/Engineering/articles/post" exact component={Articlepage}></Route>
-    <Route path="/discuss/Engineering/presentations" exact component={presentations}></Route>
-    <Route path="/discuss/Medical/articles" exact component={Article}></Route>
-    <Route path="/discuss/Medical/articles/post" exact component={Articlepage}></Route>
-    <Route path="/discuss/Medical/presentations" exact component={presentations}></Route>
-    <Route path="/discuss/JEE/articles" exact component={Article}></Route>
-    <Route path="/discuss/JEE/articles/post" exact component={Articlepage}></Route>
-    <Route path="/discuss/JEE/presentations" exact component={presentations}></Route>
-    <Route path="/discuss/NEET/articles" exact component={Article}></Route>
-    <Route path="/discuss/NEET/articles/post" exact component={Articlepage}></Route>
-    <Route path="/discuss/NEET/presentations" exact component={presentations}></Route>
-    <Route path="/discuss/School/articles" exact component={Article}></Route>
-    <Route path="/discuss/School/articles/post" exact component={Articlepage}></Route>
-    <Route path="/discuss/School/presentations" exact component={presentations}></Route>
-    <Route path="/profile/edit" exact component={editProfile}></Route>
-    <Route path="/Dashboard" exact component={Dashboard}></Route>
-    <Route path="/Dashboard/:topic" exact component={DashboardTopic}></Route>
+    <Route exact path="/" render={(props) => <Home {...props} logged={logged} />}/>
+    <Route exact path="/pastmeets"  render={(props) => <PastMeets {...props} logged={logged} />}/>
+    <Route exact path="/login"  render={(props) => <Login {...props} logged={logged} />}/>
+    <Route exact path='/join'  render={(props) => <Join {...props} logged={logged} />}/>
+    <Route exact path='/create'  render={(props) => <Create {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Engineering"  render={(props) => <Discuss {...props} logged={logged} />}/>
+    <Route exact path="/discuss/JEE"  render={(props) => <Discuss {...props} logged={logged} />}/>
+    <Route exact path="/discuss/NEET"  render={(props) => <Discuss {...props} logged={logged} />}/>
+    <Route exact path="/discuss/School"  render={(props) => <Discuss {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Medical"  render={(props) => <Discuss {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Engineering/videolectures"render={(props) => <DiscussVideo {...props} logged={logged} />}/>
+    <Route exact path="/discuss/JEE/videolectures" render={(props) => <DiscussVideo {...props} logged={logged} />}/>
+    <Route exact path="/discuss/NEET/videolectures" render={(props) => <DiscussVideo {...props} logged={logged} />}/>
+    <Route exact path="/discuss/School/videolectures" render={(props) => <DiscussVideo {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Medical/videolectures" render={(props) => <DiscussVideo {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Engineering/ebooks" render={(props) => <Ebooks {...props} logged={logged} />}/>
+    <Route exact path="/discuss/JEE/ebooks" render={(props) => <Ebooks {...props} logged={logged} />}/>
+    <Route exact path="/discuss/NEET/ebooks" render={(props) => <Ebooks {...props} logged={logged} />}/>
+    <Route exact path="/discuss/School/ebooks" render={(props) => <Ebooks {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Medical/ebooks" render={(props) => <Ebooks {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Engineering/articles" render={(props) => <Article {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Engineering/articles/post" render={(props) => <Articlepage {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Engineering/presentations" render={(props) => <Presentations {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Medical/articles" render={(props) => <Article {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Medical/articles/post" render={(props) => <Articlepage {...props} logged={logged} />}/>
+    <Route exact path="/discuss/Medical/presentations" render={(props) => <Presentations {...props} logged={logged} />}/>
+    <Route exact path="/discuss/JEE/articles" render={(props) => <Article {...props} logged={logged} />}/>
+    <Route exact path="/discuss/JEE/articles/post" render={(props) => <Articlepage {...props} logged={logged} />}/>
+    <Route exact path="/discuss/JEE/presentations" render={(props) => <Presentations {...props} logged={logged} />}/>
+    <Route exact path="/discuss/NEET/articles" render={(props) => <Article {...props} logged={logged} />}/>
+    <Route exact path="/discuss/NEET/articles/post" render={(props) => <Articlepage {...props} logged={logged} />}/>
+    <Route exact path="/discuss/NEET/presentations" render={(props) => <Presentations {...props} logged={logged} />}/>
+    <Route exact path="/discuss/School/articles" render={(props) => <Article {...props} logged={logged} />}/>
+    <Route exact path="/discuss/School/articles/post" render={(props) => <Articlepage {...props} logged={logged} />}/>
+    <Route exact path="/discuss/School/presentations" render={(props) => <Presentations {...props} logged={logged} />}/>
+    <Route exact path="/profile/edit" render={(props) => <EditProfile {...props} logged={logged} />}/>
+    <Route exact path="/Dashboard" render={(props) => <Dashboard {...props} logged={logged} />}/>
+    <Route exact path="/Dashboard/:topic" render={(props) => <DashboardTopic {...props} logged={logged} />}/>
 
   </Router>
   );

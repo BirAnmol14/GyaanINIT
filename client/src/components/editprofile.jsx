@@ -1,12 +1,12 @@
 import React from 'react';
 import './login.css'
 
-function getActive(){
-  var url=window.location.href.split('/');
-  return {name:url[url.length-1],url:window.location.href}
-}
+// function getActive(){
+//   var url=window.location.href.split('/');
+//   return {name:url[url.length-1],url:window.location.href}
+// }
 
-function EditProfile(){
+function EditProfile(props){
     return(
       <div >
             <div class="container">
@@ -26,13 +26,13 @@ function EditProfile(){
               
                 <div class="col-md-9 personal-info">
                     <div class="alert alert-info alert-dismissable">
-                    <a class="panel-close close" data-dismiss="alert">×</a> 
+                    <a href="/" class="panel-close close" data-dismiss="alert">×</a> 
                     <i class="fa fa-coffee"></i>
                     This is an <strong>.alert</strong>. Use this to show important messages to the user.
                     </div>
                     <h3>Personal info</h3>
                     
-                    <form class="form-horizontal" role="form">
+                    <form class="form-horizontal">
                     <div class="form-group">
                         <label class="col-lg-3 control-label">First Name:</label>
                         <div class="col-lg-8">
