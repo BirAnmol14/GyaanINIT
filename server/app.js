@@ -37,7 +37,7 @@ app.listen(process.env.PORT,(req,res)=>{
 });
 
 //GET requests
-app.get('/',(req,res)=>{
+app.get('/api/',(req,res)=>{
   res.send('Server Running');
 });
 
