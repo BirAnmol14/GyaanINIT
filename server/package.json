@@ -10,7 +10,8 @@
     "express-session": "^1.17.1",
     "md5": "^2.2.1",
     "nodemon": "^2.0.4",
-    "querystring": "^0.2.0"
+    "querystring": "^0.2.0",
+    "zxcvbn": "^4.4.2"
   },
   "devDependencies": {},
   "scripts": {

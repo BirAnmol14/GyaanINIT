@@ -2,17 +2,38 @@
 import React from 'react';
 import logo from './logo.png';
 import ServerRoutes from './ServerRoutes.js';
-
 import profile from './profile.png';
+
 function Navbar(props) {
   const [search, setSearch] = React.useState({ text: '' });
+  const [search_results,setResults]=React.useState({});
   function changeSearch(event) {
     setSearch({ text: event.target.value });
   }
   function submitSearch(e) {
     e.preventDefault();
     alert('Trying to search: ' + search.text);
+    if(search.text.length>0 ){
+    fetchResults();
+  }else{
+    alert('Please make a valid search');
+  }
     setSearch({ text: '' });
+  }
+  async function fetchResults(){
+    const url=ServerRoutes.search+"?find="+search.text;
+    const response=await fetch(url,{
+      method:'GET',
+      credentials:'include'
+    });
+    const status=await response.status;
+    if(status===200){
+      const res=await response.json();
+      alert(JSON.stringify(res));
+      setResults(res);//Actually sets the state, can be tested by using react dev tools and viewing state of navbar
+    }else{
+      alert('Error Occurred '+ status);
+    }
   }
   async function logout(event){
     const response=await fetch(ServerRoutes.logout,{
@@ -90,7 +111,7 @@ function Navbar(props) {
             My Courses
          </a> : <a className="nav-link" href="/Dashboard" >
               My Courses
-   </a>
+              </a>
 
             : null}
 
@@ -101,16 +122,14 @@ function Navbar(props) {
           <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" >Search</button>
         </form> : null}
 
-        
-        {(props.login !== 'true') ? <form className="nav navbar-nav navbar-right">
-        <p style={{textAlign:"right"}}>  <a href="/login">Login</a></p>
+
+        {(props.login !== 'true') ? <form className="form-inline my-2 my-sm-0" style={{ margin: '10px' }}>
+        <a href="/login"><button className="btn btn-outline-warning my-2 my-sm-0" type="button" >Login</button></a>
         </form> : <form className="dropdown pmd-dropdown pmd-user-info" style={{ margin: '10px' }}>
-            <a href="javascript:void(0);" className="btn-user dropdown-toggle media align-items-center" data-toggle="dropdown" data-sidebar="true" aria-expanded="false">
-            <a className="navbar-brand" href="/"><img src={profile} alt='logo' style={{ borderRadius: '60px' }} width="50" height="50" />
-            
+
+            <a className="navbar-brand btn-user dropdown-toggle media align-items-center" href="javascript:void(0);" data-toggle="dropdown" data-sidebar="true" aria-expanded="false"><img src={profile} alt='logo' style={{ borderRadius: '60px' }} width="50" height="50" />
             </a>
-            </a>
-            <ul className="dropdown-menu dropdown-menu-right" role="menu">
+            <ul className="dropdown-menu dropdown-menu-right" role="menu" id='profile'>
               <a className="dropdown-item" href="/profile/">View Profile</a>
               <a  onClick={logout} className="dropdown-item" href="javascript:void(0);">Logout</a>
             </ul>

@@ -22,8 +22,8 @@ function App() {
   //login check and pass to render-props
   var [logged,setLogged]=React.useState('false');
   async function loggedStatus(){
-    
-    
+
+
     const response=await fetch(ServerRoutes.loggedIn,{
       method: 'GET',
       credentials: 'include'
@@ -32,13 +32,13 @@ function App() {
     if(status===200){
       const res=await response.json();
       if(res.status===true){
-     
-      
+
+
         setLogged({user:res.user,status:'true'});
-   
+
         return;
-        
-        
+
+
       }else{
           setLogged('false');
           return;
@@ -46,11 +46,11 @@ function App() {
     }else{
       alert('Error '+status);
     }
-  
+
   }
   React.useEffect(() => {
     loggedStatus();
-  });
+  },[]);
 
   return (
     <Router>

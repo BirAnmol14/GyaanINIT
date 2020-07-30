@@ -12,7 +12,7 @@ function getActive() {
 }
 function Dashboard(props) {
 
- 
+
   return (
     <div>
       <Navbar links={{ active: getActive(), other: [{ name: 'Home', url: '/' }, { name: 'Past Meets', url: '/pastmeets' }, {name:'Join Meet',url:'/login?type=join'},{name:'Create Meet',url:'/login?type=create'}] }} brand='true' discuss='true' search='true' login={props.logged.status}/>
@@ -24,7 +24,7 @@ function Dashboard(props) {
            props.logged.user.name:null}
            </h5>
            </center>
-           <div style={{backgroundColor:'hsla(0, 0%, 0%, 0.3)', width:'1200px',marginLeft:'160px'}}>
+           <div style={{backgroundColor:'hsla(0, 0%, 0%, 0.3)', width:'90%',marginLeft:'5%',marginRight:'5%'}}>
           <Menu />
           </div>
 

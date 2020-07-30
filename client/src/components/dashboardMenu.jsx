@@ -9,13 +9,13 @@ function Menu() {
                 <section>
 
                     <div className="row">
-                        <div className="col-md-12">
+                        <div className="col-md-12" style={{paddingLeft:'0px',paddingRight:'0px'}}>
                             <div className="panel panel-primary">
 
                                 <div className="p-3 mb-2 bg-dark text-white">   <div className="panel-heading">
                                     <h2 className="panel-title d-flex justify-content-center font-weight-bolder text-monospace"><span className="glyphicon glyphicon-thumbs-up"></span>Dashboard</h2>
                                 </div></div>
-                                <div className="panel-body">
+                                <div className="panel-body" style={{marginLeft:'5%',marginRight:'5%'}}>
 
                                     <br />
                                     <h3 className="panel-heading panel-heading"><span class="text-dark border-primary">Updates</span></h3>
@@ -161,11 +161,11 @@ function Menu() {
                                                         </ul></div>
 
                                                     </div>
-                                                   
+
                                                 </div>
                                             </div>
 
-                                           
+
                                         </div>
                                     </div>
 

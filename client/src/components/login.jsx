@@ -7,12 +7,12 @@ import ServerRoutes from './ServerRoutes.js';
 function Login(props){
     const [login,resetLogin]=React.useState({email:'',password:''});
     const [reg,setReg]=React.useState({email:'',password:'',name:''});
+    const [strength,setStrength]=React.useState(0);
     function getNextUrl(){
       const obj=queryString.parse(props.location.search);
       if(obj && obj.type && (obj.type==='join'||obj.type==='create')){
         return '/'+obj.type;
       }
-      
       return '/';
     }
     function loginChange(event){
@@ -56,9 +56,41 @@ function Login(props){
       const {value,name}=event.target;
       setReg(prev=>{return ({...prev,[name]:value});});
     }
+
+
+    React.useEffect(() => {
+      async function PasswordStrength(){
+        const body=JSON.stringify({password:reg.password});
+        try{
+          const response=await fetch(ServerRoutes.pass_strength,{
+            method:'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: body
+          })
+          let status=await response.status;
+          if(status === 200){
+            let res=await response.json();
+            setStrength(res.strength);
+          }else{
+            alert('Error Occurred '+status);
+            setStrength(0);
+          }
+        }catch(e){
+          console.error(e);
+        }
+      }
+      PasswordStrength();    
+    },[reg.password]);
+
     function regSubmit(event){
       event.preventDefault();
-      registerApi();
+      if(strength>66){
+        registerApi();
+      }
+      else{
+        alert('Password strength too low, try a better password');
+      }
       setReg({email:'',password:'',name:''});
     }
     async function registerApi(){
@@ -138,8 +170,20 @@ function Login(props){
               <div className="col">
                 <label htmlFor="InputPassword1">Password</label>
                 <input type="password" className="form-control" id="InputPassword1" style={{borderRadius:'10px'}} required name='password' value={reg.password} onChange={regChange}/>
+
               </div>
             </div>
+
+            <div className="row">
+            <div className="col">
+              <div className="progress" style={{marginTop:'10px'}}>
+                <div className=  { strength>0?strength<=33 ?"progress-bar bg-danger":strength<=66?"progress-bar bg-warning":"progress-bar bg-success":'"progress-bar'} role="progressbar" style={{width:strength+'%'}} aria-valuenow={strength} aria-valuemin="0" aria-valuemax="100">
+                  { strength>0?strength<=33 ?'Weak':strength<=66?'Moderate':'Strong':' '}
+                </div>
+              </div>
+            </div>
+          </div>
+
             <div className="row">
               <div className='col'>
                 <button type="submit" className="btn btn-danger" style={{marginTop:'1em',backgroundColor:'#007bff',borderColor:'white'}} name='register'>Submit</button>

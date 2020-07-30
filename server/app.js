@@ -61,6 +61,13 @@ app.get('/api/account/logout',(req,res)=>{
   res.json(func.logout(req));
 });
 
+app.get('/api/tools/search',(req,res)=>{
+  if(req.query && req.query.find){
+    res.json(func.search(req.query.find));
+  }else{
+    res.status(400).send('Bad Query');
+  }
+});
 //POST requests
 app.post('/api/account/register',(req,res)=>{
   func.register_user(req.body,res);
@@ -68,4 +75,15 @@ app.post('/api/account/register',(req,res)=>{
 
 app.post('/api/account/login',(req,res)=>{
   res.json(func.login(req,req.body,res));
+});
+
+app.post('/api/tools/password_strength',(req,res)=>{
+      if(req.body && req.body.password){
+        res.json(func.check_strength(req.body.password));
+      }else if(req.body && req.body.password===''){
+        res.json({strength:0})
+      }
+      else{
+        res.status(400).send('Bad Query');
+      }
 });

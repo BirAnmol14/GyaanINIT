@@ -48,6 +48,36 @@ GET requests
           },...
         ]
 
+5. Search
+  -END POINT: /api/tools/search?find={your query}
+  -METHOD: 'GET'
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA: An object
+      - {
+          users:[
+            {
+
+            },...
+          ],
+          articles:[
+            {
+
+            },...
+          ],
+          posts:[
+            {
+
+            },...
+          ],
+          videos:[
+            {
+
+            },...
+          ]
+        }
+
 
 POST requests
 1. Registering a User
@@ -79,3 +109,16 @@ POST requests
       - status: boolean
       - message: String
       -user:Object (if status true)
+
+
+3. Test Password Strength
+  -END POINT: /api/tools/password_strength
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - password: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - strength: Number between 0 and 100
