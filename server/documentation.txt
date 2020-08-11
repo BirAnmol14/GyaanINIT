@@ -89,8 +89,13 @@ GET requests
           validUrl: boolean ,
           admin_email:String ,
           users:[
-                    list of emails of users in the call,...
-                ]
+                  {
+                    User object in the Call,
+                    -name:String,
+                    -email:String,
+                    -uid:String
+                  }, ...
+                ] - a list of user objects sorted by lexicographic order on Name
       }
 
 
