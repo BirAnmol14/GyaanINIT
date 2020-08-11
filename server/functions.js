@@ -184,10 +184,16 @@ function getCallUserList(url){
       urlValid=true;
       admin_email=calls[i].admin_email;
       for(var j=0;j<calls[i].users.length;j++){
-        users.push(calls[i].users[j]);
+        var temp=getUserInfo(calls[i].users[j]);
+        if(temp.status===true){
+          users.push(temp.info);
+        }
       }
       break;
     }
   }
+    if(users.length!==0){
+      users.sort(function(a,b){return a.name.toLowerCase().localeCompare(b.name.toLowerCase())});
+    }
     return {validUrl:urlValid,admin_email:admin_email,users:users};
 }
