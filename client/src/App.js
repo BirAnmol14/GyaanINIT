@@ -17,10 +17,18 @@ import Dashboard from './components/dashboard'
 import DashboardTopic from './components/dashboardTopic'
 import ServerRoutes from './components/ServerRoutes.js';
 import Presentations from './components/presentations';
-
+import queryString from 'query-string';
+import VideoCall from './components/VideoCall.jsx';
 function App() {
+  function getNextUrl(){
+    const obj=queryString.parse(window.location.search);
+    if(obj && obj.type && (obj.type==='join'||obj.type==='create'||obj.type==='Dashboard')){
+      return '/'+obj.type;
+    }
+    return '/';
+  }
   //login check and pass to render-props
-  var [logged,setLogged]=React.useState('false');
+  var [logged,setLogged]=React.useState({status:false,user:null});
   async function loggedStatus(){
 
 
@@ -32,15 +40,22 @@ function App() {
     if(status===200){
       const res=await response.json();
       if(res.status===true){
-
-
-        setLogged({user:res.user,status:'true'});
-
+        setLogged({user:res.user,status:true});
+        if(window.location.href.includes('/login')){
+            window.location.href=getNextUrl();
+        }
         return;
 
 
       }else{
-          setLogged('false');
+          setLogged({status:false,user:null});
+          if(window.location.href.includes('/join')){
+              window.location.href='/login?type=join';
+          }else if(window.location.href.includes('/create')){
+            window.location.href='/login?type=create';
+          }else if (window.location.href.includes('/Dashboard')) {
+            window.location.href='/login?type=Dashboard';
+          }
           return;
       }
     }else{
@@ -55,6 +70,7 @@ function App() {
   return (
     <Router>
     <Route exact path="/" render={(props) => <Home {...props} logged={logged} />}/>
+    <Route path="/videoCall" render={(props) => <VideoCall {...props} logged={logged} />}/>
     <Route exact path="/pastmeets"  render={(props) => <PastMeets {...props} logged={logged} />}/>
     <Route exact path="/login"  render={(props) => <Login {...props} logged={logged} />}/>
     <Route exact path='/join'  render={(props) => <Join {...props} logged={logged} />}/>

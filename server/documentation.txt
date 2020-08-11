@@ -78,6 +78,21 @@ GET requests
           ]
         }
 
+6. Get all users present in a call
+  -END POINT: /api/tools/getCallUserList?url={meet url}
+  -METHOD: 'GET'
+  -RESPONSE:
+    -statusCode: 200
+    - Content-Type:JSON
+    - SCHEMA: An Object
+      {
+          validUrl: boolean ,
+          admin_email:String ,
+          users:[
+                    list of emails of users in the call,...
+                ]
+      }
+
 
 POST requests
 1. Registering a User
@@ -122,3 +137,35 @@ POST requests
     - Content-Type:JSON
     - SCHEMA:
       - strength: Number between 0 and 100
+
+
+4. Generate Call
+  -END POINT: /api/call/generateCall
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - meetUrl: String(mandatory)
+    - password: String(mandatory)
+    - admin_email: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - url: String(if status true, maybe different from the url user sends in body)
+
+5. Join Call
+  -END POINT: /api/call/joinCall
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - meetUrl: String(mandatory)
+    - password: String(mandatory)
+    - user_email: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - url: String(if status true always same as the url user sends in body)
+      - message: String

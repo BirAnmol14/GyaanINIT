@@ -12,14 +12,14 @@ function getActive(){
 }
 function DashboardTopic(props){
 
-  
+
     return(
       <div>
-        <Navbar links={{active:getActive(),other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/login?type=join'},{name:'Create Meet',url:'/login?type=create'}]}} brand='true' discuss='true' search='true' login={props.logged.status}/>
+        <Navbar links={{active:getActive(),other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true' login={props.logged.status}/>
         <div style={{marginTop:"90px"}}>
         <SideNavbar links={{active:{name:getActive().name},other:[{ name: 'DASHBOARD', url: '/Dashboard' },{name:'DSA',url:'/Dashboard/DSA'},{name:'uP',url:'/Dashboard/uP'},{name:'DBMS',url:'/Dashboard/DBMS'},{name:'PAVA',url:'/Dashboard/PAVA'},{name:'POE',url:'/Dashboard/POE'}]}}/>
         <div className="panel-group" id="accordion">
-       
+
        <Anounce/>
        <Anounce/>
        <Anounce/>

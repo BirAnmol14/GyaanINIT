@@ -10,7 +10,7 @@ function Login(props){
     const [strength,setStrength]=React.useState(0);
     function getNextUrl(){
       const obj=queryString.parse(props.location.search);
-      if(obj && obj.type && (obj.type==='join'||obj.type==='create')){
+      if(obj && obj.type && (obj.type==='join'||obj.type==='create'||obj.type==='Dashboard')){
         return '/'+obj.type;
       }
       return '/';
@@ -80,7 +80,7 @@ function Login(props){
           console.error(e);
         }
       }
-      PasswordStrength();    
+      PasswordStrength();
     },[reg.password]);
 
     function regSubmit(event){
@@ -116,8 +116,8 @@ function Login(props){
       }
     }
     return(
+        props.logged.status===false?
       <div>
-
         <Navbar brand='true' links={{active:{name:'Login',url:'/login'},other:[{name:'Home',url:'/'}]}}/>
        <div style={{marginTop:"140px"}}>
         <div style={{backgroundColor:'#343A40',margin:'4em',padding:'2em',borderRadius:'20px',marginLeft: '30%',
@@ -195,6 +195,8 @@ function Login(props){
         </div>
         </div>
       </div>
+      :
+      <div/>
     );
 
 }

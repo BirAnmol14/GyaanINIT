@@ -4,6 +4,7 @@ const md5=require('md5');
 const zxcvbn=require('zxcvbn');
 
 const registered_users=[];
+const calls=[];//{url,password,admin_email,users}
 
 module.exports={
   register_user:register_user,
@@ -13,7 +14,10 @@ module.exports={
   logout:logout,
   getAllUsers:getAllUsers,
   search:search,
-  check_strength:check_strength
+  check_strength:check_strength,
+  generateCall:generateCall,
+  joinCall:joinCall,
+  getCallUserList:getCallUserList
 }
 
 function User(name,email,password){
@@ -119,4 +123,71 @@ function check_strength(password){
     score+=0.5;
   }
   return {strength:score/4*100};
+}
+
+function generateCall(url,password,admin_email,req){
+  if(isLoggedIn(req).status===true){
+    const found=calls.find(call=>call.url===url);
+    var temp=url;
+    if(found){
+      var count=0;
+      for(var i=0;i<calls.length;i++){
+        if(calls[i].url===temp){
+          count++;
+          temp=url+count;
+        }
+      }
+      url+=(count);
+      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[]});
+      return {status:true,url:url}
+    }else{
+      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[]});
+      return {status:true,url:url}
+    }
+  }
+  else{
+    return {status:false,url:null}
+  }
+}
+
+function joinCall(url,password,user_email,req){
+  if(isLoggedIn(req).status===true){
+    var index=-1;
+    for(var i=0;i<calls.length;i++){
+      if(calls[i].url===url){
+        index=i;
+        break;
+      }
+    }
+    if(index===-1){
+      return {status:false,url:null,message:'No such call found'}
+    }else{
+      if(calls[index].password===md5(password)){
+        calls[index].users.push(user_email);
+        return {status:true,url:url,message:'Successfully Joined'}
+      }else{
+        return {status:false,url:url,message:'Incorrect Password'}
+      }
+    }
+  }
+  else{
+    return {status:false,url:null,message:'You are not logged in'}
+  }
+}
+
+function getCallUserList(url){
+  var urlValid=false;
+  var admin_email='';
+  var users=[];
+  for(var i=0;i<calls.length;i++){
+    if(calls[i].url===url){
+      urlValid=true;
+      admin_email=calls[i].admin_email;
+      for(var j=0;j<calls[i].users.length;j++){
+        users.push(calls[i].users[j]);
+      }
+      break;
+    }
+  }
+    return {validUrl:urlValid,admin_email:admin_email,users:users};
 }

@@ -107,7 +107,7 @@ function Navbar(props) {
               </div>
 
             </li> : null}
-          {(props.login === 'true') ? (props.links.active.name === 'Dashboard' || window.location.href.split('/').indexOf("Dashboard") !== -1) ? <a className="nav-link active" href="/Dashboard" >
+          {(props.login === true) ? (props.links.active.name === 'Dashboard' || window.location.href.split('/').indexOf("Dashboard") !== -1) ? <a className="nav-link active" href="/Dashboard" >
             My Courses
          </a> : <a className="nav-link" href="/Dashboard" >
               My Courses
@@ -123,7 +123,7 @@ function Navbar(props) {
         </form> : null}
 
 
-        {(props.login !== 'true') ? <form className="form-inline my-2 my-sm-0" style={{ margin: '10px' }}>
+        {(props.login !== true) ? <form className="form-inline my-2 my-sm-0" style={{ margin: '10px' }}>
         <a href="/login"><button className="btn btn-outline-warning my-2 my-sm-0" type="button" >Login</button></a>
         </form> : <form className="dropdown pmd-dropdown pmd-user-info" style={{ margin: '10px' }}>
 

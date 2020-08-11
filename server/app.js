@@ -68,6 +68,14 @@ app.get('/api/tools/search',(req,res)=>{
     res.status(400).send('Bad Query');
   }
 });
+
+app.get('/api/tools/getCallUserList',(req,res)=>{
+  if(req.query.url){res.json(func.getCallUserList(req.query.url));}
+  else{
+    res.statusCode=400;
+    res.json({message:'bad query, url query parameter missing in url'});
+  }
+});
 //POST requests
 app.post('/api/account/register',(req,res)=>{
   func.register_user(req.body,res);
@@ -86,4 +94,20 @@ app.post('/api/tools/password_strength',(req,res)=>{
       else{
         res.status(400).send('Bad Query');
       }
+});
+
+app.post('/api/call/generateCall',(req,res)=>{
+  if(req.body && req.body.meetUrl && req.body.password && req.body.admin_email){
+    res.json(func.generateCall(req.body.meetUrl,req.body.password,req.body.admin_email,req));
+  }else{
+    res.status(400).send('Bad Query');
+  }
+});
+
+app.post('/api/call/joinCall',(req,res)=>{
+  if(req.body && req.body.meetUrl && req.body.password && req.body.user_email){
+    res.json(func.joinCall(req.body.meetUrl,req.body.password,req.body.user_email,req));
+  }else{
+    res.status(400).send('Bad Query');
+  }
 });

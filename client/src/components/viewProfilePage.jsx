@@ -10,7 +10,7 @@ function getActive(){
 function viewProfile(props){
     return(
         <div style={{backgroundColor:'hsla(0, 0%, 0%, 0.3)', width:'1000px',marginLeft:'400px'}}>
-            <Navbar links={{active:getActive(),other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/login?type=join'},{name:'Create Meet',url:'/login?type=create'}]}} brand='true' discuss='true' search='true' login={props.logged.status} />
+            <Navbar links={{active:getActive(),other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true' login={props.logged.status} />
             <ViewProfile link="/profile/"/>
         </div>
     );
