@@ -53,6 +53,18 @@ function Create(props){
         </div>
       </div>
       <div className="row">
+        <div className="col">
+          <label htmlFor = "content">Content</label>
+          <select class = "form-control">
+            <option>Content</option>
+          </select>
+        </div>
+        <div className="col">
+          <label htmlFor="upload-file">Upload</label>
+          <input type="file" className="form-control" id='upload-file' name='uploadFile' />
+        </div>
+      </div>
+      <div className="row">
         <div className='col'>
           <button type="submit" className="btn btn-danger" style={{marginTop:'1em',backgroundColor:'#007bff',borderColor:'white'}} name='create'>Create</button>
         </div>
