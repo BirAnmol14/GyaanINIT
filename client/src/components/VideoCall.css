@@ -20,4 +20,28 @@ overflow-y: scroll;
      font-size: 30px;
      margin: 10px;
   }
-  
+  .resize {
+     
+ 
+  }
+  .resize.horizontal {
+    resize: horizontal;
+  }
+  .resize.vertical {
+    resize: vertical;
+  }
+  .resize.both {
+    
+  }
+  .wrap {
+    width: 99%;
+    height: 80%;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow: hidden;
+    border: 1px solid black;
+  }
+
+  .dark-mode {
+    
+  }
