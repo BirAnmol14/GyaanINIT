@@ -226,23 +226,23 @@ function changeToggle5_(){
 
       <nav className={darkMode?"navbar fixed-bottom navbar-dark bg-dark":"navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
         <div className="d-flex justify-content-start">
-          <button type="button" className="btn btn-light ml-2"><AddCircleOutlineRoundedIcon></AddCircleOutlineRoundedIcon></button>
+          <button type="button" className={darkMode?"btn btn-secondary ml-2":"btn btn-light ml-2"}><AddCircleOutlineRoundedIcon></AddCircleOutlineRoundedIcon></button>
             <div class="btn-group dropup">
-              <button type="button" className="btn btn-light dropdown-toggle ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <button type="button" className={darkMode?"btn btn-secondary dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <QueuePlayNextRoundedIcon></QueuePlayNextRoundedIcon></button>
-              <div class="dropdown-menu">
-                <button onClick={changeToggle2_} id = "presentation" className="dropdown-item" type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
+              <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
+                <button onClick={changeToggle2_} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
                   <div class="dropdown-divider"></div>
-                <button onClick={changeToggle3_} id = "screenshare" className="dropdown-item" type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
+                <button onClick={changeToggle3_} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
                   <div class="dropdown-divider"></div>
-                <button onClick={changeToggle4_} id = "videos" class="dropdown-item" type="button"><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
+                <button onClick={changeToggle4_} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
                   <div class="dropdown-divider"></div>
-                <button onClick={changeToggle5_} id = "whiteboard" class="dropdown-item" type="button"><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
+                <button onClick={changeToggle5_} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
                   <div className="dropdown-divider"></div>
-                <button onClick={changeToggle2_} id = "draw" class="dropdown-item" type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
+                <button onClick={changeToggle2_} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
               </div>
 
-              {darkMode?  <button type='button' className="btn btn-light ml-2" onClick={toggleDarkMode}><WbSunnyRoundedIcon/></button>:<button type='button' className="btn btn-light ml-2" onClick={toggleDarkMode}><Brightness2RoundedIcon/> </button>}
+              {darkMode?  <button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon/></button>:<button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon/> </button>}
 
             </div>
 
@@ -257,8 +257,8 @@ function changeToggle5_(){
           }
         </div>
         <div class="d-flex justify-content-end">
-          <button type="button" onClick={changeToggle_} className="btn btn-secondary ml-1"><PeopleIcon></PeopleIcon></button>
-          <button type="button" className="btn btn-secondary btn-sm ml-1" ><ChatIcon></ChatIcon></button>
+          <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"}><PeopleIcon></PeopleIcon></button>
+          <button type="button" className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} ><ChatIcon></ChatIcon></button>
         </div>
 
       </nav>

@@ -43,6 +43,6 @@ overflow-y: scroll;
   }
 
   .dark-mode {
-    background-color: black;
+    background-color: #343A40;
     color: white;
   }
