@@ -16,6 +16,8 @@ import BorderColorRoundedIcon from '@material-ui/icons/BorderColorRounded';
 import GestureRoundedIcon from '@material-ui/icons/GestureRounded';
 import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
 import Brightness2RoundedIcon from '@material-ui/icons/Brightness2Rounded';
+import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
+import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import crousel from './crousel.jpg';
 import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
@@ -32,6 +34,9 @@ function VideoCall(props) {
  const [userList,setList]=React.useState([]);
  const [darkMode,setDarkMode]=React.useState(false);
  const[mic,changeMicState] = React.useState(false);
+ const [recording,setRecording]=React.useState(false);
+ const [recTime,setRecTime]=React.useState({hrs:0,min:0,sec:0});
+ const [timerId,setTimerId]=React.useState(null);
  function toggle_micState(){
     mic?changeMicState(false):changeMicState(true) ;
  }
@@ -39,6 +44,38 @@ function VideoCall(props) {
  function toggle_videoState(){
    video?changeVideoState(false):changeVideoState(true);
  }
+ function toggleRecording(){
+   setRecording(prev=>!prev);
+ }
+ React.useEffect(()=>{
+   if(recording){
+     setRecTime({hrs:0,min:0,sec:0});
+     var startTime=new Date().getTime();
+     let timer_id=setInterval(()=>{
+         var currTime=new Date().getTime();
+         var diff=(currTime-startTime)/1000;
+         var hr=Math.floor(diff/3600);
+         diff=diff%3600;
+         var min=Math.floor((diff)/60);
+         diff=diff%60;
+         var sec=Math.floor(diff);
+         setRecTime({hrs:hr,min:min,sec:sec});
+     },1000);
+     setTimerId(timer_id);
+   }else{
+     clearInterval(timerId);
+     setRecTime({hrs:0,min:0,sec:0});
+   }
+ },[recording]);
+
+function prettyPrintTime(){
+  var string="";
+  string+=recTime.hrs<10?"0"+recTime.hrs+":":recTime.hrs+":";
+  string+=recTime.min<10?"0"+recTime.min+":":recTime.min+":";
+  string+=recTime.sec<10?"0"+recTime.sec:recTime.sec;
+  return string;
+}
+
 async function endCall(){
   var temp=window.location.href.split('/');
   const body=JSON.stringify({callUrl:temp[temp.length-1]});
@@ -75,7 +112,6 @@ const status=await response.status;
 if(status===200){
   const res=await response.json();
   if(res.validUrl){
-    console.log(res.users)
     setAdmin(res.users.filter(user=>user.email===res.admin_email));
     setList(res.users.filter(user=>user.email!==res.admin_email));
   }
@@ -99,7 +135,7 @@ function changeToggle6_(){
   toggle6.width==="0px"?changeToggle6((prevState) => ({
     ...prevState,
     width:"200px",
-  
+
   })):changeToggle6((prevState) => ({
     ...prevState,
     width:"0px"
@@ -256,20 +292,20 @@ return (
       <div style={toggle}>
       <ul className="list-group">
       {
-        adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index} style={darkMode?{borderBottom:'2px solid white'}:{borderBottom:'2px solid black'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><p><img src={user.profilePic} alt="profile" style={{display:"inline",verticalAlign:"middle",float: "left"}}/><span>Admin:</span><br/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
+        adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index} style={darkMode?{borderBottom:'2px solid white'}:{borderBottom:'2px solid black'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><p style={{fontSize:'12px'}}><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'10px',display:"inline",verticalAlign:"middle",float: "left"}}/><span>Admin:</span><br/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
       }
       {
-        userList.map((user,index)=>{return <li key={"user "+index} id={"user "+index} className={darkMode?"list-group-item dark-mode":"list-group-item"}><p><img src={user.profilePic} alt="profile" style={{display:"inline",verticalAlign:"middle",float: "left"}}/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
+        userList.map((user,index)=>{return <li key={"user "+index} id={"user "+index} className={darkMode?"list-group-item dark-mode":"list-group-item"}><p style={{fontSize:'12px'}}><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',display:"inline",marginLeft:'0px',marginRight:'10px',verticalAlign:"middle",float: "left"}}/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
       }
       </ul>
       </div>
       <div style={toggle6}>
       <div style={{backgroundColor:"white", height:"100%"}}>
-        
+
       <div className="list-group">
   <div className="list-group-item list-group-item-action flex-column align-items-start">
     <div className="d-flex">
-      
+
       <small>3 days ago</small>
     </div>
     <p className="">Name / User</p>
@@ -277,7 +313,7 @@ return (
   </div>
   <div className="list-group-item list-group-item-action flex-column align-items-start">
     <div className="d-flex ">
-     
+
       <small className="text-muted">3 days ago</small>
     </div>
     <p className="">Name / User</p>
@@ -285,7 +321,7 @@ return (
   </div>
   <div className="list-group-item list-group-item-action flex-column align-items-start">
     <div className="d-flex">
-      
+
       <small className="text-muted">3 days ago</small>
     </div>
     <p className="">Name / User</p>
@@ -302,15 +338,15 @@ return (
 
       <nav className={darkMode?"navbar fixed-bottom navbar-dark bg-dark":"navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
         <div className="d-flex justify-content-start">
-       
-        {darkMode?  <button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon/></button>:<button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon/> </button>}
 
-          <button type="button" className={darkMode?"btn btn-secondary ml-2":"btn btn-light ml-2"}><AddCircleOutlineRoundedIcon></AddCircleOutlineRoundedIcon></button>
+        {darkMode?  <button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/></button>:<button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/> </button>}
+
+          <button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"}><AddCircleOutlineRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></AddCircleOutlineRoundedIcon></button>
             <div class="btn-group dropup">
-              <button type="button" className={darkMode?"btn btn-secondary dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-              <QueuePlayNextRoundedIcon></QueuePlayNextRoundedIcon></button>
+              <button type="button" className={darkMode?"btn btn-dark dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              <QueuePlayNextRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></QueuePlayNextRoundedIcon></button>
               <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
-                
+
                 <button onClick={changeToggle2_} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
                   <div class="dropdown-divider"></div>
                 <button onClick={changeToggle3_} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
@@ -321,22 +357,22 @@ return (
                   <div className="dropdown-divider"></div>
                 <button onClick={changeToggle2_} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
               </div>
-
+              {recording?<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RemoveCircleOutlineIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'10px'}}/>{prettyPrintTime()}</button>:<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RadioButtonCheckedIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>}
             </div>
 
         </div>
         <div className="d-flex justify-content-center">
-          {mic?<button type='button' className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_micState} ><KeyboardVoiceRoundedIcon></KeyboardVoiceRoundedIcon></button>
-        :<button type="button" className="btn btn-danger ml-2" style = {{borderRadius: "30px"}} onClick={toggle_micState}><MicOffRoundedIcon></MicOffRoundedIcon> </button>
+          {mic?<button type='button' className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_micState} ><KeyboardVoiceRoundedIcon style = {{display: "inline",verticalAlign:"middle"}}></KeyboardVoiceRoundedIcon></button>
+        :<button type="button" className="btn btn-danger ml-2" style = {{borderRadius: "30px"}} onClick={toggle_micState}><MicOffRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></MicOffRoundedIcon> </button>
           }
-          <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick={endCall}><PhoneDisabledIcon/></button>
-          {video?<button type="button" className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamIcon></VideocamIcon></button>:
-          <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamOffIcon></VideocamOffIcon></button>
+          <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick={endCall}><PhoneDisabledIcon  style = {{display: "inline",verticalAlign:"middle"}}/></button>
+          {video?<button type="button" className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamIcon  style = {{display: "inline",verticalAlign:"middle"}}></VideocamIcon></button>:
+          <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamOffIcon  style = {{display: "inline",verticalAlign:"middle"}}></VideocamOffIcon></button>
           }
         </div>
         <div class="d-flex justify-content-end">
-          <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"}><PeopleIcon></PeopleIcon></button>
-          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} ><ChatIcon></ChatIcon></button>
+          <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><PeopleIcon  style = {{display: "inline",verticalAlign:"middle"}}></PeopleIcon></button>
+          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} ><ChatIcon  style = {{display: "inline",verticalAlign:"middle"}}></ChatIcon></button>
         </div>
 
       </nav>

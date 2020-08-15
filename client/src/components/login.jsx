@@ -85,13 +85,13 @@ function Login(props){
 
     function regSubmit(event){
       event.preventDefault();
-      if(strength>0){       //change for setting password strength.
+      if(strength>66){       
         registerApi();
       }
       else{
         alert('Password strength too low, try a better password');
       }
-      setReg({password:''});
+      setReg(prev=>{return({...prev,password:''});});
     }
     async function registerApi(){
       const body=JSON.stringify({name: reg.name,email:reg.email,password:reg.password});
