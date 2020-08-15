@@ -3,8 +3,8 @@ const querystring = require('querystring');
 const md5=require('md5');
 const zxcvbn=require('zxcvbn');
 
-const registered_users=[];
-const calls=[];//{url,password,admin_email,users}
+const registered_users=[];//{email,name,uid,password,profilePic}
+const calls=[];//{url,password,admin_email,users(only emails)}
 
 module.exports={
   register_user:register_user,
@@ -17,7 +17,8 @@ module.exports={
   check_strength:check_strength,
   generateCall:generateCall,
   joinCall:joinCall,
-  getCallUserList:getCallUserList
+  getCallUserList:getCallUserList,
+  endCall:endCall
 }
 
 function User(name,email,password){
@@ -25,6 +26,7 @@ function User(name,email,password){
   this.email=email.toLowerCase();
   this.password=md5(password);
   this.uid=this.email.split('@')[0];
+  this.profilePic='https://ui-avatars.com/api/?rounded=true&name='+this.name.split(' ').join('+');//Default profile pic
 }
 
 function register_user(body,res){
@@ -63,7 +65,7 @@ function login(req,body,res){
 function getUserInfo(email){
   const found=registered_users.find(user=>user.email===email.toLowerCase());
   if(found){
-    return {status:true,info:{name:found.name,email:found.email,uid:found.uid}};
+    return {status:true,info:{name:found.name,email:found.email,uid:found.uid,profilePic:found.profilePic}};
   }
   else{
     return {status:false,info:{}};
@@ -196,4 +198,34 @@ function getCallUserList(url){
       users.sort(function(a,b){return a.name.toLowerCase().localeCompare(b.name.toLowerCase())});
     }
     return {validUrl:urlValid,admin_email:admin_email,users:users};
+}
+
+function endCall(req,callUrl){
+  var callInfo=getCallUserList(callUrl);
+  if(callInfo.validUrl===true){
+      var userList=callInfo.users;
+      let currUser=req.session.user;
+      if(!currUser){
+        return {status:false,currUser:"User not logged in"}
+      }
+      var found=false;
+      for(var j=0;j<userList.length;j++){
+        if(userList[j].email===currUser.email){
+          found=true;
+          break;
+        }
+      }
+      if(!found){
+        return {status:false,message:'Current user not in this call'}
+      }
+    for(var i=0;i<calls.length;i++){
+      if(calls[i].url===callUrl){
+        calls[i].users=calls[i].users.filter(user_email=>user_email!==currUser.email);
+        return {status:true,message:"User removed successfully from the call"}
+      }
+    }
+    return {status:false,message:"No Such Call exists"}
+  }else{
+    return {status:false,message:"No Such Call exists"}
+  }
 }

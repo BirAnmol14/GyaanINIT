@@ -10,8 +10,12 @@ GET requests
     - SCHEMA:
       - status: boolean
       - info: Object containing
-        -name: String
-        -email: String
+              {
+                -name:String,
+                -email:String,
+                -uid:String,
+                profilePic:String
+              }
 
 2. Verifying LoggedIn status
   -END POINT: /api/account/verifyLoginStatus
@@ -22,6 +26,12 @@ GET requests
     - SCHEMA:
       - status: boolean
       - user: Object
+              {
+                -name:String,
+                -email:String,
+                -uid:String,
+                profilePic:String
+              }
 
 3. Logout
   -END POINT: /api/account/logout
@@ -42,9 +52,10 @@ GET requests
     - SCHEMA: A list of Objects
       - [
           {
-            email:
-            name:
-            uid:
+            -name:String,
+            -email:String,
+            -uid:String,
+            profilePic:String
           },...
         ]
 
@@ -58,7 +69,10 @@ GET requests
       - {
           users:[
             {
-
+              -name:String,
+              -email:String,
+              -uid:String,
+              profilePic:String
             },...
           ],
           articles:[
@@ -93,7 +107,8 @@ GET requests
                     User object in the Call,
                     -name:String,
                     -email:String,
-                    -uid:String
+                    -uid:String,
+                    profilePic:String
                   }, ...
                 ] - a list of user objects sorted by lexicographic order on Name
       }
@@ -173,4 +188,17 @@ POST requests
     - SCHEMA:
       - status: boolean
       - url: String(if status true always same as the url user sends in body)
+      - message: String
+
+5. End Call
+  -END POINT: /api/call/endCall
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - callUrl: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
       - message: String

@@ -111,3 +111,11 @@ app.post('/api/call/joinCall',(req,res)=>{
     res.status(400).send('Bad Query');
   }
 });
+
+app.post('/api/call/endCall',(req,res)=>{
+  if(req.body && req.body.callUrl){
+    res.json(func.endCall(req,req.body.callUrl));
+  }else{
+    res.status(400).send('Bad Query');
+  }
+});

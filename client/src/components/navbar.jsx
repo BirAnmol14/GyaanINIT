@@ -127,7 +127,7 @@ function Navbar(props) {
         <a href="/login"><button className="btn btn-outline-warning my-2 my-sm-0" type="button" >Login</button></a>
         </form> : <form className="dropdown pmd-dropdown pmd-user-info" style={{ margin: '10px' }}>
 
-            <a className="navbar-brand btn-user dropdown-toggle media align-items-center" href="javascript:void(0);" data-toggle="dropdown" data-sidebar="true" aria-expanded="false"><img src={profile} alt='logo' style={{ borderRadius: '60px' }} width="50" height="50" />
+            <a className="navbar-brand btn-user dropdown-toggle media align-items-center" href="javascript:void(0);" data-toggle="dropdown" data-sidebar="true" aria-expanded="false"><img src={props.pic?props.pic:profile} alt='logo' style={{ borderRadius: '60px' }} width="50" height="50" />
             </a>
             <ul className="dropdown-menu dropdown-menu-right" role="menu" id='profile'>
               <a className="dropdown-item" href="/profile/">View Profile</a>

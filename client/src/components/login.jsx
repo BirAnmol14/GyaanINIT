@@ -118,7 +118,7 @@ function Login(props){
     return(
         props.logged.status===false?
       <div>
-        <Navbar brand='true' links={{active:{name:'Login',url:'/login'},other:[{name:'Home',url:'/'}]}}/>
+        <Navbar brand='true' links={{active:{name:'Login',url:'/login'},other:[{name:'Home',url:'/'}]}} login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
        <div style={{marginTop:"140px"}}>
         <div style={{backgroundColor:'#343A40',margin:'4em',padding:'2em',borderRadius:'20px',marginLeft: '30%',
     marginRight: '30%', width: '40%'}}>
@@ -176,8 +176,8 @@ function Login(props){
 
             <div className="row">
             <div className="col">
-              <div className="progress" style={{marginTop:'10px'}}>
-                <div className=  { strength>0?strength<=33 ?"progress-bar bg-danger":strength<=66?"progress-bar bg-warning":"progress-bar bg-success":'"progress-bar'} role="progressbar" style={{width:strength+'%'}} aria-valuenow={strength} aria-valuemin="0" aria-valuemax="100">
+              <div className="progress" style={{marginTop:'10px',height:'0.7em'}}>
+                <div className=  { strength>0?strength<=33 ?"progress-bar bg-danger":strength<=66?"progress-bar bg-warning":"progress-bar bg-success":'"progress-bar'} role="progressbar" style={{height:'0.7em',width:strength+'%'}} aria-valuenow={strength} aria-valuemin="0" aria-valuemax="100">
                   { strength>0?strength<=33 ?'Weak':strength<=66?'Moderate':'Strong':' '}
                 </div>
               </div>

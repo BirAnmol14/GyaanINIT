@@ -11,27 +11,27 @@ function EditProfile(props){
       <div >
             <div class="container">
                 <div class = "d-flex justify-content-center" style={{marginTop:'140px'}}><h1>Edit Profile</h1></div>
-               
+
                 <div class="row">
-             
+
                 <div class="col-md-3">
                     <div class="text-center">
-                    <img src="//placehold.it/100" class="avatar img-circle" alt="avatar" style={{marginTop:'100px'}}/>
+                    <img src={props.pic?props.pic:"//placehold.it/100"} class="avatar img-circle" alt="avatar" style={{marginTop:'100px'}}/>
                     <h6>Upload a different photo...</h6>
-                    
+
                     <input type="file" class="form-control" />
                     </div>
                 </div>
-                
-              
+
+
                 <div class="col-md-9 personal-info">
                     <div class="alert alert-info alert-dismissable" style={{width:'550px'}}>
-                    <a href="/" class="panel-close close" data-dismiss="alert">×</a> 
+                    <a href="/" class="panel-close close" data-dismiss="alert">×</a>
                     <i class="fa fa-coffee"></i>
                     This is an <strong>.alert</strong>. Use this to show important messages to the user.
                     </div>
                     <h3>Personal info</h3>
-                    
+
                     <form class="form-horizontal">
                     <div class="form-group">
                         <label class="col-lg-3 control-label">First Name:</label>
@@ -91,14 +91,14 @@ function EditProfile(props){
                         <div class="col-md-8">
                         <input type="button" class="btn btn-primary" value="Save Changes" />
                         <span></span>
-                        <a href="/profile"><input type="button" class="btn btn-default" value="Cancel" /></a> 
+                        <a href="/profile"><input type="button" class="btn btn-default" value="Cancel" /></a>
                         </div>
                     </div>
                     </form>
                 </div>
             </div>
             </div>
-            
+
       </div>
     );
 

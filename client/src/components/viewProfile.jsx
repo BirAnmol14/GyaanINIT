@@ -11,23 +11,23 @@ function ViewProfile(props){
                 <div class = "d-flex justify-content-center" style={{marginTop:'140px'}}><h1>My Profile</h1></div>
                 <br />
                 <div class="row">
-             
+
                 <div class="col-md-3">
                     <div class="text-center">
-                        
-                    <img src={profile} class="avatar img-circle" alt="avatar" style={{marginTop:'100px',width:'150px'}}/>
+
+                    <img src={props.pic?props.pic:profile} class="avatar img-circle" alt="avatar" style={{marginTop:'100px',width:'150px'}}/>
                     </div>
                 </div>
-                
-              
+
+
                 <div class="col-md-9 personal-info">
                     <div class="alert alert-info alert-dismissable" style={{width:'550px'}}>
-                    <a href="/" class="panel-close close" data-dismiss="alert">×</a> 
-                    
+                    <a href="/" class="panel-close close" data-dismiss="alert">×</a>
+
                     This is an <strong>.alert</strong>. Use this to show important messages to the user.
                     </div>
                     <h3>Personal info</h3>
-                    
+
                     <form class="form-horizontal">
                     <div class="form-group">
                         <label class="col-lg-3 control-label">First Name:</label>
@@ -75,7 +75,7 @@ function ViewProfile(props){
                 </div>
             </div>
             </div>
-            
+
       </div>
     );
 

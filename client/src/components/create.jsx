@@ -39,7 +39,7 @@ function Create(props){
   return(
     props.logged.status===true?
     <div>
-      <Navbar  links={{active:{name:'Create Meet',url:'/create'},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}}  brand='true' discuss='true' search='true' login={props.logged.status}/>
+      <Navbar  links={{active:{name:'Create Meet',url:'/create'},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}}  brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
       {generatedUrl.length===0?
       <form onSubmit={submitDetails} style={{marginTop:'140px',backgroundColor:'#343A40',color:'white',padding:'2em',border:'solid 2px white',borderRadius:'10px'}}>
       <div className="row">

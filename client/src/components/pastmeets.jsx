@@ -6,7 +6,7 @@ function PastMeets(props){
     return(
       <div>
 
-        <Navbar links={{active:{name:'Past Meets',url:'/pastmeets'},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true'  login={props.logged.status}/>
+        <Navbar links={{active:{name:'Past Meets',url:'/pastmeets'},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true'  login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
        <div style={{marginTop:"110px"}}>
         <div class=" card text-left mb-2" style={{width: "", backgroundColor:"", marginLeft:"15%", marginRight:"15%",marginTop:"2%"}}>
   <div class="card-header">

@@ -14,7 +14,11 @@ import ScreenShareRoundedIcon from '@material-ui/icons/ScreenShareRounded';
 import LiveTvRoundedIcon from '@material-ui/icons/LiveTvRounded';
 import BorderColorRoundedIcon from '@material-ui/icons/BorderColorRounded';
 import GestureRoundedIcon from '@material-ui/icons/GestureRounded';
+import WbSunnyRoundedIcon from '@material-ui/icons/WbSunnyRounded';
+import Brightness2RoundedIcon from '@material-ui/icons/Brightness2Rounded';
 import crousel from './crousel.jpg';
+import './VideoCall.css';
+import ServerRoutes from './ServerRoutes.js';
 
 function VideoCall(props) {
  var [ toggle,changeToggle]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
@@ -22,6 +26,9 @@ function VideoCall(props) {
  var [ toggle3,changeToggle3]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle4,changeToggle4]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
+ const [adminUser,setAdmin]=React.useState([]);
+ const [userList,setList]=React.useState([]);
+ const [darkMode,setDarkMode]=React.useState(false);
  const[mic,changeMicState] = React.useState(false);
  function toggle_micState(){
     mic?changeMicState(false):changeMicState(true) ;
@@ -30,27 +37,65 @@ function VideoCall(props) {
  function toggle_videoState(){
    video?changeVideoState(false):changeVideoState(true);
  }
+async function endCall(){
+  var temp=window.location.href.split('/');
+  const body=JSON.stringify({callUrl:temp[temp.length-1]});
+  const response=await fetch(ServerRoutes.endCall,{
+    method:'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body:body
+  });
+  const status=await response.status;
+  if(status===200){
+    const res=await response.json();
+    if(res.status){
+      window.location.href='/join';
+    }else{
+      alert(res.message);
+      window.location.href='/join';
+    }
+  }else{
+    alert('Error Leaving Call '+status);
+  }
+}
+function toggleDarkMode() {
+  setDarkMode(!darkMode);
+}
+async function changeToggle_(){
+  var temp=window.location.href.split('/');
+  var url=ServerRoutes.getVideoCallUsers+temp[temp.length-1];
+const response=await fetch(url,{
+  method:'GET',
+  credentials: 'include'
+});
+const status=await response.status;
+if(status===200){
+  const res=await response.json();
+  if(res.validUrl){
+    setAdmin(res.users.filter(user=>user.email===res.admin_email));
+    setList(res.users.filter(user=>user.email!==res.admin_email));
+  }
 
-function myFunction() {
-  var element = document.body;
-  element.classList.toggle("dark-mode");
-} 
-function changeToggle_(){
-
-{toggle.width==="0px"?changeToggle((prevState) => ({
+}else{
+  alert('Erorr in fetching userList '+status);
+  setList([]);
+}
+toggle.width==="0px"?changeToggle((prevState) => ({
   ...prevState,
   width:"200px",
 
 })):changeToggle((prevState) => ({
   ...prevState,
   width:"0px"
-}))}
+}))
+
 
 }
 
 function changeToggle2_(){
 
-  {toggle.width==="0px"?changeToggle2((prevState2) => ({
+  toggle.width==="0px"?changeToggle2((prevState2) => ({
     ...prevState2,
     width: "98%",
     height: "80%",
@@ -58,18 +103,18 @@ function changeToggle2_(){
     marginRight: "10px",
     overflow: "hidden",
     border: "1px solid black"
-    
+
   })):changeToggle2((prevState2) => ({
     ...prevState2,
     width:"0%",
     hieght:"0%"
-  }))}
-  
+  }))
+
 }
 
 function changeToggle3_(){
 
-  {toggle.width==="0px"?changeToggle3((prevState3) => ({
+  toggle.width==="0px"?changeToggle3((prevState3) => ({
     ...prevState3,
     width: "98%",
     height: "80%",
@@ -77,17 +122,17 @@ function changeToggle3_(){
     marginRight: "10px",
     overflow: "hidden",
     border: "1px solid black"
-    
+
   })):changeToggle3((prevState3) => ({
     ...prevState3,
     width:"0px"
-  }))}
-  
+  }))
+
 }
 
 function changeToggle4_(){
 
-  {toggle.width==="0px"?changeToggle4((prevState4) => ({
+  toggle.width==="0px"?changeToggle4((prevState4) => ({
     ...prevState4,
     width: "98%",
     height: "80%",
@@ -95,17 +140,17 @@ function changeToggle4_(){
     marginRight: "10px",
     overflow: "hidden",
     border: "1px solid black"
-    
+
   })):changeToggle4((prevState4) => ({
     ...prevState4,
     width:"0px"
-  }))}
-  
+  }))
+
 }
 
 function changeToggle5_(){
 
-  {toggle.width==="0px"?changeToggle5((prevState5) => ({
+  toggle.width==="0px"?changeToggle5((prevState5) => ({
     ...prevState5,
     width: "98%",
     height: "80%",
@@ -113,13 +158,13 @@ function changeToggle5_(){
     marginRight: "10px",
     overflow: "hidden",
     border: "1px solid black"
-    
+
   })):changeToggle5((prevState5) => ({
     ...prevState5,
     width:"0px",
     height:"0px"
-  }))}
-  
+  }))
+
 }
 
 
@@ -130,7 +175,7 @@ function changeToggle5_(){
       <div ><h1>Video Call</h1>
     <h2>Url: {window.location.pathname.split('/')[2]}</h2></div>
 
-    
+
         <div style={toggle2}>
             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
@@ -166,62 +211,54 @@ function changeToggle5_(){
 
         </div>
 
-    
+
       <div style={toggle}>
       <ul className="list-group">
-    <li className="list-group-item">Cras justo odio</li>
-    <li className="list-group-item">Dapibus ac facilisis in</li>
-    <li className="list-group-item">Morbi leo risus</li>
-    <li className="list-group-item">Porta ac consectetur ac</li>
-    <li className="list-group-item">Vestibulum at eros</li>
-    <li className="list-group-item">Cras justo odio</li>
-    <li className="list-group-item">Dapibus ac facilisis in</li>
-    <li className="list-group-item">Morbi leo risus</li>
-    <li className="list-group-item">Porta ac consectetur ac</li>
-    <li className="list-group-item">Vestibulum at eros</li>
-    <li className="list-group-item">Cras justo odio</li>
-    <li className="list-group-item">Dapibus ac facilisis in</li>
-    <li className="list-group-item">Morbi leo risus</li>
-    <li className="list-group-item">Porta ac consectetur ac</li>
-    <li className="list-group-item">Vestibulum at eros</li>
-  </ul>
-        </div>
-       
-        
-      <nav class="navbar fixed-bottom navbar-light bg-light">
+      {
+        adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index} style={darkMode?{borderBottom:'2px solid white'}:{borderBottom:'2px solid black'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><p><img src={user.profilePic} alt="profile" style={{display:"inline",verticalAlign:"middle",float: "left"}}/><span>Admin:</span><br/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
+      }
+      {
+        userList.map((user,index)=>{return <li key={"user "+index} id={"user "+index} className={darkMode?"list-group-item dark-mode":"list-group-item"}><p><img src={user.profilePic} alt="profile" style={{display:"inline",verticalAlign:"middle",float: "left"}}/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
+      }
+      </ul>
+      </div>
 
-        <div class="d-flex justify-content-start">
+
+      <nav className={darkMode?"navbar fixed-bottom navbar-dark bg-dark":"navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
+        <div className="d-flex justify-content-start">
           <button type="button" className="btn btn-light ml-2"><AddCircleOutlineRoundedIcon></AddCircleOutlineRoundedIcon></button>
             <div class="btn-group dropup">
               <button type="button" className="btn btn-light dropdown-toggle ml-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <QueuePlayNextRoundedIcon></QueuePlayNextRoundedIcon></button>
               <div class="dropdown-menu">
-                <button onClick={changeToggle2_} id = "presentation" className="dropdown-item" type="button"><DescriptionRoundedIcon style = {{display: "inline"}}></DescriptionRoundedIcon>    presentation</button>
+                <button onClick={changeToggle2_} id = "presentation" className="dropdown-item" type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
                   <div class="dropdown-divider"></div>
-                <button onClick={changeToggle3_} id = "screenshare" className="dropdown-item" type="button"><ScreenShareRoundedIcon style = {{display: "inline"}}></ScreenShareRoundedIcon>   screenshare</button>
+                <button onClick={changeToggle3_} id = "screenshare" className="dropdown-item" type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
                   <div class="dropdown-divider"></div>
-                <button onClick={changeToggle4_} id = "videos" class="dropdown-item" type="button"><LiveTvRoundedIcon style = {{display: "inline"}}></LiveTvRoundedIcon>   videos</button>
+                <button onClick={changeToggle4_} id = "videos" class="dropdown-item" type="button"><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
                   <div class="dropdown-divider"></div>
-                <button onClick={changeToggle5_} id = "whiteboard" class="dropdown-item" type="button"><BorderColorRoundedIcon style = {{display: "inline"}}></BorderColorRoundedIcon>   whiteboard</button>
-                  <div class="dropdown-divider"></div>
-                <button onClick={changeToggle2_} id = "draw" class="dropdown-item" type="button"><GestureRoundedIcon style = {{display: "inline"}}></GestureRoundedIcon>   draw</button>
+                <button onClick={changeToggle5_} id = "whiteboard" class="dropdown-item" type="button"><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
+                  <div className="dropdown-divider"></div>
+                <button onClick={changeToggle2_} id = "draw" class="dropdown-item" type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
               </div>
-              <button onclick={myFunction()}>Toggle dark mode</button>
+
+              {darkMode?  <button type='button' className="btn btn-light ml-2" onClick={toggleDarkMode}><WbSunnyRoundedIcon/></button>:<button type='button' className="btn btn-light ml-2" onClick={toggleDarkMode}><Brightness2RoundedIcon/> </button>}
+
             </div>
 
         </div>
-        <div class="d-flex justify-content-center">
+        <div className="d-flex justify-content-center">
           {mic?<button type='button' className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_micState} ><KeyboardVoiceRoundedIcon></KeyboardVoiceRoundedIcon></button>
         :<button type="button" className="btn btn-danger ml-2" style = {{borderRadius: "30px"}} onClick={toggle_micState}><MicOffRoundedIcon></MicOffRoundedIcon> </button>
           }
-          <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}}><PhoneDisabledIcon></PhoneDisabledIcon></button>
+          <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick={endCall}><PhoneDisabledIcon/></button>
           {video?<button type="button" className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamIcon></VideocamIcon></button>:
           <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamOffIcon></VideocamOffIcon></button>
           }
         </div>
         <div class="d-flex justify-content-end">
-          <button type="button" onClick={changeToggle_} class="btn btn-secondary ml-1"><PeopleIcon></PeopleIcon></button>
-          <button type="button" class="btn btn-secondary btn-sm ml-1" ><ChatIcon></ChatIcon></button>
+          <button type="button" onClick={changeToggle_} className="btn btn-secondary ml-1"><PeopleIcon></PeopleIcon></button>
+          <button type="button" className="btn btn-secondary btn-sm ml-1" ><ChatIcon></ChatIcon></button>
         </div>
 
       </nav>

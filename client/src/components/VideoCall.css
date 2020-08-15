@@ -8,7 +8,7 @@ overflow-y: scroll;
     height: 100%;
     margin: 0;
   }
-  
+
   .call_buttons{
       align-items: center;
       margin-bottom: 10px;
@@ -21,8 +21,8 @@ overflow-y: scroll;
      margin: 10px;
   }
   .resize {
-     
- 
+
+
   }
   .resize.horizontal {
     resize: horizontal;
@@ -31,7 +31,7 @@ overflow-y: scroll;
     resize: vertical;
   }
   .resize.both {
-    
+
   }
   .wrap {
     width: 99%;
@@ -43,5 +43,6 @@ overflow-y: scroll;
   }
 
   .dark-mode {
-    
+    background-color: black;
+    color: white;
   }

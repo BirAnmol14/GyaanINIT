@@ -7,6 +7,8 @@
   const password_strenght_endpoint="/api/tools/password_strength";
   const generate_meet_endpoint='/api/call/generateCall';
   const join_meet_endpoint='/api/call/joinCall';
+  const getVideoCallUsers_endpoint='/api/tools/getCallUserList?url=';
+  const endCall_Endpoint='/api/call/endCall';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -15,5 +17,7 @@
     search:search_endpoint,
     pass_strength:password_strenght_endpoint,
     generateCall:generate_meet_endpoint,
-    joinCall:join_meet_endpoint
+    joinCall:join_meet_endpoint,
+    getVideoCallUsers:getVideoCallUsers_endpoint,
+    endCall:endCall_Endpoint
    }

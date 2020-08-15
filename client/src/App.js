@@ -30,8 +30,6 @@ function App() {
   //login check and pass to render-props
   var [logged,setLogged]=React.useState({status:false,user:null});
   async function loggedStatus(){
-
-
     const response=await fetch(ServerRoutes.loggedIn,{
       method: 'GET',
       credentials: 'include'
