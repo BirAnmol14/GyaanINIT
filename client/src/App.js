@@ -61,8 +61,10 @@ function App() {
     }
 
   }
+ 
   React.useEffect(() => {
     loggedStatus();
+    
   },[]);
 
   return (

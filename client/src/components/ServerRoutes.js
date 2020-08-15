@@ -9,6 +9,7 @@
   const join_meet_endpoint='/api/call/joinCall';
   const getVideoCallUsers_endpoint='/api/tools/getCallUserList?url=';
   const endCall_Endpoint='/api/call/endCall';
+  const verifyInCall_endpoint='/api/call/verifyInCall';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -19,5 +20,6 @@
     generateCall:generate_meet_endpoint,
     joinCall:join_meet_endpoint,
     getVideoCallUsers:getVideoCallUsers_endpoint,
-    endCall:endCall_Endpoint
+    endCall:endCall_Endpoint,
+    verifyInCall:verifyInCall_endpoint
    }

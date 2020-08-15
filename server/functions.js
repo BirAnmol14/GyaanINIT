@@ -18,7 +18,8 @@ module.exports={
   generateCall:generateCall,
   joinCall:joinCall,
   getCallUserList:getCallUserList,
-  endCall:endCall
+  endCall:endCall,
+  verifyInCall:verifyInCall
 }
 
 function User(name,email,password){
@@ -227,5 +228,33 @@ function endCall(req,callUrl){
     return {status:false,message:"No Such Call exists"}
   }else{
     return {status:false,message:"No Such Call exists"}
+  }
+}
+
+function verifyInCall(req,callUrl){
+  var callInfo=getCallUserList(callUrl);
+  if(callInfo.validUrl===true){
+    var userList=callInfo.users;
+    let currUser=req.session.user;
+    if(!currUser){
+      return {status:false,currUser:"User not logged in"}
+    }
+    var found=false;
+    for(var j=0;j<userList.length;j++){
+      if(userList[j].email===currUser.email){
+        found=true;
+        break;
+      }
+    }
+    if(found===false){
+      return {status:false,message:'Current user not in this call'};
+    }
+    else{
+      return {status:true,message:"User can access the call"};
+     
+    }
+  }
+  else{
+    return {status:false,message:"No Such Call do exists"};
   }
 }

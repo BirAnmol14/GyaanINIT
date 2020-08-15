@@ -5,9 +5,10 @@ const https=require('https');
 const secrets=require('./secrets.js');
 const func=require('./functions.js');
 const session = require('express-session');
+const { verify } = require('crypto');
 require('dotenv').config();
 
-app.use(parser.json());
+app.use(express.json());
 app.use(parser.urlencoded({
   extended: true
 }));
@@ -52,6 +53,7 @@ app.get('/api/users/getinfo',(req,res)=>{
 app.get('/api/account/verifyLoginStatus',(req,res)=>{
   res.json(func.isLoggedIn(req));
 });
+
 
 app.get('/api/users/getAllUsers',(req,res)=>{
     res.json(func.getAllUsers());
@@ -119,3 +121,25 @@ app.post('/api/call/endCall',(req,res)=>{
     res.status(400).send('Bad Query');
   }
 });
+
+app.post('/api/call/verifyInCall',(req,res)=>{
+  console.log(req);
+  
+  if(req.body && req.body.callUrl){
+    res.json(func.endCall(req,req.body.callUrl));
+  }else{
+    res.status(400).send('Bad Query');
+  }
+});
+// app.post('/api/call/verifyInCall',(req,res)=>{
+//   console.log("hello");
+//   console.log(req);
+//   if(req.body&&req.body.callUrl){
+//   res.json(func.verifyInCall(req,req.body.callUrl));
+//   }
+//   else{
+//     console.log("helo");
+//     res.status(400).send('Bad Query');
+//   }
+
+// });
