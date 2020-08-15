@@ -237,7 +237,7 @@ function verifyInCall(req,callUrl){
     var userList=callInfo.users;
     let currUser=req.session.user;
     if(!currUser){
-      return {status:false,currUser:"User not logged in"}
+      return {status:false,message:"User not logged in"}
     }
     var found=false;
     for(var j=0;j<userList.length;j++){
@@ -251,10 +251,10 @@ function verifyInCall(req,callUrl){
     }
     else{
       return {status:true,message:"User can access the call"};
-     
+
     }
   }
   else{
-    return {status:false,message:"No Such Call do exists"};
+    return {status:false,message:"No Such Call exists"};
   }
 }

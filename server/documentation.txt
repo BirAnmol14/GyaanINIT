@@ -190,8 +190,21 @@ POST requests
       - url: String(if status true always same as the url user sends in body)
       - message: String
 
-5. End Call
+6. End Call
   -END POINT: /api/call/endCall
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - callUrl: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+
+7. End Call
+  -END POINT: /api/call/verifyUserInCall
   -HEADERS: "Content-Type": "application/json"
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:

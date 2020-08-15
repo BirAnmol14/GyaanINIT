@@ -122,24 +122,10 @@ app.post('/api/call/endCall',(req,res)=>{
   }
 });
 
-app.post('/api/call/verifyInCall',(req,res)=>{
-  console.log(req);
-  
+app.post('/api/call/verifyUserInCall',(req,res)=>{
   if(req.body && req.body.callUrl){
-    res.json(func.endCall(req,req.body.callUrl));
+    res.json(func.verifyInCall(req,req.body.callUrl));
   }else{
     res.status(400).send('Bad Query');
   }
 });
-// app.post('/api/call/verifyInCall',(req,res)=>{
-//   console.log("hello");
-//   console.log(req);
-//   if(req.body&&req.body.callUrl){
-//   res.json(func.verifyInCall(req,req.body.callUrl));
-//   }
-//   else{
-//     console.log("helo");
-//     res.status(400).send('Bad Query');
-//   }
-
-// });

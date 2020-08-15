@@ -26,6 +26,7 @@ function VideoCall(props) {
  var [ toggle3,changeToggle3]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle4,changeToggle4]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
+ const [inCall,setInCall]=React.useState(false);
  const [adminUser,setAdmin]=React.useState([]);
  const [userList,setList]=React.useState([]);
  const [darkMode,setDarkMode]=React.useState(false);
@@ -167,8 +168,35 @@ function changeToggle5_(){
 
 }
 
-
-  return (
+React.useEffect(()=>{
+  async function verifyCall(){
+    const temp=window.location.href.split('/');
+    const body=JSON.stringify({callUrl:temp[temp.length-1]});
+    const response = await fetch(ServerRoutes.verifyUserInCall,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: body
+    });
+    const status=await response.status;
+    if(status===200){
+      const res=await response.json();
+      if(res.status){
+        setInCall(true);
+      }else{
+        setInCall(false);
+        alert(res.message);
+        window.location.href='/join';
+      }
+    }else{
+      alert('Error verifying'+status);
+      window.location.href='/join';
+    }
+  }
+  verifyCall();
+},[]);
+return (
+    inCall===false?<div/>:
     <div className="full-height">
       {/* <h1>Video Call</h1>
     <h2>Url: {window.location.pathname.split('/')[2]}</h2> */}
