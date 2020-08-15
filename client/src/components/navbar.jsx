@@ -3,7 +3,8 @@ import React from 'react';
 import logo from './logo.png';
 import ServerRoutes from './ServerRoutes.js';
 import profile from './profile.png';
-
+import SearchIcon from '@material-ui/icons/Search';
+import AccountBoxIcon from '@material-ui/icons/AccountBox';
 function Navbar(props) {
   const [search, setSearch] = React.useState({ text: '' });
   const [search_results,setResults]=React.useState({});
@@ -119,12 +120,12 @@ function Navbar(props) {
 
         {props.search ? <form className="form-inline my-2 my-lg-0" onSubmit={submitSearch}>
           <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={search.text} onChange={changeSearch} />
-          <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" >Search</button>
+          <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" ><SearchIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
         </form> : null}
 
 
         {(props.login !== true) ? <form className="form-inline my-2 my-sm-0" style={{ margin: '10px' }}>
-        <a href="/login"><button className="btn btn-outline-warning my-2 my-sm-0" type="button" >Login</button></a>
+        <a href="/login"><button className="btn btn-outline-light my-2 my-sm-0" type="button" ><AccountBoxIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}/>Login</button></a>
         </form> : <form className="dropdown pmd-dropdown pmd-user-info" style={{ margin: '10px' }}>
 
             <a className="navbar-brand btn-user dropdown-toggle media align-items-center" href="javascript:void(0);" data-toggle="dropdown" data-sidebar="true" aria-expanded="false"><img src={props.pic?props.pic:profile} alt='logo' style={{ borderRadius: '60px' }} width="50" height="50" />
