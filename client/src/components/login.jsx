@@ -85,13 +85,13 @@ function Login(props){
 
     function regSubmit(event){
       event.preventDefault();
-      if(strength>66){
+      if(strength>0){       //change for setting password strength.
         registerApi();
       }
       else{
         alert('Password strength too low, try a better password');
       }
-      setReg({email:'',password:'',name:''});
+      setReg({password:''});
     }
     async function registerApi(){
       const body=JSON.stringify({name: reg.name,email:reg.email,password:reg.password});
@@ -106,6 +106,8 @@ function Login(props){
         var res=await response.json();
         if(res.status){
           alert(res.message+'\n Kindly Login');
+          resetLogin({email:reg.email});
+          setReg({name:'',email:'',password:''});
           document.getElementById('pills-login-tab').click();
         }
         else{

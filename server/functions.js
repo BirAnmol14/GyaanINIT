@@ -166,7 +166,11 @@ function joinCall(url,password,user_email,req){
       return {status:false,url:null,message:'No such call found'}
     }else{
       if(calls[index].password===md5(password)){
-        calls[index].users.push(user_email);
+        var arr=calls[index].users.filter((email)=>(email!=user_email));
+        arr.push(user_email);
+        calls[index].users=arr;
+       // console.log(calls[index]);
+       // calls[index].users.push(user_email);
         return {status:true,url:url,message:'Successfully Joined'}
       }else{
         return {status:false,url:url,message:'Incorrect Password'}
@@ -186,6 +190,7 @@ function getCallUserList(url){
     if(calls[i].url===url){
       urlValid=true;
       admin_email=calls[i].admin_email;
+      //console.log(calls[i].users);
       for(var j=0;j<calls[i].users.length;j++){
         var temp=getUserInfo(calls[i].users[j]);
         if(temp.status===true){

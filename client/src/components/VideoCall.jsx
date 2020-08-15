@@ -26,6 +26,7 @@ function VideoCall(props) {
  var [ toggle3,changeToggle3]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle4,changeToggle4]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
+ var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
  const [inCall,setInCall]=React.useState(false);
  const [adminUser,setAdmin]=React.useState([]);
  const [userList,setList]=React.useState([]);
@@ -74,6 +75,7 @@ const status=await response.status;
 if(status===200){
   const res=await response.json();
   if(res.validUrl){
+    console.log(res.users)
     setAdmin(res.users.filter(user=>user.email===res.admin_email));
     setList(res.users.filter(user=>user.email!==res.admin_email));
   }
@@ -93,7 +95,17 @@ toggle.width==="0px"?changeToggle((prevState) => ({
 
 
 }
+function changeToggle6_(){
+  toggle6.width==="0px"?changeToggle6((prevState) => ({
+    ...prevState,
+    width:"200px",
+  
+  })):changeToggle6((prevState) => ({
+    ...prevState,
+    width:"0px"
+  }));
 
+}
 function changeToggle2_(){
 
   toggle.width==="0px"?changeToggle2((prevState2) => ({
@@ -167,32 +179,33 @@ function changeToggle5_(){
   }))
 
 }
-
-React.useEffect(()=>{
-  async function verifyCall(){
-    const temp=window.location.href.split('/');
-    const body=JSON.stringify({callUrl:temp[temp.length-1]});
-    const response = await fetch(ServerRoutes.verifyUserInCall,{
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: body
-    });
-    const status=await response.status;
-    if(status===200){
-      const res=await response.json();
-      if(res.status){
-        setInCall(true);
-      }else{
-        setInCall(false);
-        alert(res.message);
-        window.location.href='/join';
-      }
+async function verifyCall(){
+  const temp=window.location.href.split('/');
+  const body=JSON.stringify({callUrl:temp[temp.length-1]});
+  const response = await fetch(ServerRoutes.verifyUserInCall,{
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: body
+  });
+  const status=await response.status;
+  if(status===200){
+    const res=await response.json();
+    if(res.status){
+      setInCall(true);
     }else{
-      alert('Error verifying'+status);
+      setInCall(false);
+      alert(res.message);
       window.location.href='/join';
     }
+  }else{
+    alert('Error verifying'+status);
+    window.location.href='/join';
   }
+}
+
+React.useEffect(()=>{
+
   verifyCall();
 },[]);
 return (
@@ -250,15 +263,54 @@ return (
       }
       </ul>
       </div>
+      <div style={toggle6}>
+      <div style={{backgroundColor:"white", height:"100%"}}>
+        
+      <div className="list-group">
+  <div className="list-group-item list-group-item-action flex-column align-items-start">
+    <div className="d-flex">
+      
+      <small>3 days ago</small>
+    </div>
+    <p className="">Name / User</p>
+    <small>Donec id elit non mi porta.</small>
+  </div>
+  <div className="list-group-item list-group-item-action flex-column align-items-start">
+    <div className="d-flex ">
+     
+      <small className="text-muted">3 days ago</small>
+    </div>
+    <p className="">Name / User</p>
+    <small className="text-muted">Donec id elit non mi porta.</small>
+  </div>
+  <div className="list-group-item list-group-item-action flex-column align-items-start">
+    <div className="d-flex">
+      
+      <small className="text-muted">3 days ago</small>
+    </div>
+    <p className="">Name / User</p>
+    <small className="text-muted">Donec id elit non mi porta.</small>
+  </div>
+</div>
+<div style={{bottom:"7%", marginBottom:"1%", backgroundColor:"",position:"fixed"}}>
 
+    <textarea className="textarea_custom" placeholder="Type message.." name="msg" required></textarea>
+
+</div>
+      </div>
+      </div>
 
       <nav className={darkMode?"navbar fixed-bottom navbar-dark bg-dark":"navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
         <div className="d-flex justify-content-start">
+       
+        {darkMode?  <button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon/></button>:<button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon/> </button>}
+
           <button type="button" className={darkMode?"btn btn-secondary ml-2":"btn btn-light ml-2"}><AddCircleOutlineRoundedIcon></AddCircleOutlineRoundedIcon></button>
             <div class="btn-group dropup">
               <button type="button" className={darkMode?"btn btn-secondary dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               <QueuePlayNextRoundedIcon></QueuePlayNextRoundedIcon></button>
               <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
+                
                 <button onClick={changeToggle2_} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
                   <div class="dropdown-divider"></div>
                 <button onClick={changeToggle3_} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
@@ -269,8 +321,6 @@ return (
                   <div className="dropdown-divider"></div>
                 <button onClick={changeToggle2_} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
               </div>
-
-              {darkMode?  <button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon/></button>:<button type='button' className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon/> </button>}
 
             </div>
 
@@ -286,7 +336,7 @@ return (
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"}><PeopleIcon></PeopleIcon></button>
-          <button type="button" className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} ><ChatIcon></ChatIcon></button>
+          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-secondary  ml-2":"btn btn-light  ml-2"} ><ChatIcon></ChatIcon></button>
         </div>
 
       </nav>
