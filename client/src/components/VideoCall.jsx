@@ -1,5 +1,6 @@
 import React from 'react';
 import './VideoCall.css';
+
 import KeyboardVoiceRoundedIcon from '@material-ui/icons/KeyboardVoiceRounded';
 import MicOffRoundedIcon from '@material-ui/icons/MicOffRounded';
 import VideocamIcon from '@material-ui/icons/Videocam';
@@ -7,6 +8,7 @@ import VideocamOffIcon from '@material-ui/icons/VideocamOff';
 import PhoneDisabledIcon from '@material-ui/icons/PhoneDisabled';
 import ChatIcon from '@material-ui/icons/Chat';
 import PeopleIcon from '@material-ui/icons/People';
+import SignalCellular4BarIcon from '@material-ui/icons/SignalCellular4Bar';
 import AddCircleOutlineRoundedIcon from '@material-ui/icons/AddCircleOutlineRounded';
 import QueuePlayNextRoundedIcon from '@material-ui/icons/QueuePlayNextRounded';
 import DescriptionRoundedIcon from '@material-ui/icons/DescriptionRounded';
@@ -37,7 +39,27 @@ function VideoCall(props) {
  const [recording,setRecording]=React.useState(false);
  const [recTime,setRecTime]=React.useState({hrs:0,min:0,sec:0});
  const [timerId,setTimerId]=React.useState(null);
+ const [networkStats,updateNetworkStats]=React.useState({effectiveType:"",downlink:"",rtt:""});
+ navigator.connection.addEventListener('change', logNetworkInfo);
+
+ function logNetworkInfo() {
+ 
+   updateNetworkStats((prev)=>({
+     ...prev,
+
+    effectiveType:navigator.connection.effectiveType,
+    downlink:navigator.connection.downlink + 'Mb/s',
+    rtt:navigator.connection.rtt + 'ms'
+
+  }));
+  console.log(networkStats);
+ }
+ setInterval(() => {
+  logNetworkInfo();
+}, 10000);
+
  function toggle_micState(){
+  
     mic?changeMicState(false):changeMicState(true) ;
  }
  const[video,changeVideoState] = React.useState(false);
@@ -48,6 +70,7 @@ function VideoCall(props) {
    setRecording(prev=>!prev);
  }
  React.useEffect(()=>{
+  
    if(recording){
      setRecTime({hrs:0,min:0,sec:0});
      var startTime=new Date().getTime();
@@ -67,6 +90,14 @@ function VideoCall(props) {
      setRecTime({hrs:0,min:0,sec:0});
    }
  },[recording]);
+
+ function networkStatsPrint(){
+  var string="";
+  string+=networkStats.effectiveType+" ";
+  string+=networkStats.downlink+" ";
+  string+=networkStats.rtt;
+  return string;
+}
 
 function prettyPrintTime(){
   var string="";
@@ -252,7 +283,7 @@ return (
       <div ><h1>Video Call</h1>
     <h2>Url: {window.location.pathname.split('/')[2]}</h2></div>
 
-
+  <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{networkStatsPrint()}</div></div>
         <div style={toggle2}>
             <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
             <div class="carousel-inner">
@@ -372,6 +403,7 @@ return (
         </div>
         <div class="d-flex justify-content-end">
           <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><PeopleIcon  style = {{display: "inline",verticalAlign:"middle"}}></PeopleIcon></button>
+      
           <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} ><ChatIcon  style = {{display: "inline",verticalAlign:"middle"}}></ChatIcon></button>
         </div>
 
