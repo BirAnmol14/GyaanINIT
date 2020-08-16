@@ -299,32 +299,28 @@ else{
 }
 function admin_helper(){
   if(props.logged.status && adminBool){
-    console.log(props);
-    console.log(adminBool[0].email);
+    // console.log(props);
+    // console.log(adminBool[0].email);
     if(props.logged.user.email===adminBool[0].email){
+     // console.log(true);
       return true;
-
     }
+    //console.log(false);           //BAR BAR call ho raha hai, Dekhna hoga
     return false;
   }
 }
 React.useEffect(()=>{
- 
-  props.logged.status===true?checkAdmin(props.logged.user):checkAdmin("");
   check_Admin();
   verifyCall();
  
 },[]);
 React.useEffect(()=>{
  checkAdminHelper(admin_helper);
-  //console.log(admin_helper());
 })
 return (
   
     inCall===false?<div/>:
     <div className="full-height">
-      {/* <h1>Video Call</h1>
-    <h2>Url: {window.location.pathname.split('/')[2]}</h2> */}
       <div ><h1>Video Call</h1>
     <h2>Url: {window.location.pathname.split('/')[2]}</h2></div>
     
