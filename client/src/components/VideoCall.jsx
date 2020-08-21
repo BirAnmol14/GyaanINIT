@@ -21,17 +21,71 @@ import Brightness2RoundedIcon from '@material-ui/icons/Brightness2Rounded';
 import RadioButtonCheckedIcon from '@material-ui/icons/RadioButtonChecked';
 import RemoveCircleOutlineIcon from '@material-ui/icons/RemoveCircleOutline';
 import crousel from './crousel.jpg';
+import desktop from './desktop.jpg';
 import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
+
+
+  
+function initDraw(canvas) {
+  var mouse = {
+      x: 0,
+      y: 0,
+      startX: 0,
+      startY: 0
+  };
+  function setMousePosition(e) {
+      var ev = e || window.event; //Moz || IE
+      if (ev.pageX) { //Moz
+          mouse.x = ev.pageX + window.pageXOffset;
+          mouse.y = ev.pageY + window.pageYOffset;
+      } else if (ev.clientX) { //IE
+          mouse.x = ev.clientX + document.body.scrollLeft;
+          mouse.y = ev.clientY + document.body.scrollTop;
+      }
+  };
+
+  var element = null;    
+  canvas.onmousemove = function (e) {
+      setMousePosition(e);
+      if (element !== null) {
+          element.style.width = Math.abs(mouse.x - mouse.startX) + 'px';
+          element.style.height = Math.abs(mouse.y - mouse.startY) + 'px';
+          element.style.left = (mouse.x - mouse.startX < 0) ? mouse.x + 'px' : mouse.startX + 'px';
+          element.style.top = (mouse.y - mouse.startY < 0) ? mouse.y + 'px' : mouse.startY + 'px';
+      }
+  }
+
+  canvas.onclick = function (e) {
+      if (element !== null) {
+          element = null;
+          canvas.style.cursor = "default";
+          console.log("finsihed.");
+      } else {
+          console.log("begun.");
+          mouse.startX = mouse.x;
+          mouse.startY = mouse.y;
+          element = document.createElement('div');
+          element.className = 'rectangle'
+          element.style.left = mouse.x + 'px';
+          element.style.top = mouse.y + 'px';
+          canvas.appendChild(element)
+          canvas.style.cursor = "crosshair";
+      }
+  }
+}
 
 function VideoCall(props) {
  
  var [ toggle,changeToggle]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
  var [ toggle2,changeToggle2]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
- var [ toggle3,changeToggle3]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
- var [ toggle4,changeToggle4]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
+ var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "90%",marginLeft: "10px",marginRight: "10px",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"left"});
+ var [ toggle4,changeToggle4]=React.useState({width:"18%",height: "90%",marginLeft: "10px",marginRight: "10px",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"right"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
+ var [param,changeParam] = React.useState(0);
  const [inCall,setInCall]=React.useState(false);
  const [adminUser,setAdmin]=React.useState([]);
  const [adminBool,checkAdmin]=React.useState();
@@ -42,11 +96,73 @@ function VideoCall(props) {
  const [recording,setRecording]=React.useState(false);
  const [recTime,setRecTime]=React.useState({hrs:0,min:0,sec:0});
  const [timerId,setTimerId]=React.useState(null);
+
+ const divsadded = () =>
+{
+  
+    switch(param){
+    case 1:
+      return (
+    <div style={toggle3}>
+        <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img class="d-block w-100" src={crousel} alt="First slide"/>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src={crousel}  alt="Second slide"/>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src={crousel}  alt="Third slide"/>
+          </div>
+        </div>
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    </div>);
+    
+    case 2:
+      return (
+    <div style={toggle3}>
+         <img class="d-block w-100" src={desktop} alt="First slide"/>
+    </div>);
+    
+    case 3:
+      return (
+    <div style={toggle3}>
+        <iframe width="100%" height="100%"
+        src="https://www.youtube.com/embed/tgbNymZ7vqY">
+        </iframe> 
+    </div>);
+   
+    case 4:
+      return (
+    <div style={toggle3}>
+        
+    </div>
+    );
+    
+    default:
+        return (
+          <div style={toggle3}>
+      
+          </div>);
+    }
+  }
+  
+  
+ /*
  const [networkStats,updateNetworkStats]=React.useState({effectiveType:"",downlink:"",rtt:""});
  navigator.connection.addEventListener('change', logNetworkInfo);
+*/
 
-
-
+/*
  function logNetworkInfo() {
  
    updateNetworkStats((prev)=>({
@@ -62,6 +178,7 @@ function VideoCall(props) {
  setInterval(() => {
   logNetworkInfo();
 }, 10000);
+*/
 
  function toggle_micState(){
   
@@ -95,7 +212,7 @@ function VideoCall(props) {
      setRecTime({hrs:0,min:0,sec:0});
    }
  },[recording]);
-
+/*
  function networkStatsPrint(){
   var string="";
   string+=networkStats.effectiveType+" ";
@@ -103,7 +220,7 @@ function VideoCall(props) {
   string+=networkStats.rtt;
   return string;
 }
-
+*/
 function prettyPrintTime(){
   var string="";
   string+=recTime.hrs<10?"0"+recTime.hrs+":":recTime.hrs+":";
@@ -177,14 +294,15 @@ function changeToggle6_(){
 
   })):changeToggle6((prevState) => ({
     ...prevState,
-    width:"0px"
+    width:"0px",
+    height:"0%"
   }));
 
 }
 function changeToggle2_(){
 
-  toggle.width==="0px"?changeToggle2((prevState2) => ({
-    ...prevState2,
+  toggle2.width==="0px"?changeToggle2((prevState) => ({
+    ...prevState,
     width: "98%",
     height: "80%",
     marginLeft: "10px",
@@ -192,68 +310,16 @@ function changeToggle2_(){
     overflow: "hidden",
     border: "1px solid black"
 
-  })):changeToggle2((prevState2) => ({
-    ...prevState2,
+  })):changeToggle2((prevState) => ({
+    ...prevState,
     width:"0%",
     hieght:"0%"
   }))
 
 }
 
-function changeToggle3_(){
 
-  toggle.width==="0px"?changeToggle3((prevState3) => ({
-    ...prevState3,
-    width: "98%",
-    height: "80%",
-    marginLeft: "10px",
-    marginRight: "10px",
-    overflow: "hidden",
-    border: "1px solid black"
 
-  })):changeToggle3((prevState3) => ({
-    ...prevState3,
-    width:"0px"
-  }))
-
-}
-
-function changeToggle4_(){
-
-  toggle.width==="0px"?changeToggle4((prevState4) => ({
-    ...prevState4,
-    width: "98%",
-    height: "80%",
-    marginLeft: "10px",
-    marginRight: "10px",
-    overflow: "hidden",
-    border: "1px solid black"
-
-  })):changeToggle4((prevState4) => ({
-    ...prevState4,
-    width:"0px"
-  }))
-
-}
-
-function changeToggle5_(){
-
-  toggle.width==="0px"?changeToggle5((prevState5) => ({
-    ...prevState5,
-    width: "98%",
-    height: "80%",
-    marginLeft: "10px",
-    marginRight: "10px",
-    overflow: "hidden",
-    border: "1px solid black"
-
-  })):changeToggle5((prevState5) => ({
-    ...prevState5,
-    width:"0px",
-    height:"0px"
-  }))
-
-}
 async function verifyCall(){
   const temp=window.location.href.split('/');
   const body=JSON.stringify({callUrl:temp[temp.length-1]});
@@ -324,42 +390,15 @@ return (
       <div ><h1>Video Call</h1>
     <h2>Url: {window.location.pathname.split('/')[2]}</h2></div>
     
-  <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{networkStatsPrint()}</div></div>
-        <div style={toggle2}>
-            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img class="d-block w-100" src={crousel} alt="First slide"/>
-              </div>
-              <div class="carousel-item">
-                <img class="d-block w-100" src={crousel}  alt="Second slide"/>
-              </div>
-              <div class="carousel-item">
-                <img class="d-block w-100" src={crousel}  alt="Third slide"/>
-              </div>
-            </div>
-            <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="sr-only">Next</span>
-            </a>
-          </div>
-        </div>
-
-        <div style={toggle3}>
-
-        </div>
-
+  <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
+        <div style={{width:"100%" ,height:"90%" , overflow:"hidden"}}>
+        {
+          divsadded()
+        }
         <div style={toggle4}>
 
         </div>
-        <div style={toggle5}>
-
         </div>
-
 
       <div style={toggle}>
       <ul className="list-group">
@@ -419,15 +458,15 @@ return (
       <QueuePlayNextRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></QueuePlayNextRoundedIcon></button>
       <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
 
-        <button onClick={changeToggle2_} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
+        <button type = "button" onClick={()=>changeParam(1)} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
           <div class="dropdown-divider"></div>
-        <button onClick={changeToggle3_} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
+        <button type = "button" onClick={()=>changeParam(2)} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
           <div class="dropdown-divider"></div>
-        <button onClick={changeToggle4_} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
+        <button type = "button" onClick={()=>changeParam(3)} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
           <div class="dropdown-divider"></div>
-        <button onClick={changeToggle5_} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
+        <button type = "button" onClick={()=>changeParam(4)} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
           <div className="dropdown-divider"></div>
-        <button onClick={changeToggle2_} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
+        <button type = "button"  onClick={()=>changeParam(5)} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
       </div>
       {recording?<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RemoveCircleOutlineIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'10px'}}/>{prettyPrintTime()}</button>:<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RadioButtonCheckedIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>}
     </div>
