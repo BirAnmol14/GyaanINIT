@@ -32,7 +32,7 @@ import crousel from './crousel.jpg';
 import desktop from './desktop.jpg';
 import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
-
+import Badge from '@material-ui/core/Badge';
 
 
 function initDraw(canvas) {
@@ -110,7 +110,9 @@ function VideoCall(props) {
  const [chats,setChats]=React.useState([]);
  const [getChats,setGetChats]=React.useState(false);
  const [newMessage,setNewMessage]=React.useState(false);
+ const [newMessageCount,setNewMessageCount]=React.useState(false);
  const [getUsers,setGetUsers]=React.useState(false);
+ const [backgroundMessageCheckId,setBackgroundMessageCheckId]=React.useState(null);
  const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: '#f5f5f9',
@@ -301,7 +303,9 @@ React.useEffect(()=>{
 },[getUsers]);
 
 async function changeToggle6_(){
+  setNewMessageCount(false);
   if(toggle6.width==="0px"){
+    clearInterval(backgroundMessageCheckId);
     await fetchCallChat();
     changeToggle((prev)=>({...prev,width:"0px"}));
     setGetUsers(false);
@@ -310,6 +314,10 @@ async function changeToggle6_(){
     chatsDiv.scrollTop=chatsDiv.scrollHeight;
   }else{
     setGetChats(false);
+    var id=setInterval(()=>{
+      fetchCallChat();
+    },0.5*1000);
+    setBackgroundMessageCheckId(id);
   }
   toggle6.width==="0px"?changeToggle6((prevState) => ({
     ...prevState,
@@ -331,7 +339,7 @@ async function fetchCallChat(){
   if(status===200){
     const res=await response.json();
     if(res.status===true){
-      setChats((prev)=>{if(prev.length!==res.chats.length){setNewMessage(true)}else{setNewMessage(false)};return(res.chats)});
+      setChats((prev)=>{if(prev.length!==res.chats.length){setNewMessage(true);}else{setNewMessage(false)};return(res.chats)});
     }else{
       alert(res.message);
       window.location.href='/';
@@ -342,18 +350,24 @@ async function fetchCallChat(){
 }
 React.useEffect(()=>{
   if(getChats){
-    if(newMessage){
-      var chatsDiv=document.getElementById('chatsDiv');
-      chatsDiv.scrollTop=chatsDiv.scrollHeight;
-    }
     var timerId=setInterval(()=>{
       fetchCallChat();
+      setChatTimerId(timerId);
     },0.5*1000);
     setChatTimerId(timerId);
   }else{
     clearInterval(chatTimerId);
   }
-},[getChats,newMessage]);
+},[getChats]);
+
+React.useEffect(()=>{
+  if(newMessage && getChats){
+    setNewMessageCount(false);
+    var chatsDiv=document.getElementById('chatsDiv');
+    chatsDiv.scrollTop=chatsDiv.scrollHeight;
+  }
+  else if(newMessage && !getChats){setNewMessageCount(true)}
+},[newMessage]);
 
 function changeToggle2_(){
 
@@ -458,14 +472,20 @@ function admin_helper(){
     return false;
   }
 }
+function BackgroundMessageCheck(){
+  var id=setInterval(()=>{
+    fetchCallChat();
+  },0.5*1000);
+  setBackgroundMessageCheckId(id);
+}
 React.useEffect(()=>{
   check_Admin();
   verifyCall();
-
+  BackgroundMessageCheck();
 },[]);
 React.useEffect(()=>{
  checkAdminHelper(admin_helper);
-})
+},)
 
 return (
 
@@ -512,7 +532,7 @@ return (
       <div style={darkMode?{backgroundColor:" #343A40;", height:"100%"}:{backgroundColor:"white", height:"100%"}}>
       <div className="list-group chat-list" id="chatsDiv" style={darkMode?{backgroundColor:" #343A40;"}:{backgroundColor:"white"}}>
       {
-        chats.map((chat,index)=>{return <div id={index} className={darkMode?"list-group-item dark-mode list-group-item-action flex-column align-items-start":"list-group-item list-group-item-action flex-column align-items-start"}>
+        chats.map((chat,index)=>{return <div id={index} key={index} className={darkMode?"list-group-item dark-mode list-group-item-action flex-column align-items-start":"list-group-item list-group-item-action flex-column align-items-start"}>
             <div className="d-flex">
               <img src={chat.user.profilePic} alt="profile" style={{height:'1.5rem',width:'1.5rem',marginLeft:'0px',marginRight:'5px',display:"inline",verticalAlign:"middle"}}/>
               <small style={{display:"inline",verticalAlign:"middle"}}>{chat.user.name}</small>
@@ -568,7 +588,8 @@ return (
         <div class="d-flex justify-content-end">
           <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><PeopleIcon  style = {{display: "inline",verticalAlign:"middle"}}></PeopleIcon></button>
 
-          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} ><ChatIcon  style = {{display: "inline",verticalAlign:"middle"}}></ChatIcon></button>
+          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><Badge variant={newMessageCount?"dot":null} color="error">
+  <ChatIcon  style = {{display: "inline",verticalAlign:"middle"}}></ChatIcon></Badge></button>
 
           <div class="btn-group dropup">
             <button type="button" className={darkMode?"btn btn-dark dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
