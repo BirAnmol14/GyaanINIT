@@ -1,6 +1,14 @@
 import React from 'react';
 import './VideoCall.css';
 
+
+
+import { withStyles, makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Tooltip from '@material-ui/core/Tooltip';
+import Typography from '@material-ui/core/Typography';
+
+
 import KeyboardVoiceRoundedIcon from '@material-ui/icons/KeyboardVoiceRounded';
 import MicOffRoundedIcon from '@material-ui/icons/MicOffRounded';
 import VideocamIcon from '@material-ui/icons/Videocam';
@@ -77,11 +85,11 @@ function initDraw(canvas) {
 
 function VideoCall(props) {
  
- var [ toggle,changeToggle]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
+ var [ toggle,changeToggle]=React.useState({width:"0px",height: "90%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
  var [ toggle2,changeToggle2]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
- var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "90%",marginLeft: "10px",marginRight: "10px",
+ var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"left"});
- var [ toggle4,changeToggle4]=React.useState({width:"18%",height: "90%",marginLeft: "10px",marginRight: "10px",
+ var [ toggle4,changeToggle4]=React.useState({width:"18%",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"right"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
@@ -96,8 +104,17 @@ function VideoCall(props) {
  const [recording,setRecording]=React.useState(false);
  const [recTime,setRecTime]=React.useState({hrs:0,min:0,sec:0});
  const [timerId,setTimerId]=React.useState(null);
-
- const divsadded = () =>
+ const HtmlTooltip = withStyles((theme) => ({
+  tooltip: {
+    backgroundColor: '#f5f5f9',
+    color: 'rgba(0, 0, 0, 0.87)',
+    maxWidth: 220,
+    fontSize: theme.typography.pxToRem(12),
+    border: '1px solid #dadde9',
+  },
+}))(Tooltip);
+ 
+const divsadded = () =>
 {
   
     switch(param){
@@ -130,7 +147,7 @@ function VideoCall(props) {
     case 2:
       return (
     <div style={toggle3}>
-         <img class="d-block w-100" src={desktop} alt="First slide"/>
+         <img class="d-block w-100" src={desktop} alt="screen share slide"/>
     </div>);
     
     case 3:
@@ -278,7 +295,7 @@ if(status===200){
 }
 toggle.width==="0px"?changeToggle((prevState) => ({
   ...prevState,
-  width:"200px",
+  width:"120px",
 
 })):changeToggle((prevState) => ({
   ...prevState,
@@ -365,13 +382,13 @@ else{
 }
 function admin_helper(){
   if(props.logged.status && adminBool){
-    // console.log(props);
-    // console.log(adminBool[0].email);
+     console.log(props);
+    console.log(adminBool[0].email);
     if(props.logged.user.email===adminBool[0].email){
-     // console.log(true);
+      console.log(true);
       return true;
     }
-    //console.log(false);           //BAR BAR call ho raha hai, Dekhna hoga
+    console.log(false);          
     return false;
   }
 }
@@ -388,6 +405,9 @@ return (
     inCall===false?<div/>:
     <div className="full-height">
       <div ><h1>Video Call</h1>
+     
+     
+
     <h2>Url: {window.location.pathname.split('/')[2]}</h2></div>
     
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
@@ -403,10 +423,26 @@ return (
       <div style={toggle}>
       <ul className="list-group">
       {
-        adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index} style={darkMode?{borderBottom:'2px solid white'}:{borderBottom:'2px solid black'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><p style={{fontSize:'12px'}}><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'10px',display:"inline",verticalAlign:"middle",float: "left"}}/><span>Admin:</span><br/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
+        adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index}  style={darkMode?{borderBottom:'2px solid white',padding:'0px'}:{borderBottom:'2px solid black',padding:'0px'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><HtmlTooltip
+        title={
+          <React.Fragment>
+           <span>{user.name}</span><br/><span>@{user.uid}</span><br/>email:{user.email}<span></span>
+          </React.Fragment>
+        }
+      >
+        <div><p style={{fontSize:'10px'}}><u>Admin</u><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle",float: "left"}}/></p></div>
+      </HtmlTooltip></li>})
       }
       {
-        userList.map((user,index)=>{return <li key={"user "+index} id={"user "+index} className={darkMode?"list-group-item dark-mode":"list-group-item"}><p style={{fontSize:'12px'}}><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',display:"inline",marginLeft:'0px',marginRight:'10px',verticalAlign:"middle",float: "left"}}/><span>{user.name}</span><br/><span>@{user.uid}</span><br/><span>{user.email}</span></p></li>})
+        userList.map((user,index)=>{return <li key={"user "+index} id={"user "+index} style={{padding:'0px'}} className={darkMode?"list-group-item dark-mode":"list-group-item"}><HtmlTooltip
+        title={
+          <React.Fragment>
+           <span>{user.name}</span><br/><span>@{user.uid}</span><br/>email:{user.email}<span></span>
+          </React.Fragment>
+        }
+      >
+        <div><p style={{fontSize:'8px'}}><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle",float: "left"}}/></p></div>
+      </HtmlTooltip></li>})
       }
       </ul>
       </div>
