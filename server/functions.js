@@ -229,6 +229,9 @@ function endCall(req,callUrl){
     for(var i=0;i<calls.length;i++){
       if(calls[i].url===callUrl){
         calls[i].users=calls[i].users.filter(user_email=>user_email!==currUser.email);
+        if(calls[i].users.length===0){
+          calls[i].chats=[];
+        }
         return {status:true,message:"User removed successfully from the call"}
       }
     }

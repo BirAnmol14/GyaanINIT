@@ -224,6 +224,7 @@ function prettyPrintTime(){
 }
 
 async function endCall(){
+  clearInterval(backgroundMessageCheckId);
   var temp=window.location.href.split('/');
   const body=JSON.stringify({callUrl:temp[temp.length-1]});
   const response=await fetch(ServerRoutes.endCall,{
@@ -305,7 +306,7 @@ React.useEffect(()=>{
 async function changeToggle6_(){
   setNewMessageCount(false);
   if(toggle6.width==="0px"){
-    clearInterval(backgroundMessageCheckId);
+    //clearInterval(backgroundMessageCheckId);
     await fetchCallChat();
     changeToggle((prev)=>({...prev,width:"0px"}));
     setGetUsers(false);
@@ -314,10 +315,10 @@ async function changeToggle6_(){
     chatsDiv.scrollTop=chatsDiv.scrollHeight;
   }else{
     setGetChats(false);
-    var id=setInterval(()=>{
-      fetchCallChat();
-    },0.5*1000);
-    setBackgroundMessageCheckId(id);
+    // var id=setInterval(()=>{
+    //   fetchCallChat();
+    // },0.5*1000);
+    // setBackgroundMessageCheckId(id);
   }
   toggle6.width==="0px"?changeToggle6((prevState) => ({
     ...prevState,
@@ -348,17 +349,17 @@ async function fetchCallChat(){
     alert('Error '+status);
   }
 }
-React.useEffect(()=>{
-  if(getChats){
-    var timerId=setInterval(()=>{
-      fetchCallChat();
-      setChatTimerId(timerId);
-    },0.5*1000);
-    setChatTimerId(timerId);
-  }else{
-    clearInterval(chatTimerId);
-  }
-},[getChats]);
+// React.useEffect(()=>{
+//   if(getChats){
+//     var timerId=setInterval(()=>{
+//       fetchCallChat();
+//       setChatTimerId(timerId);
+//     },0.5*1000);
+//     setChatTimerId(timerId);
+//   }else{
+//     clearInterval(chatTimerId);
+//   }
+// },[getChats]);
 
 React.useEffect(()=>{
   if(newMessage && getChats){
@@ -452,7 +453,7 @@ const status=await response.status;
 if(status===200){
   const res=await response.json();
   if(res.validUrl){
-    checkAdmin(res.users.filter(user=>user.email===res.admin_email));
+    checkAdmin(res.admin_email);
     }
 }
 else{
@@ -462,13 +463,9 @@ else{
 }
 function admin_helper(){
   if(props.logged.status && adminBool){
-
-
-    if(props.logged.user.email===adminBool[0].email){
-
+    if(props.logged.user.email===adminBool){
       return true;
     }
-
     return false;
   }
 }
@@ -478,14 +475,20 @@ function BackgroundMessageCheck(){
   },0.5*1000);
   setBackgroundMessageCheckId(id);
 }
-React.useEffect(()=>{
-  check_Admin();
-  verifyCall();
-  BackgroundMessageCheck();
+ React.useEffect(()=>{
+   async function startUp(){
+     await verifyCall();
+   }
+  startUp();
 },[]);
 React.useEffect(()=>{
- checkAdminHelper(admin_helper);
-},)
+  async function runner(){
+    await check_Admin();
+    await checkAdminHelper(admin_helper());
+    await BackgroundMessageCheck();
+  }
+  runner();
+},[props.logged]);
 
 return (
 
@@ -538,7 +541,7 @@ return (
               <small style={{display:"inline",verticalAlign:"middle"}}>{chat.user.name}</small>
             </div>
             <p className="">{chat.message}</p>
-            <small>{chat.time.toLocaleString()}</small>
+            <small>{new Date(chat.time).toLocaleString()}</small>
           </div>
           }
         )
