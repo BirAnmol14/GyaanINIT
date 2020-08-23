@@ -7,8 +7,8 @@ import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
 import Typography from '@material-ui/core/Typography';
-
-
+import SendIcon from '@material-ui/icons/Send';
+import InfoIcon from '@material-ui/icons/Info';
 import KeyboardVoiceRoundedIcon from '@material-ui/icons/KeyboardVoiceRounded';
 import MicOffRoundedIcon from '@material-ui/icons/MicOffRounded';
 import VideocamIcon from '@material-ui/icons/Videocam';
@@ -34,7 +34,7 @@ import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
 
 
-  
+
 function initDraw(canvas) {
   var mouse = {
       x: 0,
@@ -53,7 +53,7 @@ function initDraw(canvas) {
       }
   };
 
-  var element = null;    
+  var element = null;
   canvas.onmousemove = function (e) {
       setMousePosition(e);
       if (element !== null) {
@@ -68,9 +68,9 @@ function initDraw(canvas) {
       if (element !== null) {
           element = null;
           canvas.style.cursor = "default";
-          console.log("finsihed.");
+
       } else {
-          console.log("begun.");
+
           mouse.startX = mouse.x;
           mouse.startY = mouse.y;
           element = document.createElement('div');
@@ -84,7 +84,7 @@ function initDraw(canvas) {
 }
 
 function VideoCall(props) {
- 
+
  var [ toggle,changeToggle]=React.useState({width:"0px",height: "90%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
  var [ toggle2,changeToggle2]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "80%",marginLeft: "10px",marginRight: "10px",
@@ -92,7 +92,7 @@ function VideoCall(props) {
  var [ toggle4,changeToggle4]=React.useState({width:"18%",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"right"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
- var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
+ var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s"});
  var [param,changeParam] = React.useState(0);
  const [inCall,setInCall]=React.useState(false);
  const [adminUser,setAdmin]=React.useState([]);
@@ -104,6 +104,13 @@ function VideoCall(props) {
  const [recording,setRecording]=React.useState(false);
  const [recTime,setRecTime]=React.useState({hrs:0,min:0,sec:0});
  const [timerId,setTimerId]=React.useState(null);
+ const [userListTimerId,setUserListTimerId]=React.useState(null);
+ const [chatTimerId,setChatTimerId]=React.useState(null);
+ const [chatText,setChatText]=React.useState("");
+ const [chats,setChats]=React.useState([]);
+ const [getChats,setGetChats]=React.useState(false);
+ const [newMessage,setNewMessage]=React.useState(false);
+ const [getUsers,setGetUsers]=React.useState(false);
  const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: '#f5f5f9',
@@ -113,10 +120,10 @@ function VideoCall(props) {
     border: '1px solid #dadde9',
   },
 }))(Tooltip);
- 
+
 const divsadded = () =>
 {
-  
+
     switch(param){
     case 1:
       return (
@@ -143,62 +150,39 @@ const divsadded = () =>
         </a>
       </div>
     </div>);
-    
+
     case 2:
       return (
     <div style={toggle3}>
          <img class="d-block w-100" src={desktop} alt="screen share slide"/>
     </div>);
-    
+
     case 3:
       return (
     <div style={toggle3}>
         <iframe width="100%" height="100%"
-        src="https://www.youtube.com/embed/tgbNymZ7vqY">
-        </iframe> 
+        src="https://www.youtube.com/embed/tgbNymZ7vqY" title="ytVideo">
+        </iframe>
     </div>);
-   
+
     case 4:
       return (
     <div style={toggle3}>
-        
+
     </div>
     );
-    
+
     default:
         return (
           <div style={toggle3}>
-      
+
           </div>);
     }
   }
-  
-  
- /*
- const [networkStats,updateNetworkStats]=React.useState({effectiveType:"",downlink:"",rtt:""});
- navigator.connection.addEventListener('change', logNetworkInfo);
-*/
 
-/*
- function logNetworkInfo() {
- 
-   updateNetworkStats((prev)=>({
-     ...prev,
-
-    effectiveType:navigator.connection.effectiveType,
-    downlink:navigator.connection.downlink + 'Mb/s',
-    rtt:navigator.connection.rtt + 'ms'
-
-  }));
- // console.log(networkStats);
- }
- setInterval(() => {
-  logNetworkInfo();
-}, 10000);
-*/
 
  function toggle_micState(){
-  
+
     mic?changeMicState(false):changeMicState(true) ;
  }
  const[video,changeVideoState] = React.useState(false);
@@ -209,7 +193,6 @@ const divsadded = () =>
    setRecording(prev=>!prev);
  }
  React.useEffect(()=>{
-  
    if(recording){
      setRecTime({hrs:0,min:0,sec:0});
      var startTime=new Date().getTime();
@@ -229,15 +212,7 @@ const divsadded = () =>
      setRecTime({hrs:0,min:0,sec:0});
    }
  },[recording]);
-/*
- function networkStatsPrint(){
-  var string="";
-  string+=networkStats.effectiveType+" ";
-  string+=networkStats.downlink+" ";
-  string+=networkStats.rtt;
-  return string;
-}
-*/
+
 function prettyPrintTime(){
   var string="";
   string+=recTime.hrs<10?"0"+recTime.hrs+":":recTime.hrs+":";
@@ -274,10 +249,30 @@ async function endCall(){
 function toggleDarkMode() {
   setDarkMode(!darkMode);
 }
+
 async function changeToggle_(){
+
+if(toggle.width==="0px"){
+  fetchUserList();
+  changeToggle6((prev)=>({...prev,width:"0px"}));
+  setGetChats(false);
+  setGetUsers(true);
+}else{
+  setGetUsers(false);
+}
+toggle.width==="0px"?changeToggle((prevState) => ({
+  ...prevState,
+  width:"120px",
+
+})):changeToggle((prevState) => ({
+  ...prevState,
+  width:"0px"
+}))
+}
+async function fetchUserList(){
   var temp=window.location.href.split('/');
   var url=ServerRoutes.getVideoCallUsers+temp[temp.length-1];
-const response=await fetch(url,{
+  const response=await fetch(url,{
   method:'GET',
   credentials: 'include'
 });
@@ -293,29 +288,73 @@ if(status===200){
   alert('Erorr in fetching userList '+status);
   setList([]);
 }
-toggle.width==="0px"?changeToggle((prevState) => ({
-  ...prevState,
-  width:"120px",
-
-})):changeToggle((prevState) => ({
-  ...prevState,
-  width:"0px"
-}))
-
-
 }
-function changeToggle6_(){
+React.useEffect(()=>{
+  if(getUsers){
+    var timerId=setInterval(()=>{
+      fetchUserList();
+    },2*1000);
+    setUserListTimerId(timerId);
+  }else{
+    clearInterval(userListTimerId);
+  }
+},[getUsers]);
+
+async function changeToggle6_(){
+  if(toggle6.width==="0px"){
+    await fetchCallChat();
+    changeToggle((prev)=>({...prev,width:"0px"}));
+    setGetUsers(false);
+    setGetChats(true);
+    var chatsDiv=document.getElementById('chatsDiv');
+    chatsDiv.scrollTop=chatsDiv.scrollHeight;
+  }else{
+    setGetChats(false);
+  }
   toggle6.width==="0px"?changeToggle6((prevState) => ({
     ...prevState,
-    width:"200px",
+    width:"250px",
 
   })):changeToggle6((prevState) => ({
     ...prevState,
-    width:"0px",
-    height:"0%"
+    width:"0px"
   }));
-
 }
+async function fetchCallChat(){
+  var temp=window.location.href.split('/');
+  var url=ServerRoutes.getCallChat+temp[temp.length-1];
+  const response=await fetch(url,{
+    method:'GET',
+    credentials: 'include'
+  });
+  const status=await response.status;
+  if(status===200){
+    const res=await response.json();
+    if(res.status===true){
+      setChats((prev)=>{if(prev.length!==res.chats.length){setNewMessage(true)}else{setNewMessage(false)};return(res.chats)});
+    }else{
+      alert(res.message);
+      window.location.href='/';
+    }
+  }else{
+    alert('Error '+status);
+  }
+}
+React.useEffect(()=>{
+  if(getChats){
+    if(newMessage){
+      var chatsDiv=document.getElementById('chatsDiv');
+      chatsDiv.scrollTop=chatsDiv.scrollHeight;
+    }
+    var timerId=setInterval(()=>{
+      fetchCallChat();
+    },0.5*1000);
+    setChatTimerId(timerId);
+  }else{
+    clearInterval(chatTimerId);
+  }
+},[getChats,newMessage]);
+
 function changeToggle2_(){
 
   toggle2.width==="0px"?changeToggle2((prevState) => ({
@@ -335,7 +374,34 @@ function changeToggle2_(){
 
 }
 
-
+async function postChatMessage(){
+  if(chatText.length===0){
+    return;
+  }
+  const temp=window.location.href.split('/');
+  const body=JSON.stringify({callUrl:temp[temp.length-1],message:chatText});
+  const response= await fetch(ServerRoutes.postChatMessage,{
+    method:'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: body
+  });
+  const status=await response.status;
+  if(status===200){
+    const res=await response.json();
+    if(res.status===true){
+      await fetchCallChat();
+      var chatsDiv=document.getElementById('chatsDiv');
+      chatsDiv.scrollTop=chatsDiv.scrollHeight;
+    }else{
+      alert(res.message);
+      window.location.href='/';
+    }
+  }else{
+    alert('Error '+status);
+  }
+  setChatText("");
+}
 
 async function verifyCall(){
   const temp=window.location.href.split('/');
@@ -376,40 +442,35 @@ if(status===200){
     }
 }
 else{
-  alert('Erorr in fetching Admin '+status); 
+  alert('Erorr in fetching Admin '+status);
 }
 
 }
 function admin_helper(){
   if(props.logged.status && adminBool){
-     console.log(props);
-    console.log(adminBool[0].email);
+
+
     if(props.logged.user.email===adminBool[0].email){
-      console.log(true);
+
       return true;
     }
-    console.log(false);          
+
     return false;
   }
 }
 React.useEffect(()=>{
   check_Admin();
   verifyCall();
- 
+
 },[]);
 React.useEffect(()=>{
  checkAdminHelper(admin_helper);
 })
+
 return (
-  
+
     inCall===false?<div/>:
     <div className="full-height">
-      <div ><h1>Video Call</h1>
-     
-     
-
-    <h2>Url: {window.location.pathname.split('/')[2]}</h2></div>
-    
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
         <div style={{width:"100%" ,height:"90%" , overflow:"hidden"}}>
         {
@@ -420,17 +481,17 @@ return (
         </div>
         </div>
 
-      <div style={toggle}>
+      {getUsers?<div style={toggle}>
       <ul className="list-group">
       {
         adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index}  style={darkMode?{borderBottom:'2px solid white',padding:'0px'}:{borderBottom:'2px solid black',padding:'0px'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><HtmlTooltip
         title={
           <React.Fragment>
-           <span>{user.name}</span><br/><span>@{user.uid}</span><br/>email:{user.email}<span></span>
+          <span>Admin</span><br/><span>{user.name}</span><br/><span>@{user.uid}</span><br/>email:{user.email}<span></span>
           </React.Fragment>
         }
       >
-        <div><p style={{fontSize:'10px'}}><u>Admin</u><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle",float: "left"}}/></p></div>
+        <div style={{padding:"4px"}}><center><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle"}}/></center></div>
       </HtmlTooltip></li>})
       }
       {
@@ -441,73 +502,59 @@ return (
           </React.Fragment>
         }
       >
-        <div><p style={{fontSize:'8px'}}><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle",float: "left"}}/></p></div>
+          <div style={{padding:"4px"}}><center><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle"}}/></center></div>
       </HtmlTooltip></li>})
       }
       </ul>
+      </div>:null}
+
+{getChats?<div style={darkMode?{...toggle6,backgroundColor:"#343A40"}:{...toggle6,backgroundColor:"white"}}>
+      <div style={darkMode?{backgroundColor:" #343A40;", height:"100%"}:{backgroundColor:"white", height:"100%"}}>
+      <div className="list-group chat-list" id="chatsDiv" style={darkMode?{backgroundColor:" #343A40;"}:{backgroundColor:"white"}}>
+      {
+        chats.map((chat,index)=>{return <div id={index} className={darkMode?"list-group-item dark-mode list-group-item-action flex-column align-items-start":"list-group-item list-group-item-action flex-column align-items-start"}>
+            <div className="d-flex">
+              <img src={chat.user.profilePic} alt="profile" style={{height:'1.5rem',width:'1.5rem',marginLeft:'0px',marginRight:'5px',display:"inline",verticalAlign:"middle"}}/>
+              <small style={{display:"inline",verticalAlign:"middle"}}>{chat.user.name}</small>
+            </div>
+            <p className="">{chat.message}</p>
+            <small>{chat.time.toLocaleString()}</small>
+          </div>
+          }
+        )
+      }
       </div>
-      <div style={toggle6}>
-      <div style={{backgroundColor:"white", height:"100%"}}>
-
-      <div className="list-group">
-  <div className="list-group-item list-group-item-action flex-column align-items-start">
-    <div className="d-flex">
-
-      <small>3 days ago</small>
-    </div>
-    <p className="">Name / User</p>
-    <small>Donec id elit non mi porta.</small>
-  </div>
-  <div className="list-group-item list-group-item-action flex-column align-items-start">
-    <div className="d-flex ">
-
-      <small className="text-muted">3 days ago</small>
-    </div>
-    <p className="">Name / User</p>
-    <small className="text-muted">Donec id elit non mi porta.</small>
-  </div>
-  <div className="list-group-item list-group-item-action flex-column align-items-start">
-    <div className="d-flex">
-
-      <small className="text-muted">3 days ago</small>
-    </div>
-    <p className="">Name / User</p>
-    <small className="text-muted">Donec id elit non mi porta.</small>
-  </div>
-</div>
-<div style={{bottom:"7%", marginBottom:"1%", backgroundColor:"",position:"fixed"}}>
-
-    <textarea className="textarea_custom" placeholder="Type message.." name="msg" required></textarea>
-
+<div style={{bottom:"5%",marginBottom:"1.5%" ,backgroundColor:"",position:"fixed",zIndex:"2",height:"15%"}} className={darkMode?"dark-mode":null}>
+    <textarea className="textarea_custom" placeholder="Type message.." name="msg" required style={{width:"90%"}} value={chatText} onChange={(eve)=>{const {value}=eve.target; setChatText(value)}}></textarea>
+    <button type="button" className={"btn btn-primary  ml-2"} onClick={postChatMessage}><SendIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
 </div>
       </div>
       </div>
-
+:null}
       <nav className={darkMode?"navbar fixed-bottom navbar-dark bg-dark":"navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
       {adminBoolHelper===true?<div className="d-flex justify-content-start">
-
 {darkMode?  <button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/></button>:<button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/> </button>}
-
   <button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"}><AddCircleOutlineRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></AddCircleOutlineRoundedIcon></button>
     <div class="btn-group dropup">
       <button type="button" className={darkMode?"btn btn-dark dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <QueuePlayNextRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></QueuePlayNextRoundedIcon></button>
       <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
-
-        <button type = "button" onClick={()=>changeParam(1)} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
+        <button type = "button" onClick={()=>changeParam(1)} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"}><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
           <div class="dropdown-divider"></div>
-        <button type = "button" onClick={()=>changeParam(2)} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
+        <button type = "button" onClick={()=>changeParam(2)} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
           <div class="dropdown-divider"></div>
-        <button type = "button" onClick={()=>changeParam(3)} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
+        <button type = "button" onClick={()=>changeParam(3)} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
           <div class="dropdown-divider"></div>
-        <button type = "button" onClick={()=>changeParam(4)} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
+        <button type = "button" onClick={()=>changeParam(4)} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
           <div className="dropdown-divider"></div>
-        <button type = "button"  onClick={()=>changeParam(5)} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} type="button"><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
+        <button type = "button"  onClick={()=>changeParam(5)} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
       </div>
-      {recording?<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RemoveCircleOutlineIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'10px'}}/>{prettyPrintTime()}</button>:<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RadioButtonCheckedIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>}
     </div>
+    {recording?<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RemoveCircleOutlineIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'10px'}}/>{prettyPrintTime()}</button>:<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RadioButtonCheckedIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>}
 
-</div>:<div className="d-flex justify-content-start">{darkMode?  <button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/></button>:<button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/> </button>}</div>}  
+</div>:<div className="d-flex justify-content-start">
+{darkMode?  <button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/></button>:<button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/> </button>}</div>}
+        <center>
         <div className="d-flex justify-content-center">
           {mic?<button type='button' className="btn btn-primary ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_micState} ><KeyboardVoiceRoundedIcon style = {{display: "inline",verticalAlign:"middle"}}></KeyboardVoiceRoundedIcon></button>
         :<button type="button" className="btn btn-danger ml-2" style = {{borderRadius: "30px"}} onClick={toggle_micState}><MicOffRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></MicOffRoundedIcon> </button>
@@ -517,10 +564,27 @@ return (
           <button type="button" className="btn btn-danger ml-2" style = {{borderRadius : "50px"}} onClick = {toggle_videoState}><VideocamOffIcon  style = {{display: "inline",verticalAlign:"middle"}}></VideocamOffIcon></button>
           }
         </div>
+        </center>
         <div class="d-flex justify-content-end">
           <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><PeopleIcon  style = {{display: "inline",verticalAlign:"middle"}}></PeopleIcon></button>
-      
+
           <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} ><ChatIcon  style = {{display: "inline",verticalAlign:"middle"}}></ChatIcon></button>
+
+          <div class="btn-group dropup">
+            <button type="button" className={darkMode?"btn btn-dark dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <InfoIcon style = {{display: "inline",verticalAlign:"middle"}}></InfoIcon></button>
+            <div class={darkMode?"dropdown-menu dropdown-menu-right dark-mode":"dropdown-menu dropdown-menu-right"}>
+            <div ><h3>Meet Details</h3></div>
+            <div class="dropdown-divider"></div>
+            <div>
+            <h4>Url: {window.location.href}</h4>
+            </div>
+            <div class="dropdown-divider"></div>
+            <div>
+            <h4>Description: </h4>
+            </div>
+            </div>
+          </div>
         </div>
 
       </nav>

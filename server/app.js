@@ -78,6 +78,15 @@ app.get('/api/tools/getCallUserList',(req,res)=>{
     res.json({message:'bad query, url query parameter missing in url'});
   }
 });
+
+app.get('/api/call/getCallChat',(req,res)=>{
+  if(req.query.url){res.json(func.getCallChat(req,req.query.url));}
+  else{
+    res.statusCode=400;
+    res.json({message:'bad query, url query parameter missing in url'});
+  }
+});
+
 //POST requests
 app.post('/api/account/register',(req,res)=>{
   func.register_user(req.body,res);
@@ -125,6 +134,14 @@ app.post('/api/call/endCall',(req,res)=>{
 app.post('/api/call/verifyUserInCall',(req,res)=>{
   if(req.body && req.body.callUrl){
     res.json(func.verifyInCall(req,req.body.callUrl));
+  }else{
+    res.status(400).send('Bad Query');
+  }
+});
+
+app.post('/api/call/postMessage',(req,res)=>{
+  if(req.body && req.body.callUrl){
+    res.json(func.postMessageInCall(req,req.body.callUrl,req.body.message));
   }else{
     res.status(400).send('Bad Query');
   }

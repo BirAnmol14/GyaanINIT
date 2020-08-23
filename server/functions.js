@@ -4,8 +4,8 @@ const md5=require('md5');
 const zxcvbn=require('zxcvbn');
 
 const registered_users=[];//{email,name,uid,password,profilePic}
-const calls=[];//{url,password,admin_email,users(only emails)}
-
+const calls=[];//{url,password,admin_email,users(only emails),chats}
+//chats  -> [{user_email,message,time}]
 module.exports={
   register_user:register_user,
   login:login,
@@ -19,7 +19,9 @@ module.exports={
   joinCall:joinCall,
   getCallUserList:getCallUserList,
   endCall:endCall,
-  verifyInCall:verifyInCall
+  verifyInCall:verifyInCall,
+  postMessageInCall:postMessageInCall,
+  getCallChat:getCallChat
 }
 
 function User(name,email,password){
@@ -141,10 +143,10 @@ function generateCall(url,password,admin_email,req){
         }
       }
       url+=(count);
-      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[]});
+      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[],chats:[]});
       return {status:true,url:url}
     }else{
-      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[]});
+      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[],chats:[]});
       return {status:true,url:url}
     }
   }
@@ -261,5 +263,59 @@ function verifyInCall(req,callUrl){
   }
   else{
     return {status:false,message:"No Such Call exists"};
+  }
+}
+
+function postMessageInCall(req,callUrl,message){
+  var test=verifyInCall(req,callUrl);
+  if(test.status===false){
+    return {status:false,message:test.message}
+  }else{
+    let user=req.session.user;
+    if(!user){
+      return {status:false,message:"User not Logged in"}
+    }
+    else{
+      var found=-1;
+      for(var i=0;i<calls.length;i++){
+        if(calls[i].url===callUrl){
+          found=i;
+          break;
+        }
+      }
+      if(found===-1){
+        return {status:false,message:"No Such Call exists"}
+      }else{
+        calls[found].chats.push({user_email:user.email,message:message,time: new Date()});
+        return {status:true, message:"Message Successfully Posted"}
+      }
+    }
+  }
+}
+
+function getCallChat(req,url){
+  let test=verifyInCall(req,url);
+  if(test.status===false){
+    return {status:false,chats:[],message:test.message}
+  }
+  else{
+    var found=-1;
+    for(var i=0;i<calls.length;i++){
+      if(calls[i].url===url){
+        found=i;
+        break;
+      }
+    }
+    if(found===-1){
+      return {status:false,chats:[],message:"No Such Call exists"}
+    }else{
+      var chats=calls[found].chats;
+      chats.sort(function (a,b){return a.time.getTime()-b.time.getTime()});
+      var chatList=[]
+      for(var i=0;i<chats.length;i++){
+        chatList.push({user:getUserInfo(chats[i].user_email).info,message:chats[i].message,time:chats[i].time});
+      }
+      return {status:true, message:"success",chats:chatList}
+    }
   }
 }

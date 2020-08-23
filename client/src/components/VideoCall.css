@@ -9,7 +9,7 @@ overflow-y: scroll;
     display: inline-block;
     border-bottom: 1px dotted black;
   }
-  
+
   .tooltip .tooltiptext {
     visibility: hidden;
     width: 120px;
@@ -18,12 +18,12 @@ overflow-y: scroll;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
-  
+
     /* Position the tooltip */
     position: absolute;
     z-index: 1;
   }
-  
+
   .tooltip:hover .tooltiptext {
     visibility: visible;
   }
@@ -54,7 +54,7 @@ overflow-y: scroll;
      font-size: 30px;
      margin: 10px;
   }
-  
+
   .resize.horizontal {
     resize: horizontal;
   }
@@ -85,3 +85,14 @@ overflow-y: scroll;
     border: 1px solid #FF0000;
     position: absolute;
 }
+
+.chat-list{
+  height: 85%;
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  overflow: -moz-scrollbars-none;
+  z-index: 1;
+}
+.chat-list::-webkit-scrollbar {
+                display: none;
+            }

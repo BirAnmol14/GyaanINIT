@@ -113,6 +113,26 @@ GET requests
                 ] - a list of user objects sorted by lexicographic order on Name
       }
 
+7. Get Chat in a call
+  -END POINT: /api/call/getCallChat?url={meet url}
+  -METHOD: 'GET'
+  -RESPONSE:
+    -statusCode: 200
+    - Content-Type:JSON
+    - SCHEMA: An Object
+      {
+          status: boolean ,
+          message: String ,
+          chats:[
+                  {
+                    Chat object
+                    -user: Object {name: String, email: String, uid: String ,profilePic: String},
+                    -message: String,
+                    -time: JavaScript Date Object
+                  }, ...
+                ] - a list of Chat objects sorted by timestamp in ascending order
+      }
+
 
 POST requests
 1. Registering a User
@@ -205,6 +225,19 @@ POST requests
 
 7. End Call
   -END POINT: /api/call/verifyUserInCall
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - callUrl: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+
+8. Post Message in Call
+  -END POINT: /api/call/postMessage
   -HEADERS: "Content-Type": "application/json"
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:

@@ -10,6 +10,8 @@
   const getVideoCallUsers_endpoint='/api/tools/getCallUserList?url=';
   const endCall_Endpoint='/api/call/endCall';
   const verifyInCall_endpoint='/api/call/verifyUserInCall';
+  const postCallMessage_endpoint='/api/call/postMessage';
+  const getCallMessageList_endpoint='/api/call/getCallChat?url=';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -21,5 +23,7 @@
     joinCall:join_meet_endpoint,
     getVideoCallUsers:getVideoCallUsers_endpoint,
     endCall:endCall_Endpoint,
-    verifyUserInCall:verifyInCall_endpoint
+    verifyUserInCall:verifyInCall_endpoint,
+    postChatMessage:postCallMessage_endpoint,
+    getCallChat:getCallMessageList_endpoint
    }
