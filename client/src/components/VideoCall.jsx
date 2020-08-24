@@ -90,10 +90,18 @@ function VideoCall(props) {
  var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"left"});
  var [ toggle4,changeToggle4]=React.useState({width:"18%",height: "80%",marginLeft: "10px",marginRight: "10px",
- overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"right"});
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"});
  var [ toggle5,changeToggle5]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s"});
  var [param,changeParam] = React.useState(0);
+ var [paramBool,changeParamBool] = React.useState(false);
+
+ var [ toggle9,changeToggle9]=React.useState({width: "100%",height:"25%",marginLeft: "",marginRight: "",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"});
+ 
+ var [divHeight,setDivHeight]=React.useState("0%");
+ var [divWidth,setDivWidth]=React.useState("0%");
+
  const [inCall,setInCall]=React.useState(false);
  const [adminUser,setAdmin]=React.useState([]);
  const [adminBool,checkAdmin]=React.useState();
@@ -113,6 +121,7 @@ function VideoCall(props) {
  const [newMessageCount,setNewMessageCount]=React.useState(false);
  const [getUsers,setGetUsers]=React.useState(false);
  const [backgroundMessageCheckId,setBackgroundMessageCheckId]=React.useState(null);
+ const [openWindows,setOpenWindows]=React.useState([]);
  const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: '#f5f5f9',
@@ -125,9 +134,11 @@ function VideoCall(props) {
 
 const divsadded = () =>
 {
-
+  //console.log(openWindows);
+ 
     switch(param){
     case 1:
+      
       return (
     <div style={toggle3}>
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -152,6 +163,9 @@ const divsadded = () =>
         </a>
       </div>
     </div>);
+    
+     
+    
 
     case 2:
       return (
@@ -170,7 +184,13 @@ const divsadded = () =>
     case 4:
       return (
     <div style={toggle3}>
-
+4th white board
+    </div>
+    );
+    case 5:
+      return (
+    <div style={toggle3}>
+5th draw
     </div>
     );
 
@@ -180,9 +200,12 @@ const divsadded = () =>
 
           </div>);
     }
+    
   }
 
 
+  
+  
  function toggle_micState(){
 
     mic?changeMicState(false):changeMicState(true) ;
@@ -252,6 +275,7 @@ async function endCall(){
 function toggleDarkMode() {
   setDarkMode(!darkMode);
 }
+
 
 async function changeToggle_(){
 
@@ -489,19 +513,79 @@ React.useEffect(()=>{
   }
   runner();
 },[props.logged]);
+async function changeParamBool(){
+  changeParamBool(false);
+}
+
+
 
 return (
 
     inCall===false?<div/>:
     <div className="full-height">
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
-        <div style={{width:"100%" ,height:"90%" , overflow:"hidden"}}>
+        <div style={{width:"100%" ,marginTop:"50px",marginBottom:"20px",height:"100%" , overflow:"hidden"}}>
+        
         {
-          divsadded()
-        }
-        <div style={toggle4}>
+          paramBool?
+         divsadded():<div style={toggle3}>
 
+
+          </div>
+         
+        }
+        
+        
+        <div style={toggle4}>
+          {openWindows.indexOf(1)!==-1&&param!==1?
+          <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(1);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==1) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr ,1]});changeParamBool(true);}}  >  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img class="d-block w-100" src={crousel} alt="First slide"/>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src={crousel}  alt="Second slide"/>
+          </div>
+          <div class="carousel-item">
+            <img class="d-block w-100" src={crousel}  alt="Third slide"/>
+          </div>
         </div>
+        <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="sr-only">Previous</span>
+        </a>
+        <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+       </div>:null}
+    {openWindows.indexOf(2)!==-1&&param!==2?
+    <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(2);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==2) ;var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");} console.log(divHeight);return [...arr,2]});changeParamBool(true);}}  > <img class="d-block w-100" src={desktop} alt="screen share slide"/>
+        </div>:null}
+    {openWindows.indexOf(3)!==-1&&param!==3?
+    <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(3);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==3) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,3]});changeParamBool(true);}}  > <iframe width="100%" height="100%"
+        src="https://www.youtube.com/embed/tgbNymZ7vqY" title="ytVideo">
+        </iframe>
+     </div>:null}
+    {openWindows.indexOf(4)!==-1&&param!==4?
+    <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(4);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==4) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,4]});changeParamBool(true);}}  >4th
+       
+    </div>:null}
+    {openWindows.indexOf(5)!==-1&&param!==5?
+    <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
+ overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(5);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==5) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,5]});changeParamBool(true);}}  >5th
+        </div>:null}
+          
+   
+   
+       
+          </div>
+        
         </div>
 
       {getUsers?<div style={toggle}>
@@ -562,15 +646,15 @@ return (
       <button type="button" className={darkMode?"btn btn-dark dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       <QueuePlayNextRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}></QueuePlayNextRoundedIcon></button>
       <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
-        <button type = "button" onClick={()=>changeParam(1)} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"}><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
+        <button type = "button" onClick={()=>{changeParam(1);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==1) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,1]});changeParamBool(true);}} id = "presentation" className={darkMode?"dropdown-item dark-mode":"dropdown-item"}><DescriptionRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></DescriptionRoundedIcon>Presentation</button>
           <div class="dropdown-divider"></div>
-        <button type = "button" onClick={()=>changeParam(2)} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
+        <button type = "button" onClick={()=>{changeParam(2);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==2) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,2]});changeParamBool(true);}} id = "screenshare" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><ScreenShareRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></ScreenShareRoundedIcon>Screenshare</button>
           <div class="dropdown-divider"></div>
-        <button type = "button" onClick={()=>changeParam(3)} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
+        <button type = "button" onClick={()=>{changeParam(3);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==3) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,3]});changeParamBool(true);}} id = "videos" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><LiveTvRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></LiveTvRoundedIcon>Videos</button>
           <div class="dropdown-divider"></div>
-        <button type = "button" onClick={()=>changeParam(4)} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
+        <button type = "button" onClick={()=>{changeParam(4);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==4) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,4]});changeParamBool(true); }} id = "whiteboard" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><BorderColorRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></BorderColorRoundedIcon>Whiteboard</button>
           <div className="dropdown-divider"></div>
-        <button type = "button"  onClick={()=>changeParam(5)} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
+        <button type = "button"  onClick={()=>{changeParam(5);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==5) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,5]});changeParamBool(true);}} id = "draw" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><GestureRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></GestureRoundedIcon>Draw</button>
       </div>
     </div>
     {recording?<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RemoveCircleOutlineIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'10px'}}/>{prettyPrintTime()}</button>:<button type="button" className={darkMode?"btn btn-dark ml-2":"btn btn-light ml-2"} onClick={toggleRecording}><RadioButtonCheckedIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>}
