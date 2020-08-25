@@ -1,4 +1,5 @@
 //jshint esversion:8
+  const serverUrl='http://localhost:8080'
   const login_endpoint='/api/account/login';
   const register_endpoint='/api/account/register';
   const logout_endpoint='/api/account/logout';
@@ -12,6 +13,7 @@
   const verifyInCall_endpoint='/api/call/verifyUserInCall';
   const postCallMessage_endpoint='/api/call/postMessage';
   const getCallMessageList_endpoint='/api/call/getCallChat?url=';
+  const socketVideoCall_Endpoint=serverUrl+'/api/videoCallSocket';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -25,5 +27,6 @@
     endCall:endCall_Endpoint,
     verifyUserInCall:verifyInCall_endpoint,
     postChatMessage:postCallMessage_endpoint,
-    getCallChat:getCallMessageList_endpoint
+    getCallChat:getCallMessageList_endpoint,
+    socketEndpoint:socketVideoCall_Endpoint
    }

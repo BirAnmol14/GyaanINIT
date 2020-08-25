@@ -33,7 +33,7 @@ import desktop from './desktop.jpg';
 import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
 import Badge from '@material-ui/core/Badge';
-
+import socketIOClient from "socket.io-client";
 
 function initDraw(canvas) {
   var mouse = {
@@ -84,7 +84,7 @@ function initDraw(canvas) {
 }
 
 function VideoCall(props) {
-
+ const [appSocket,setAppSocket]=React.useState(null);
  var [ toggle,changeToggle]=React.useState({width:"0px",height: "90%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
  var [ toggle2,changeToggle2]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "80%",marginLeft: "10px",marginRight: "10px",
@@ -95,13 +95,10 @@ function VideoCall(props) {
  var [ toggle6,changeToggle6]=React.useState({width:"0px",height: "92%",top:"0px",right:"0px",position:"fixed", transition: "0.1s"});
  var [param,changeParam] = React.useState(0);
  var [paramBool,changeParamBool] = React.useState(false);
-
  var [ toggle9,changeToggle9]=React.useState({width: "100%",height:"25%",marginLeft: "",marginRight: "",
  overflow: "hidden",border: "1px solid black",transition: "0.1s"});
- 
  var [divHeight,setDivHeight]=React.useState("0%");
  var [divWidth,setDivWidth]=React.useState("0%");
-
  const [inCall,setInCall]=React.useState(false);
  const [adminUser,setAdmin]=React.useState([]);
  const [adminBool,checkAdmin]=React.useState();
@@ -112,15 +109,9 @@ function VideoCall(props) {
  const [recording,setRecording]=React.useState(false);
  const [recTime,setRecTime]=React.useState({hrs:0,min:0,sec:0});
  const [timerId,setTimerId]=React.useState(null);
- const [userListTimerId,setUserListTimerId]=React.useState(null);
- const [chatTimerId,setChatTimerId]=React.useState(null);
  const [chatText,setChatText]=React.useState("");
  const [chats,setChats]=React.useState([]);
- const [getChats,setGetChats]=React.useState(false);
  const [newMessage,setNewMessage]=React.useState(false);
- const [newMessageCount,setNewMessageCount]=React.useState(false);
- const [getUsers,setGetUsers]=React.useState(false);
- const [backgroundMessageCheckId,setBackgroundMessageCheckId]=React.useState(null);
  const [openWindows,setOpenWindows]=React.useState([]);
  const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
@@ -135,10 +126,10 @@ function VideoCall(props) {
 const divsadded = () =>
 {
   //console.log(openWindows);
- 
+
     switch(param){
     case 1:
-      
+
       return (
     <div style={toggle3}>
         <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
@@ -163,9 +154,9 @@ const divsadded = () =>
         </a>
       </div>
     </div>);
-    
-     
-    
+
+
+
 
     case 2:
       return (
@@ -200,12 +191,12 @@ const divsadded = () =>
 
           </div>);
     }
-    
+
   }
 
 
-  
-  
+
+
  function toggle_micState(){
 
     mic?changeMicState(false):changeMicState(true) ;
@@ -247,7 +238,6 @@ function prettyPrintTime(){
 }
 
 async function endCall(){
-  clearInterval(backgroundMessageCheckId);
   var temp=window.location.href.split('/');
   const body=JSON.stringify({callUrl:temp[temp.length-1]});
   const response=await fetch(ServerRoutes.endCall,{
@@ -270,22 +260,16 @@ async function endCall(){
   }
 }
 
-
-
 function toggleDarkMode() {
   setDarkMode(!darkMode);
 }
 
-
-async function changeToggle_(){
-
-if(toggle.width==="0px"){
-  fetchUserList();
-  changeToggle6((prev)=>({...prev,width:"0px"}));
-  setGetChats(false);
-  setGetUsers(true);
-}else{
-  setGetUsers(false);
+function changeToggle_(){
+if(toggle.width==='0px'){
+  changeToggle6((prevState) => ({
+    ...prevState,
+    width:"0px"
+  }));
 }
 toggle.width==="0px"?changeToggle((prevState) => ({
   ...prevState,
@@ -296,53 +280,19 @@ toggle.width==="0px"?changeToggle((prevState) => ({
   width:"0px"
 }))
 }
-async function fetchUserList(){
-  var temp=window.location.href.split('/');
-  var url=ServerRoutes.getVideoCallUsers+temp[temp.length-1];
-  const response=await fetch(url,{
-  method:'GET',
-  credentials: 'include'
-});
-const status=await response.status;
-if(status===200){
-  const res=await response.json();
+
+function SetUserList(res){
   if(res.validUrl){
     setAdmin(res.users.filter(user=>user.email===res.admin_email));
     setList(res.users.filter(user=>user.email!==res.admin_email));
   }
-
-}else{
-  alert('Erorr in fetching userList '+status);
-  setList([]);
 }
-}
-React.useEffect(()=>{
-  if(getUsers){
-    var timerId=setInterval(()=>{
-      fetchUserList();
-    },2*1000);
-    setUserListTimerId(timerId);
-  }else{
-    clearInterval(userListTimerId);
-  }
-},[getUsers]);
 
-async function changeToggle6_(){
-  setNewMessageCount(false);
-  if(toggle6.width==="0px"){
-    //clearInterval(backgroundMessageCheckId);
-    await fetchCallChat();
-    changeToggle((prev)=>({...prev,width:"0px"}));
-    setGetUsers(false);
-    setGetChats(true);
-    var chatsDiv=document.getElementById('chatsDiv');
-    chatsDiv.scrollTop=chatsDiv.scrollHeight;
-  }else{
-    setGetChats(false);
-    // var id=setInterval(()=>{
-    //   fetchCallChat();
-    // },0.5*1000);
-    // setBackgroundMessageCheckId(id);
+function changeToggle6_(){
+  if(toggle6.width==='0px'){
+    changeToggle((prevState) => ({
+      ...prevState,
+      width:"0px"}));
   }
   toggle6.width==="0px"?changeToggle6((prevState) => ({
     ...prevState,
@@ -353,46 +303,34 @@ async function changeToggle6_(){
     width:"0px"
   }));
 }
-async function fetchCallChat(){
-  var temp=window.location.href.split('/');
-  var url=ServerRoutes.getCallChat+temp[temp.length-1];
-  const response=await fetch(url,{
-    method:'GET',
-    credentials: 'include'
-  });
-  const status=await response.status;
-  if(status===200){
-    const res=await response.json();
+
+React.useEffect(()=>{
+  if(toggle6.width!=='0px'){
+    setNewMessage(false);
+    var chatsDiv=document.getElementById('chatsDiv');
+    chatsDiv.scrollTop=chatsDiv.scrollHeight;
+  }
+},[toggle6.width]);
+
+function setCallChat(res){
     if(res.status===true){
-      setChats((prev)=>{if(prev.length!==res.chats.length){setNewMessage(true);}else{setNewMessage(false)};return(res.chats)});
+      if(res.chats.length!==chats.length){
+        setChats(res.chats);
+      }
     }else{
       alert(res.message);
       window.location.href='/';
     }
-  }else{
-    alert('Error '+status);
-  }
 }
-// React.useEffect(()=>{
-//   if(getChats){
-//     var timerId=setInterval(()=>{
-//       fetchCallChat();
-//       setChatTimerId(timerId);
-//     },0.5*1000);
-//     setChatTimerId(timerId);
-//   }else{
-//     clearInterval(chatTimerId);
-//   }
-// },[getChats]);
-
 React.useEffect(()=>{
-  if(newMessage && getChats){
-    setNewMessageCount(false);
+  if(toggle6.width!=='0px'){
+    setNewMessage(false);
     var chatsDiv=document.getElementById('chatsDiv');
     chatsDiv.scrollTop=chatsDiv.scrollHeight;
   }
-  else if(newMessage && !getChats){setNewMessageCount(true)}
-},[newMessage]);
+  else if(chats.length!==0){setNewMessage(true);}
+},[chats]);
+
 
 function changeToggle2_(){
 
@@ -429,9 +367,10 @@ async function postChatMessage(){
   if(status===200){
     const res=await response.json();
     if(res.status===true){
-      await fetchCallChat();
-      var chatsDiv=document.getElementById('chatsDiv');
-      chatsDiv.scrollTop=chatsDiv.scrollHeight;
+      let socket=appSocket;
+      if(socket){
+        socket.emit('messagePosted');
+      }
     }else{
       alert(res.message);
       window.location.href='/';
@@ -493,12 +432,7 @@ function admin_helper(){
     return false;
   }
 }
-function BackgroundMessageCheck(){
-  var id=setInterval(()=>{
-    fetchCallChat();
-  },0.5*1000);
-  setBackgroundMessageCheckId(id);
-}
+
  React.useEffect(()=>{
    async function startUp(){
      await verifyCall();
@@ -509,10 +443,30 @@ React.useEffect(()=>{
   async function runner(){
     await check_Admin();
     await checkAdminHelper(admin_helper());
-    await BackgroundMessageCheck();
   }
   runner();
+  if(props.logged.status===true){
+    const socket=socketIOClient(ServerRoutes.socketEndpoint);
+    setAppSocket(socket);
+      var callUrl=window.location.href.split('/');
+      socket.emit('join',{user:props.logged.user.email,callUrl:callUrl[callUrl.length-1]});
+      socket.on('join',(data)=>{
+        alert(data.message);
+        //Listen to all other joining messages
+      })
+      socket.on('left',(data)=>{
+        //Listen to all left messages
+        alert(data.message);
+      });
+      socket.on('userList',(data)=>{
+          SetUserList(data);
+      });
+      socket.on('chatList',(data)=>{
+        setCallChat(data);
+      });
+    }
 },[props.logged]);
+
 async function changeParamBool(){
   changeParamBool(false);
 }
@@ -525,17 +479,17 @@ return (
     <div className="full-height">
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
         <div style={{width:"100%" ,marginTop:"50px",marginBottom:"20px",height:"100%" , overflow:"hidden"}}>
-        
+
         {
           paramBool?
          divsadded():<div style={toggle3}>
 
 
           </div>
-         
+
         }
-        
-        
+
+
         <div style={toggle4}>
           {openWindows.indexOf(1)!==-1&&param!==1?
           <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
@@ -574,21 +528,21 @@ return (
     {openWindows.indexOf(4)!==-1&&param!==4?
     <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
  overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(4);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==4) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,4]});changeParamBool(true);}}  >4th
-       
+
     </div>:null}
     {openWindows.indexOf(5)!==-1&&param!==5?
     <div style={{width: "100%",height:"25%",marginLeft: "",marginRight: "",
  overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(5);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==5) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");}console.log(divHeight);return [...arr,5]});changeParamBool(true);}}  >5th
         </div>:null}
-          
-   
-   
-       
+
+
+
+
           </div>
-        
+
         </div>
 
-      {getUsers?<div style={toggle}>
+      <div style={toggle}>
       <ul className="list-group">
       {
         adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index}  style={darkMode?{borderBottom:'2px solid white',padding:'0px'}:{borderBottom:'2px solid black',padding:'0px'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><HtmlTooltip
@@ -613,12 +567,13 @@ return (
       </HtmlTooltip></li>})
       }
       </ul>
-      </div>:null}
+      </div>
 
-{getChats?<div style={darkMode?{...toggle6,backgroundColor:"#343A40"}:{...toggle6,backgroundColor:"white"}}>
+<div style={darkMode?{...toggle6,backgroundColor:"#343A40"}:{...toggle6,backgroundColor:"white"}}>
       <div style={darkMode?{backgroundColor:" #343A40;", height:"100%"}:{backgroundColor:"white", height:"100%"}}>
       <div className="list-group chat-list" id="chatsDiv" style={darkMode?{backgroundColor:" #343A40;"}:{backgroundColor:"white"}}>
       {
+
         chats.map((chat,index)=>{return <div id={index} key={index} className={darkMode?"list-group-item dark-mode list-group-item-action flex-column align-items-start":"list-group-item list-group-item-action flex-column align-items-start"}>
             <div className="d-flex">
               <img src={chat.user.profilePic} alt="profile" style={{height:'1.5rem',width:'1.5rem',marginLeft:'0px',marginRight:'5px',display:"inline",verticalAlign:"middle"}}/>
@@ -629,6 +584,7 @@ return (
           </div>
           }
         )
+
       }
       </div>
 <div style={{bottom:"5%",marginBottom:"1.5%" ,backgroundColor:"",position:"fixed",zIndex:"2",height:"15%"}} className={darkMode?"dark-mode":null}>
@@ -637,7 +593,6 @@ return (
 </div>
       </div>
       </div>
-:null}
       <nav className={darkMode?"navbar fixed-bottom navbar-dark bg-dark":"navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
       {adminBoolHelper===true?<div className="d-flex justify-content-start">
 {darkMode?  <button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/></button>:<button type='button' className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon  style = {{display: "inline",verticalAlign:"middle"}}/> </button>}
@@ -675,7 +630,7 @@ return (
         <div class="d-flex justify-content-end">
           <button type="button" onClick={changeToggle_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><PeopleIcon  style = {{display: "inline",verticalAlign:"middle"}}></PeopleIcon></button>
 
-          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><Badge variant={newMessageCount?"dot":null} color="error">
+          <button type="button" onClick={changeToggle6_} className={darkMode?"btn btn-dark  ml-2":"btn btn-light  ml-2"}><Badge variant={newMessage?"dot":null} color="error">
   <ChatIcon  style = {{display: "inline",verticalAlign:"middle"}}></ChatIcon></Badge></button>
 
           <div class="btn-group dropup">
