@@ -154,16 +154,16 @@ app.post('/api/call/postMessage',(req,res)=>{
 
 
 //Socket namespace for videoCall
+var map=new Map();
 var nsp = io.of('/api/videoCallSocket');
 nsp.on('connection', function(socket) {
-   var map=new Map();
    socket.on('join',(object)=>{
      //Object has {user:Email of the user,callUrl: room where we have to send the user)
      map.set(socket.id,object);
      socket.join(object.callUrl);
      socket.broadcast.to(object.callUrl).emit('join',{message:func.getUserInfo(object.user).info.name+" has joined"});
      nsp.to(object.callUrl).emit('userList',videoCallFunc.getCallUserList(object.callUrl));
-     nsp.to(object.callUrl).emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
+     socket.emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
    });
    socket.on('messagePosted',()=>{
      var obj=map.get(socket.id);
