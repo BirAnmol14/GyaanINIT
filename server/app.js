@@ -4,8 +4,13 @@ const parser=require('body-parser');
 const https=require('https');
 const secrets=require('./secrets.js');
 const func=require('./functions.js');
+const videoCallFunc=require('./videoCallSocketFunctions.js');
 const session = require('express-session');
 const { verify } = require('crypto');
+const socketIo = require("socket.io");
+const server =require('http').createServer(app);
+const io = socketIo(server);
+
 require('dotenv').config();
 
 app.use(express.json());
@@ -33,7 +38,7 @@ app.use(function(req, res, next) {
   next();
 });
 
-app.listen(process.env.PORT,(req,res)=>{
+server.listen(process.env.PORT,(req,res)=>{
   console.log('Server Started on localhost: '+ process.env.PORT);
 });
 
@@ -145,4 +150,32 @@ app.post('/api/call/postMessage',(req,res)=>{
   }else{
     res.status(400).send('Bad Query');
   }
+});
+
+
+//Socket namespace for videoCall
+var nsp = io.of('/api/videoCallSocket');
+nsp.on('connection', function(socket) {
+   var map=new Map();
+   socket.on('join',(object)=>{
+     //Object has {user:Email of the user,callUrl: room where we have to send the user)
+     map.set(socket.id,object);
+     socket.join(object.callUrl);
+     socket.broadcast.to(object.callUrl).emit('join',{message:func.getUserInfo(object.user).info.name+" has joined"});
+     nsp.to(object.callUrl).emit('userList',videoCallFunc.getCallUserList(object.callUrl));
+     nsp.to(object.callUrl).emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
+   });
+   socket.on('messagePosted',()=>{
+     var obj=map.get(socket.id);
+     nsp.to(obj.callUrl).emit('chatList',videoCallFunc.getCallMessages(obj.callUrl));
+   });
+   socket.on('disconnect',()=>{
+     var obj=map.get(socket.id);
+     if(obj){
+       videoCallFunc.removeFromCall(obj.callUrl,obj.user);
+       nsp.to(obj.callUrl).emit('left',{message:func.getUserInfo(obj.user).info.name+" has left"});
+       nsp.to(obj.callUrl).emit('userList',videoCallFunc.getCallUserList(obj.callUrl));
+   }
+     map.delete(socket.id);
+   })
 });

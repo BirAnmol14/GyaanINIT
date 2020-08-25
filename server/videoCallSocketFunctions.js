@@ -1,0 +1,58 @@
+const func=require('./functions.js');
+module.exports={
+  removeFromCall:removeFromCall,
+  getCallUserList:getCallUserList,
+  getCallMessages:getCallMessages
+}
+function removeFromCall(url,email){
+  var callInfo=func.getCallUserList(url);
+  if(callInfo.validUrl===true){
+      var userList=callInfo.users;
+      var found=false;
+      for(var j=0;j<userList.length;j++){
+        if(userList[j].email===email){
+          found=true;
+          break;
+        }
+      }
+      if(!found){
+        return {status:false,message:'Current user not in this call'}
+      }
+    for(var i=0;i<func.calls.length;i++){
+      if(func.calls[i].url===url){
+        func.calls[i].users=func.calls[i].users.filter(user_email=>user_email!==email);
+        if(func.calls[i].users.length===0){
+          func.calls[i].chats=[];
+        }
+        return {status:true,message:"User removed successfully from the call"}
+      }
+    }
+    return {status:false,message:"No Such Call exists"}
+  }else{
+    return {status:false,message:"No Such Call exists"}
+  }
+}
+function getCallUserList(url){
+  return func.getCallUserList(url);
+}
+function getCallMessages(url){
+  var calls=func.calls;
+
+  var found=-1;
+  for(var i=0;i<calls.length;i++){
+    if(calls[i].url===url){
+      found=i;break;
+    }
+  }
+  if(found!==-1){
+    var chats=calls[found].chats;
+    chats.sort(function (a,b){return a.time.getTime()-b.time.getTime()});
+    var chatList=[]
+    for(var i=0;i<chats.length;i++){
+      chatList.push({user:func.getUserInfo(chats[i].user_email).info,message:chats[i].message,time:chats[i].time});
+    }
+    return {chats:chatList,status:true,message:"Successfully retrieved"}
+  }else{
+    return {chats:[],status:false,message:"Call not found"}
+  }
+}

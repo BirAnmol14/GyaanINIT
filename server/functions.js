@@ -21,7 +21,8 @@ module.exports={
   endCall:endCall,
   verifyInCall:verifyInCall,
   postMessageInCall:postMessageInCall,
-  getCallChat:getCallChat
+  getCallChat:getCallChat,
+  calls:calls
 }
 
 function User(name,email,password){
