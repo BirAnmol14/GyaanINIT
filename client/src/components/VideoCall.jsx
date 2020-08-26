@@ -1,7 +1,6 @@
 import React from 'react';
 import './VideoCall.css';
-
-
+import Toast from './toast/Toast.jsx';
 
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -113,6 +112,7 @@ function VideoCall(props) {
  const [chats,setChats]=React.useState([]);
  const [newMessage,setNewMessage]=React.useState(false);
  const [openWindows,setOpenWindows]=React.useState([]);
+ const [toastMsg,setToastMsg]=React.useState(" ");
  const HtmlTooltip = withStyles((theme) => ({
   tooltip: {
     backgroundColor: '#f5f5f9',
@@ -451,12 +451,12 @@ React.useEffect(()=>{
       var callUrl=window.location.href.split('/');
       socket.emit('join',{user:props.logged.user.email,callUrl:callUrl[callUrl.length-1]});
       socket.on('join',(data)=>{
-        alert(data.message);
+        setToastMsg(data.message);
         //Listen to all other joining messages
       })
       socket.on('left',(data)=>{
-        //Listen to all left messages
-        alert(data.message);
+        //Listen to all other leaving messages
+        setToastMsg(data.message);
       });
       socket.on('userList',(data)=>{
           SetUserList(data);
@@ -466,6 +466,18 @@ React.useEffect(()=>{
       });
     }
 },[props.logged]);
+React.useEffect(()=>{
+  if(toastMsg.length!==0){
+    display();
+  }
+},[toastMsg]);
+function display(){
+var x = document.getElementById("snackbar");
+if(x){
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); setToastMsg("");}, 3000);
+}
+}
 
 async function changeParamBool(){
   changeParamBool(false);
@@ -477,6 +489,7 @@ return (
 
     inCall===false?<div/>:
     <div className="full-height">
+    <Toast message={toastMsg}/>
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
         <div style={{width:"100%" ,marginTop:"50px",marginBottom:"20px",height:"100%" , overflow:"hidden"}}>
 
