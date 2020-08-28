@@ -591,10 +591,10 @@ return (
 
 <div style={darkMode?{...toggle6,backgroundColor:"#343A40"}:{...toggle6,backgroundColor:"white"}}>
       <div style={darkMode?{backgroundColor:" #343A40;", height:"100%"}:{backgroundColor:"white", height:"100%"}}>
-      <div className="list-group chat-list" id="chatsDiv" style={darkMode?{backgroundColor:" #343A40;"}:{backgroundColor:"white"}}>
+      <div className={darkMode?"list-group chat-list dark-mode":"list-group chat-list"} id="chatsDiv">
       {
 
-        chats.map((chat,index)=>{return <div id={index} key={index} className={darkMode?"list-group-item dark-mode list-group-item-action flex-column align-items-start":"list-group-item list-group-item-action flex-column align-items-start"}>
+        chats.map((chat,index)=>{return <div id={index} key={index}  style={darkMode?{borderBottom:'1px solid white',padding:'1em'}:{borderBottom:'1px solid black',padding:'1emm'}} className={darkMode?"list-group-item dark-mode list-group-item-action flex-column align-items-start":"list-group-item list-group-item-action flex-column align-items-start"} >
             <div className="d-flex">
               <img src={chat.user.profilePic} alt="profile" style={{height:'1.5rem',width:'1.5rem',marginLeft:'0px',marginRight:'5px',display:"inline",verticalAlign:"middle"}}/>
               <small style={{display:"inline",verticalAlign:"middle"}}>{chat.user.name}</small>
