@@ -1,6 +1,7 @@
 import React from 'react';
 import './VideoCall.css';
 import Toast from './toast/Toast.jsx';
+import audioSrc from './audio/sms-alert.mp3';
 
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
@@ -329,7 +330,7 @@ React.useEffect(()=>{
     var chatsDiv=document.getElementById('chatsDiv');
     chatsDiv.scrollTop=chatsDiv.scrollHeight;
   }
-  else if(chats.length!==0){setNewMessage(true);}
+  else if(chats.length!==0){setNewMessage(true);var y=document.getElementById("noti_audio"); if(y){y.play();}}
 },[chats]);
 
 
@@ -494,6 +495,7 @@ return (
     inCall===false?<div/>:
     <div className="full-height">
     <Toast message={toastMsg}/>
+    <audio src={audioSrc} style={{display:"none"}} id="noti_audio"/>
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
         <div style={{width:divWidth,marginTop:"50px",marginBottom:"20px",height:"100%" , overflow:"hidden"}}>
 
