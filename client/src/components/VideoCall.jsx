@@ -34,6 +34,12 @@ import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
 import Badge from '@material-ui/core/Badge';
 import socketIOClient from "socket.io-client";
+import MoreVertIcon from '@material-ui/icons/MoreVert';
+import StarRateIcon from '@material-ui/icons/StarRate';
+import VoiceOverOffIcon from '@material-ui/icons/VoiceOverOff';
+import NetworkCellIcon from '@material-ui/icons/NetworkCell';
+import QuestionAnswerRoundedIcon from '@material-ui/icons/QuestionAnswerRounded';
+import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Canvas from "./Canvas.jsx"
 
 function initDraw(canvas) {
@@ -86,7 +92,7 @@ function initDraw(canvas) {
 
 function VideoCall(props) {
  const [appSocket,setAppSocket]=React.useState(null);
- var [ toggle,changeToggle]=React.useState({width:"0px",height: "90%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
+ var [ toggle,changeToggle]=React.useState({width:"auto",height: "90%",top:"0px",right:"0px",position:"fixed", transition: "0.1s"});//,overflowY:"scroll"});
  var [ toggle2,changeToggle2]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
  var [ toggle3,changeToggle3]=React.useState({width: "78%", backgroundColor:"white",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"left"});
@@ -276,7 +282,7 @@ if(toggle.width==='0px'){
 }
 toggle.width==="0px"?changeToggle((prevState) => ({
   ...prevState,
-  width:"120px",
+  width:"auto",
 
 })):changeToggle((prevState) => ({
   ...prevState,
@@ -499,14 +505,8 @@ return (
     <audio src={audioSrc} style={{display:"none"}} id="noti_audio"/>
   <div style={{right:"0",top:"0",position:"fixed"}}><div class="card" style={{padding:"2px",margin:"1px"}}><SignalCellular4BarIcon/>{}</div></div>
         <div style={{width:divWidth,marginTop:"50px",marginBottom:"20px",height:"100%" , overflow:"hidden"}}>
-
         {
-          paramBool?
-         divsadded():<div style={toggle3}>
-
-
-          </div>
-
+          paramBool? divsadded():<div style={toggle3}></div>
         }
 
 
@@ -556,38 +556,73 @@ return (
  overflow: "hidden",border: "1px solid black",transition: "0.1s"}} onClick={()=>{changeParam(5);setOpenWindows(prev=>{var arr=[]; arr=prev.filter(ele=>ele!==5) ; var length=arr.length ;{length===0?setDivHeight("0%"):setDivHeight(100/length+"%");length>=1?setDivDisplay("block"):setDivDisplay("none")}return [...arr,5]});changeParamBool(true);}}  >5th{divHeight}
         </div>:null}
 
-
-
-
           </div>
 
         </div>
 
-      <div style={toggle}>
-      <ul className="list-group">
+      <div  style={toggle}>
+        <div style ={{overflowX:"visible"}}>
+      <ul className="list-group" style={{width:"auto"}}>
       {
         adminUser.map((user,index)=>{return <li key={"admin "+index} id={"admin "+index}  style={darkMode?{borderBottom:'2px solid white',padding:'0px'}:{borderBottom:'2px solid black',padding:'0px'}}className={darkMode?"list-group-item dark-mode":"list-group-item"}><HtmlTooltip
         title={
           <React.Fragment>
-          <span>Admin</span><br/><span>{user.name}</span><br/><span>@{user.uid}</span><br/>email:{user.email}<span></span>
+          <span>@{user.uid}</span><br/>email:{user.email}<span></span>
           </React.Fragment>
         }
       >
-        <div style={{padding:"4px"}}><center><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle"}}/></center></div>
-      </HtmlTooltip></li>})
+
+        <div style={{padding:"2px"}}><p style = {{marginBottom:'0.1rem',fontSize:'20px' }}>  <div class="btn-group dropleft">
+    <a href = "#" style={{padding:"0px" ,color:"#000000" }} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <MoreVertIcon style ={{margin :"0px"}}></MoreVertIcon>
+    </a>
+  <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
+    <div>
+    <button type = "button" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><QuestionAnswerRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></QuestionAnswerRoundedIcon>Personal Chat</button>
+    </div>
+<div class="dropdown-divider"></div>
+    <div>
+      <button type = "button" className={darkMode?"dropdown-item dark-mode":"dropdown-item"}><VoiceOverOffIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></VoiceOverOffIcon>Force Mute</button>
+    </div>
+    <div class="dropdown-divider"></div>
+    <div>
+      <button type = "button" className={darkMode?"dropdown-item dark-mode":"dropdown-item"}><NetworkCellIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></NetworkCellIcon>Network Speed</button>
+    </div>
+    </div>
+
+
+    </div><img src={user.profilePic} alt="profile" style={{height:'2.5rem',width:'2.5rem',marginLeft:'5px',marginRight:'10px',display:"inline",verticalAlign:"middle"}}/><span style = {{verticalAlign:"middle"}}>{user.name.toUpperCase()}</span><StarRateIcon></StarRateIcon><br/></p>
+
+</div>
+
+  </HtmlTooltip></li>})
       }
       {
         userList.map((user,index)=>{return <li key={"user "+index} id={"user "+index} style={{padding:'0px'}} className={darkMode?"list-group-item dark-mode":"list-group-item"}><HtmlTooltip
         title={
           <React.Fragment>
-           <span>{user.name}</span><br/><span>@{user.uid}</span><br/>email:{user.email}<span></span>
+           <span>@{user.uid}</span><br/>email:{user.email}<span></span>
           </React.Fragment>
         }
       >
-          <div style={{padding:"4px"}}><center><img src={user.profilePic} alt="profile" style={{height:'4rem',width:'4rem',marginLeft:'0px',marginRight:'0px',display:"inline",verticalAlign:"middle"}}/></center></div>
+      <div style={{padding:"2px"}}><p style = {{marginBottom:'0.1rem',fontSize:'20px' }}>
+        <div class="btn-group dropleft">
+          <a href = "#" style={{padding:"0px" ,color:"#000000"}} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><MoreVertIcon style ={{margin :"0px"}}></MoreVertIcon></a>
+            <div class={darkMode?"dropdown-menu dark-mode":"dropdown-menu"}>
+              <div>
+                <button type = "button" className={darkMode?"dropdown-item dark-mode":"dropdown-item"} ><QuestionAnswerRoundedIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></QuestionAnswerRoundedIcon>Personal Chat</button>
+              </div>
+              <div class="dropdown-divider"></div>
+              <div>
+                <button type = "button" className={darkMode?"dropdown-item dark-mode":"dropdown-item"}><NetworkCellIcon style = {{display: "inline",verticalAlign:"middle",marginRight:'5px'}}></NetworkCellIcon>Network Speed</button>
+              </div>
+            </div>
+        </div>
+        <img src={user.profilePic} alt="profile" style={{height:'2.5rem',width:'2.5rem',marginLeft:'5px',marginRight:'10px',display:"inline",verticalAlign:"middle"}}/><span style = {{verticalAlign:"middle"}}>{user.name.toUpperCase()}</span><br/></p>
+      </div>
       </HtmlTooltip></li>})
       }
       </ul>
+    </div>
       </div>
 
 <div style={darkMode?{...toggle6,backgroundColor:"#343A40"}:{...toggle6,backgroundColor:"white"}}>
@@ -608,9 +643,10 @@ return (
 
       }
       </div>
-<div style={{bottom:"5%",marginBottom:"1.5%" ,backgroundColor:"",position:"fixed",zIndex:"2",height:"15%"}} className={darkMode?"dark-mode":null}>
-    <textarea className="textarea_custom" placeholder="Type message.." name="msg" required style={{width:"90%"}} value={chatText} onChange={(eve)=>{const {value}=eve.target; setChatText(value)}}></textarea>
-    <button type="button" className={"btn btn-primary  ml-2"} onClick={postChatMessage}><SendIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
+<div style={{bottom:"5%",marginBottom:"1.5%" ,backgroundColor:"",position:"fixed",zIndex:"2",height:"10%"}} className={darkMode?"dark-mode":null}>
+    <p><textarea className="textarea_custom" placeholder="Type message.." name="msg" required style={{width:"70%"}} value={chatText} onChange={(eve)=>{const {value}=eve.target; setChatText(value)}}></textarea>
+    <button type="button" className={"btn btn-primary  ml-1"} onClick={postChatMessage} style ={{marginBottom:"20%"}} ><SendIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
+    </p>
 </div>
       </div>
       </div>
@@ -657,15 +693,13 @@ return (
           <div class="btn-group dropup">
             <button type="button" className={darkMode?"btn btn-dark dropdown-toggle ml-2":"btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <InfoIcon style = {{display: "inline",verticalAlign:"middle"}}></InfoIcon></button>
-            <div class={darkMode?"dropdown-menu dropdown-menu-right dark-mode":"dropdown-menu dropdown-menu-right"}>
-            <div ><h3>Meet Details</h3></div>
-            <div class="dropdown-divider"></div>
+            <div class={darkMode?"dropdown-menu dropdown-menu-right dark-mode":"dropdown-menu dropdown-menu-right"} style={{padding:"10px"}}>
+            <div ><h4>Meet Details:</h4></div>
             <div>
-            <h4>Url: {window.location.href}</h4>
+            <h5>{window.location.href}</h5>
             </div>
-            <div class="dropdown-divider"></div>
             <div>
-            <h4>Description: </h4>
+            <h5>Description: Lorem Ipsum</h5>
             </div>
             </div>
           </div>

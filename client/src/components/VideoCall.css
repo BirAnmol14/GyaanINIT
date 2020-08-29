@@ -87,7 +87,7 @@ overflow-y: hidden;
 }
 
 .chat-list{
-  height: 85%;
+  height: 89%;
   overflow-y: scroll;
   -ms-overflow-style: none;
   overflow: -moz-scrollbars-none;
