@@ -34,6 +34,7 @@ import './VideoCall.css';
 import ServerRoutes from './ServerRoutes.js';
 import Badge from '@material-ui/core/Badge';
 import socketIOClient from "socket.io-client";
+import Canvas from "./Canvas.jsx"
 
 function initDraw(canvas) {
   var mouse = {
@@ -87,7 +88,7 @@ function VideoCall(props) {
  const [appSocket,setAppSocket]=React.useState(null);
  var [ toggle,changeToggle]=React.useState({width:"0px",height: "90%",top:"0px",right:"0px",position:"fixed", transition: "0.1s", overflowY: "scroll"});
  var [ toggle2,changeToggle2]=React.useState({width:"0%",height: "0%",position:"fixed", transition: "0.1s"});
- var [ toggle3,changeToggle3]=React.useState({width: "78%",height: "80%",marginLeft: "10px",marginRight: "10px",
+ var [ toggle3,changeToggle3]=React.useState({width: "78%", backgroundColor:"white",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s", float:"left"});
  var [ toggle4,changeToggle4]=React.useState({width:"18%",height: "80%",marginLeft: "10px",marginRight: "10px",
  overflow: "hidden",border: "1px solid black",transition: "0.1s"});
@@ -183,7 +184,7 @@ const divsadded = () =>
     case 5:
       return (
     <div style={toggle3}>
-5th draw
+        <Canvas />
     </div>
     );
 
