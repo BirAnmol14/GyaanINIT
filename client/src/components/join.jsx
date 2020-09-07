@@ -9,7 +9,7 @@ function Join(props){
   }
   async function submitDetails(event){
     event.preventDefault();
-    const body=JSON.stringify({meetUrl:meetDetails.meetUrl,password:meetDetails.meetPass,user_email:props.logged.user.email});
+    const body=JSON.stringify({meetUrl:meetDetails.meetUrl,password:meetDetails.meetPass,user_name:props.logged.user.username});
     const response=await fetch(ServerRoutes.joinCall,{
       method:'POST',
       headers: { 'Content-Type': 'application/json' },

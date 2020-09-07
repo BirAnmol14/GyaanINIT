@@ -47,8 +47,14 @@ app.get('/api/',(req,res)=>{
   res.send('Server Running');
 });
 
-app.get('/api/users/getinfo',(req,res)=>{
-  if(req.query.email){res.json(func.getUserInfo(req.query.email));}
+app.get('/api/users/getinfo',async (req,res)=>{
+  if(req.query.username){
+    if(req.query.short){
+      res.json(await func.getUserInfo(req.query.username));
+    }else{
+        res.json(await func.getDetailedUserInfo(req.query.username));
+    }
+  }
   else{
     res.statusCode=400;
     res.json({message:'bad query, email query missing in url'});
@@ -64,7 +70,7 @@ app.get('/api/users/getAllUsers',(req,res)=>{
     res.json(func.getAllUsers());
 });
 
-app.get('/api/account/logout',(req,res)=>{
+app.get('/api/account/logout', (req,res)=>{
   res.json(func.logout(req));
 });
 
@@ -76,16 +82,16 @@ app.get('/api/tools/search',(req,res)=>{
   }
 });
 
-app.get('/api/tools/getCallUserList',(req,res)=>{
-  if(req.query.url){res.json(func.getCallUserList(req.query.url));}
+app.get('/api/tools/getCallUserList',async (req,res)=>{
+  if(req.query.url){res.json(await func.getCallUserList(req.query.url));}
   else{
     res.statusCode=400;
     res.json({message:'bad query, url query parameter missing in url'});
   }
 });
 
-app.get('/api/call/getCallChat',(req,res)=>{
-  if(req.query.url){res.json(func.getCallChat(req,req.query.url));}
+app.get('/api/call/getCallChat',async (req,res)=>{
+  if(req.query.url){res.json(await func.getCallChat(req,req.query.url));}
   else{
     res.statusCode=400;
     res.json({message:'bad query, url query parameter missing in url'});
@@ -93,12 +99,12 @@ app.get('/api/call/getCallChat',(req,res)=>{
 });
 
 //POST requests
-app.post('/api/account/register',(req,res)=>{
-  func.register_user(req.body,res);
+app.post('/api/account/register',async (req,res)=>{
+  res.json(await func.register_user(req.body));
 });
 
-app.post('/api/account/login',(req,res)=>{
-  res.json(func.login(req,req.body,res));
+app.post('/api/account/login',async (req,res)=>{
+  res.json(await func.login(req,req.body));
 });
 
 app.post('/api/tools/password_strength',(req,res)=>{
@@ -113,40 +119,40 @@ app.post('/api/tools/password_strength',(req,res)=>{
 });
 
 app.post('/api/call/generateCall',(req,res)=>{
-  if(req.body && req.body.meetUrl && req.body.password && req.body.admin_email){
-    res.json(func.generateCall(req.body.meetUrl,req.body.password,req.body.admin_email,req));
+  if(req.body && req.body.meetUrl && req.body.password && req.body.admin_username){
+    res.json(func.generateCall(req.body.meetUrl,req.body.password,req.body.admin_username,req));
   }else{
     res.status(400).send('Bad Query');
   }
 });
 
 app.post('/api/call/joinCall',(req,res)=>{
-  if(req.body && req.body.meetUrl && req.body.password && req.body.user_email){
-    res.json(func.joinCall(req.body.meetUrl,req.body.password,req.body.user_email,req));
+  if(req.body && req.body.meetUrl && req.body.password && req.body.user_name){
+    res.json(func.joinCall(req.body.meetUrl,req.body.password,req.body.user_name,req));
   }else{
     res.status(400).send('Bad Query');
   }
 });
 
-app.post('/api/call/endCall',(req,res)=>{
+app.post('/api/call/endCall',async (req,res)=>{
   if(req.body && req.body.callUrl){
-    res.json(func.endCall(req,req.body.callUrl));
+    res.json(await func.endCall(req,req.body.callUrl));
   }else{
     res.status(400).send('Bad Query');
   }
 });
 
-app.post('/api/call/verifyUserInCall',(req,res)=>{
+app.post('/api/call/verifyUserInCall',async (req,res)=>{
   if(req.body && req.body.callUrl){
-    res.json(func.verifyInCall(req,req.body.callUrl));
+    res.json(await func.verifyInCall(req,req.body.callUrl));
   }else{
     res.status(400).send('Bad Query');
   }
 });
 
-app.post('/api/call/postMessage',(req,res)=>{
+app.post('/api/call/postMessage',async (req,res)=>{
   if(req.body && req.body.callUrl){
-    res.json(func.postMessageInCall(req,req.body.callUrl,req.body.message));
+    res.json(await func.postMessageInCall(req,req.body.callUrl,req.body.message));
   }else{
     res.status(400).send('Bad Query');
   }
@@ -157,24 +163,23 @@ app.post('/api/call/postMessage',(req,res)=>{
 var map=new Map();
 var nsp = io.of('/api/videoCallSocket');
 nsp.on('connection', function(socket) {
-   socket.on('join',(object)=>{
-     //Object has {user:Email of the user,callUrl: room where we have to send the user)
+   socket.on('join',async (object)=>{
      map.set(socket.id,object);
      socket.join(object.callUrl);
-     socket.broadcast.to(object.callUrl).emit('join',{message:func.getUserInfo(object.user).info.name+" has joined"});
-     nsp.to(object.callUrl).emit('userList',videoCallFunc.getCallUserList(object.callUrl));
-     socket.emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
+     nsp.to(object.callUrl).emit('userList',await videoCallFunc.getCallUserList(object.callUrl));
+     socket.emit('chatList',await videoCallFunc.getCallMessages(object.callUrl));
+     socket.broadcast.to(object.callUrl).emit('join',{message:(await func.getUserInfo(object.user)).info.name+" has joined"});
    });
-   socket.on('messagePosted',()=>{
+   socket.on('messagePosted',async ()=>{
      var obj=map.get(socket.id);
      nsp.to(obj.callUrl).emit('chatList',videoCallFunc.getCallMessages(obj.callUrl));
    });
-   socket.on('disconnect',()=>{
+   socket.on('disconnect',async ()=>{
      var obj=map.get(socket.id);
      if(obj){
        videoCallFunc.removeFromCall(obj.callUrl,obj.user);
-       nsp.to(obj.callUrl).emit('left',{message:func.getUserInfo(obj.user).info.name+" has left"});
        nsp.to(obj.callUrl).emit('userList',videoCallFunc.getCallUserList(obj.callUrl));
+       nsp.to(obj.callUrl).emit('left',{message:(await func.getUserInfo(obj.user)).info.name+" has left"});
    }
      map.delete(socket.id);
    })

@@ -147,25 +147,25 @@ function VideoCall(props) {
 
         return (
           <div style={toggle3}>
-            <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-              <div class="carousel-inner">
-                <div class="carousel-item active">
-                  <img class="d-block w-100" src={crousel} alt="First slide" />
+            <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
+              <div className="carousel-inner">
+                <div className="carousel-item active">
+                  <img className="d-block w-100" src={crousel} alt="First slide" />
                 </div>
-                <div class="carousel-item">
-                  <img class="d-block w-100" src={crousel} alt="Second slide" />
+                <div className="carousel-item">
+                  <img className="d-block w-100" src={crousel} alt="Second slide" />
                 </div>
-                <div class="carousel-item">
-                  <img class="d-block w-100" src={crousel} alt="Third slide" />
+                <div className="carousel-item">
+                  <img className="d-block w-100" src={crousel} alt="Third slide" />
                 </div>
               </div>
-              <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
+              <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span className="sr-only">Previous</span>
               </a>
-              <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
+              <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                <span className="sr-only">Next</span>
               </a>
             </div>
           </div>);
@@ -176,7 +176,7 @@ function VideoCall(props) {
       case 2:
         return (
           <div style={toggle3}>
-            <img class="d-block w-100" src={desktop} alt="screen share slide" />
+            <img className="d-block w-100" src={desktop} alt="screen share slide" />
           </div>);
 
       case 3:
@@ -298,8 +298,8 @@ function VideoCall(props) {
 
   function SetUserList(res) {
     if (res.validUrl) {
-      setAdmin(res.users.filter(user => user.email === res.admin_email));
-      setList(res.users.filter(user => user.email !== res.admin_email));
+      setAdmin(res.users.filter(user => user.username === res.admin_username));
+      setList(res.users.filter(user => user.username !== res.admin_username));
     }
   }
 
@@ -327,7 +327,7 @@ function VideoCall(props) {
       chatsDiv.scrollTop = chatsDiv.scrollHeight;
     }
   }, [toggle6.width]);
- 
+
 
   function setCallChat(res) {
     if (res.status === true) {
@@ -433,7 +433,7 @@ function VideoCall(props) {
     if (status === 200) {
       const res = await response.json();
       if (res.validUrl) {
-        checkAdmin(res.admin_email);
+        checkAdmin(res.admin_username);
       }
     }
     else {
@@ -443,7 +443,7 @@ function VideoCall(props) {
   }
   function admin_helper() {
     if (props.logged.status && adminBool) {
-      if (props.logged.user.email === adminBool) {
+      if (props.logged.user.username === adminBool) {
         return true;
       }
       return false;
@@ -454,35 +454,43 @@ function VideoCall(props) {
     async function startUp() {
       await verifyCall();
     }
-    startUp();
+    setTimeout(()=>{
+        startUp();
+    },1000) ;
   }, []);
   React.useEffect(() => {
-    async function runner() {
-      await check_Admin();
-      await checkAdminHelper(admin_helper());
+   async function runner() {
+        await check_Admin();
     }
-    runner();
+      runner();
+  }, [props.logged]);
+React.useEffect(() => {
+   checkAdminHelper(admin_helper());
+}, [adminBool]);
+
+  React.useEffect(()=>{
     if (props.logged.status === true) {
       const socket = socketIOClient(ServerRoutes.socketEndpoint);
       setAppSocket(socket);
       var callUrl = window.location.href.split('/');
-      socket.emit('join', { user: props.logged.user.email, callUrl: callUrl[callUrl.length - 1] });
+      socket.emit('join', { user: props.logged.user.username, callUrl: callUrl[callUrl.length - 1] });
       socket.on('join', (data) => {
         setToastMsg(data.message);
         //Listen to all other joining messages
       })
       socket.on('left', (data) => {
         //Listen to all other leaving messages
-        setToastMsg(data.message);
+         setToastMsg(data.message);
       });
       socket.on('userList', (data) => {
-        SetUserList(data);
+         SetUserList(data);
       });
       socket.on('chatList', (data) => {
-        setCallChat(data);
+         setCallChat(data);
       });
     }
-  }, [props.logged]);
+  },[adminBoolHelper]);
+
   React.useEffect(() => {
     if (toastMsg.length !== 0) {
       display();
@@ -511,13 +519,13 @@ function VideoCall(props) {
       <div className="full-height">
         <div style={{display:pvtChatDisplay,position:"fixed",right:"70px",bottom:"50px"}}>
                   <p>
- 
- <button class="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" >
+
+ <button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" >
    Name of guy
  </button>
 </p>
-<div class="collapse" id="collapseExample" >
- 
+<div className="collapse" id="collapseExample" >
+
  <div style={{border:"2px", zIndex:"1",backgroundColor:"wheat", width:"250px",height:"25%"}}>
           <div style={{maxHeight:"200px",overflowY:"scroll"}} className={darkMode ? "list-group chat-list dark-mode" : "list-group chat-list"} id="chatsDiv2">
               {
@@ -536,9 +544,9 @@ function VideoCall(props) {
 
               }
             </div>
-            
-        
-   
+
+
+
    <div style={{ bottom: "20%", marginBottom: "1.5%", backgroundColor: "", position: "relative", zIndex: "2", height: "5%" }} className={darkMode ? "dark-mode" : null}>
               <p style={{height:"50px"}}><textarea className="textarea_custom" placeholder="Type message.." name="msg" required style={{ width: "70%" }} value={chatText} onChange={(eve) => { const { value } = eve.target; setChatText(value) }}></textarea>
                 <button type="button" className={"btn btn-primary  ml-1"} onClick={postChatMessage} style={{ marginBottom: "20%" }} ><SendIcon style={{ display: "inline", verticalAlign: "middle" }} /></button>
@@ -547,10 +555,10 @@ function VideoCall(props) {
  </div>
 </div>
 </div>
-       
+
         <Toast message={toastMsg} />
         <audio src={audioSrc} style={{ display: "none" }} id="noti_audio" />
-        <div style={{ right: "0", top: "0", position: "fixed" }}><div class="card" style={{ padding: "2px", margin: "1px" }}><SignalCellular4BarIcon />{}</div></div>
+        <div style={{ right: "0", top: "0", position: "fixed" }}><div className="card" style={{ padding: "2px", margin: "1px" }}><SignalCellular4BarIcon />{}</div></div>
         <div style={{ width: divWidth, marginTop: "50px", marginBottom: "20px", height: "100%", overflow: "hidden" }}>
           {
             paramBool ? divsadded() : <div style={toggle3}></div>
@@ -565,25 +573,25 @@ function VideoCall(props) {
               <div style={{
                 width: "100%", height: divHeight, marginLeft: "", marginRight: "",
                 overflow: "hidden", border: "1px solid black", transition: "0.1s"
-              }} onClick={() => { changeParam(1); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 1); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? setDivDisplay("block") : setDivDisplay("none") } return [...arr, 1] }); changeParamBool(true); }}  >  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                  <div class="carousel-inner">
-                    <div class="carousel-item active">
-                      <img class="d-block w-100" src={crousel} alt="First slide" />
+              }} onClick={() => { changeParam(1); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 1); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? setDivDisplay("block") : setDivDisplay("none") } return [...arr, 1] }); changeParamBool(true); }}  >  <div id="carouselExampleControls" className="carousel slide" data-ride="carousel">
+                  <div className="carousel-inner">
+                    <div className="carousel-item active">
+                      <img className="d-block w-100" src={crousel} alt="First slide" />
                     </div>
-                    <div class="carousel-item">
-                      <img class="d-block w-100" src={crousel} alt="Second slide" />
+                    <div className="carousel-item">
+                      <img className="d-block w-100" src={crousel} alt="Second slide" />
                     </div>
-                    <div class="carousel-item">
-                      <img class="d-block w-100" src={crousel} alt="Third slide" />
+                    <div className="carousel-item">
+                      <img className="d-block w-100" src={crousel} alt="Third slide" />
                     </div>
                   </div>
-                  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Previous</span>
+                  <a className="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                    <span className="carousel-control-prev-icon" aria-hidden="true"></span>
+                    <span className="sr-only">Previous</span>
                   </a>
-                  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="sr-only">Next</span>
+                  <a className="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                    <span className="carousel-control-next-icon" aria-hidden="true"></span>
+                    <span className="sr-only">Next</span>
                   </a>
                 </div>
               </div> : null}
@@ -591,7 +599,7 @@ function VideoCall(props) {
               <div style={{
                 width: "100%", height: divHeight, marginLeft: "", marginRight: "",
                 overflow: "hidden", border: "1px solid black", transition: "0.1s"
-              }} onClick={() => { changeParam(2); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 2); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? setDivDisplay("block") : setDivDisplay("none") } return [...arr, 2] }); changeParamBool(true); }}  > <img class="d-block w-100" src={desktop} alt="screen share slide" />
+              }} onClick={() => { changeParam(2); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 2); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? setDivDisplay("block") : setDivDisplay("none") } return [...arr, 2] }); changeParamBool(true); }}  > <img className="d-block w-100" src={desktop} alt="screen share slide" />
               </div> : null}
             {openWindows.indexOf(3) !== -1 && param !== 3 ?
               <div style={{
@@ -617,13 +625,13 @@ function VideoCall(props) {
 
           </div>
 
-           
-         
-    
+
+
+
 
         </div>
-        
-        
+
+
 
         <div style={toggle}>
           <div style={{ overflowX: "visible" }}>
@@ -633,23 +641,23 @@ function VideoCall(props) {
                   return <li key={"admin " + index} id={"admin " + index} style={darkMode ? { borderBottom: '2px solid white', padding: '0px' } : { borderBottom: '2px solid black', padding: '0px' }} className={darkMode ? "list-group-item dark-mode" : "list-group-item"}><HtmlTooltip
                     title={
                       <React.Fragment>
-                        <span>@{user.uid}</span><br />email:{user.email}<span></span>
+                        <span>@{user.username}</span><span></span>
                       </React.Fragment>
                     }
                   >
 
-                    <div style={{ padding: "2px" }}><p style={{ marginBottom: '0.1rem', fontSize: '20px' }}>  <div class="btn-group dropleft">
+                    <div style={{ padding: "2px" }}><p style={{ marginBottom: '0.1rem', fontSize: '20px' }}>  <div className="btn-group dropleft">
                       <a href="#" style={{ padding: "0px", color: "#000000" }} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon>
                       </a>
-                      <div class={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
+                      <div className={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
                         <div>
                           <button type="button" onClick={()=>setPvtChatDisplay("block")} className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><QuestionAnswerRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></QuestionAnswerRoundedIcon>Personal Chat</button>
                         </div>
-                        <div class="dropdown-divider"></div>
+                        <div className="dropdown-divider"></div>
                         <div>
                           <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><VoiceOverOffIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></VoiceOverOffIcon>Force Mute</button>
                         </div>
-                        <div class="dropdown-divider"></div>
+                        <div className="dropdown-divider"></div>
                         <div>
                           <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><NetworkCellIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></NetworkCellIcon>Network Speed</button>
                         </div>
@@ -668,18 +676,18 @@ function VideoCall(props) {
                   return <li key={"user " + index} id={"user " + index} style={{ padding: '0px' }} className={darkMode ? "list-group-item dark-mode" : "list-group-item"}><HtmlTooltip
                     title={
                       <React.Fragment>
-                        <span>@{user.uid}</span><br />email:{user.email}<span></span>
+                        <span>@{user.username}</span><span></span>
                       </React.Fragment>
                     }
                   >
                     <div style={{ padding: "2px" }}><p style={{ marginBottom: '0.1rem', fontSize: '20px' }}>
-                      <div class="btn-group dropleft">
+                      <div className="btn-group dropleft">
                         <a href="#" style={{ padding: "0px", color: "#000000" }} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon></a>
-                        <div class={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
+                        <div className={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
                           <div>
                             <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><QuestionAnswerRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></QuestionAnswerRoundedIcon>Personal Chat</button>
                           </div>
-                          <div class="dropdown-divider"></div>
+                          <div className="dropdown-divider"></div>
                           <div>
                             <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><NetworkCellIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></NetworkCellIcon>Network Speed</button>
                           </div>
@@ -695,7 +703,7 @@ function VideoCall(props) {
         </div>
 
         <div style={darkMode ? { ...toggle6, backgroundColor: "#343A40" } : { ...toggle6, backgroundColor: "white" }}>
-          <div style={darkMode ? { backgroundColor: " #343A40;", height: "100%" } : { backgroundColor: "white", height: "100%" }}>
+          <div style={darkMode ? { backgroundColor: " #343A40", height: "100%" } : { backgroundColor: "white", height: "100%" }}>
             <div className={darkMode ? "list-group chat-list dark-mode" : "list-group chat-list"} id="chatsDiv">
               {
 
@@ -724,16 +732,16 @@ function VideoCall(props) {
           {adminBoolHelper === true ? <div className="d-flex justify-content-start">
             {darkMode ? <button type='button' className={darkMode ? "btn btn-dark  ml-2" : "btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon style={{ display: "inline", verticalAlign: "middle" }} /></button> : <button type='button' className={darkMode ? "btn btn-dark  ml-2" : "btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon style={{ display: "inline", verticalAlign: "middle" }} /> </button>}
             <button type="button" className={darkMode ? "btn btn-dark ml-2" : "btn btn-light ml-2"}><AddCircleOutlineRoundedIcon style={{ display: "inline", verticalAlign: "middle" }}></AddCircleOutlineRoundedIcon></button>
-            <div class="btn-group dropup">
+            <div className="btn-group dropup">
               <button type="button" className={darkMode ? "btn btn-dark dropdown-toggle ml-2" : "btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <QueuePlayNextRoundedIcon style={{ display: "inline", verticalAlign: "middle" }}></QueuePlayNextRoundedIcon></button>
-              <div class={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
+              <div className={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
                 <button type="button" onClick={() => { changeParam(1); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 1); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? funcSetDiv() : setDivDisplay("none"); } console.log(divHeight); return [...arr, 1] }); changeParamBool(true); }} id="presentation" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><DescriptionRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></DescriptionRoundedIcon>Presentation</button>
-                <div class="dropdown-divider"></div>
+                <div className="dropdown-divider"></div>
                 <button type="button" onClick={() => { changeParam(2); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 2); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? funcSetDiv() : setDivDisplay("none") } console.log(divHeight); return [...arr, 2] }); changeParamBool(true); }} id="screenshare" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><ScreenShareRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></ScreenShareRoundedIcon>Screenshare</button>
-                <div class="dropdown-divider"></div>
+                <div className="dropdown-divider"></div>
                 <button type="button" onClick={() => { changeParam(3); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 3); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? funcSetDiv() : setDivDisplay("none") } console.log(divHeight); return [...arr, 3] }); changeParamBool(true); }} id="videos" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><LiveTvRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></LiveTvRoundedIcon>Videos</button>
-                <div class="dropdown-divider"></div>
+                <div className="dropdown-divider"></div>
                 <button type="button" onClick={() => { changeParam(4); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 4); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? funcSetDiv() : setDivDisplay("none") } console.log(divHeight); return [...arr, 4] }); changeParamBool(true); }} id="whiteboard" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><BorderColorRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></BorderColorRoundedIcon>Whiteboard</button>
                 <div className="dropdown-divider"></div>
                 <button type="button" onClick={() => { changeParam(5); setOpenWindows(prev => { var arr = []; arr = prev.filter(ele => ele !== 5); var length = arr.length; { length === 0 ? setDivHeight("0%") : setDivHeight(100 / length + "%"); length >= 1 ? funcSetDiv() : setDivDisplay("none") } console.log(divHeight); return [...arr, 5] }); changeParamBool(true); }} id="draw" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><GestureRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></GestureRoundedIcon>Draw</button>
@@ -754,16 +762,16 @@ function VideoCall(props) {
               }
             </div>
           </center>
-          <div class="d-flex justify-content-end">
+          <div className="d-flex justify-content-end">
             <button type="button" onClick={changeToggle_} className={darkMode ? "btn btn-dark  ml-2" : "btn btn-light  ml-2"}><PeopleIcon style={{ display: "inline", verticalAlign: "middle" }}></PeopleIcon></button>
 
             <button type="button" onClick={changeToggle6_} className={darkMode ? "btn btn-dark  ml-2" : "btn btn-light  ml-2"}><Badge variant={newMessage ? "dot" : null} color="error">
               <ChatIcon style={{ display: "inline", verticalAlign: "middle" }}></ChatIcon></Badge></button>
 
-            <div class="btn-group dropup">
+            <div className="btn-group dropup">
               <button type="button" className={darkMode ? "btn btn-dark dropdown-toggle ml-2" : "btn btn-light dropdown-toggle ml-2"} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 <InfoIcon style={{ display: "inline", verticalAlign: "middle" }}></InfoIcon></button>
-              <div class={darkMode ? "dropdown-menu dropdown-menu-right dark-mode" : "dropdown-menu dropdown-menu-right"} style={{ padding: "10px" }}>
+              <div className={darkMode ? "dropdown-menu dropdown-menu-right dark-mode" : "dropdown-menu dropdown-menu-right"} style={{ padding: "10px" }}>
                 <div ><h4>Meet Details:</h4></div>
                 <div>
                   <h5>{window.location.href}</h5>

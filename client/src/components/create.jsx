@@ -11,7 +11,7 @@ function Create(props){
   }
   async function submitDetails(event){
     event.preventDefault();
-    const body=JSON.stringify({meetUrl:meetDetails.meetUrl,password:meetDetails.meetPass,admin_email:props.logged.user.email});
+    const body=JSON.stringify({meetUrl:meetDetails.meetUrl,password:meetDetails.meetPass,admin_username:props.logged.user.username});
     const response=await fetch(ServerRoutes.generateCall,{
       method:'POST',
       headers: { 'Content-Type': 'application/json' },

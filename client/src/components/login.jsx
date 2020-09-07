@@ -5,8 +5,8 @@ import queryString from 'query-string';
 import ServerRoutes from './ServerRoutes.js';
 
 function Login(props){
-    const [login,resetLogin]=React.useState({email:'',password:''});
-    const [reg,setReg]=React.useState({email:'',password:'',name:''});
+    const [login,resetLogin]=React.useState({username:'',password:''});
+    const [reg,setReg]=React.useState({email:'',password:'',name:'',identity:'',username:''});
     const [strength,setStrength]=React.useState(0);
     function getNextUrl(){
       const obj=queryString.parse(props.location.search);
@@ -33,10 +33,10 @@ function Login(props){
             document.getElementById('pills-register-tab').click();
           }
       }
-      resetLogin({email:'',password:''});
+      resetLogin({username:'',password:''});
     }
     async function loginApi(){
-      const body=JSON.stringify({email:login.email,password:login.password});
+      const body=JSON.stringify({username:login.username,password:login.password});
       const response = await fetch(ServerRoutes.login, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -85,7 +85,11 @@ function Login(props){
 
     function regSubmit(event){
       event.preventDefault();
-      if(strength>66){       
+      if(strength>66){
+        if(reg.password.length<10){
+          alert('Password must have at least 10 characters');
+          return;
+        }
         registerApi();
       }
       else{
@@ -94,7 +98,7 @@ function Login(props){
       setReg(prev=>{return({...prev,password:''});});
     }
     async function registerApi(){
-      const body=JSON.stringify({name: reg.name,email:reg.email,password:reg.password});
+      const body=JSON.stringify({name: reg.name,email:reg.email,password:reg.password,username:reg.username,identity:reg.identity});
       const response = await fetch(ServerRoutes.register, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -106,8 +110,8 @@ function Login(props){
         var res=await response.json();
         if(res.status){
           alert(res.message+'\n Kindly Login');
-          resetLogin({email:reg.email});
-          setReg({name:'',email:'',password:''});
+          resetLogin({username:reg.username});
+          setReg({name:'',email:'',password:'',username:'',option:''});
           document.getElementById('pills-login-tab').click();
         }
         else{
@@ -137,8 +141,8 @@ function Login(props){
           <form onSubmit={loginSub} style={{backgroundColor:'#343A40',color:'white',padding:'2em',border:'solid 2px white',borderRadius:'20px'}}>
           <div className="row">
             <div className="col">
-              <label htmlFor="exampleInputEmail1">Email</label>
-              <input type="email" className="form-control" id="exampleInputEmail1" style={{borderRadius:'10px'}} required value={login.email} onChange={loginChange} name='email'/>
+              <label htmlFor="exampleInputUname1">User Name</label>
+              <input type="text" className="form-control" id="exampleInputUname1" style={{borderRadius:'10px'}} required value={login.username} onChange={loginChange} name='username'/>
             </div>
           </div>
           <div className="row">
@@ -172,10 +176,32 @@ function Login(props){
               <div className="col">
                 <label htmlFor="InputPassword1">Password</label>
                 <input type="password" className="form-control" id="InputPassword1" style={{borderRadius:'10px'}} required name='password' value={reg.password} onChange={regChange}/>
-
               </div>
             </div>
-
+            <div className="row">
+            <div className="col">
+            <label htmlFor="username">User Name</label>
+            <input type="text" className="form-control" id="username" style={{borderRadius:'10px'}} required name='username' value={reg.username} onChange={regChange} placeholder="unique, no spaces, short" />
+            </div>
+          </div>
+            <div className="row">
+            <div className="col">
+              <label htmlFor="Options">Choose Identity</label>
+              <select class="form-control" id="InputPassword1" style={{borderRadius:'10px'}} required name='identity' value={reg.identity} onChange={regChange}>
+               <option value="" disabled selected>Select your option</option>
+               <option value="Curious">Curious Member</option>
+               <option value="Student">Student</option>
+               <option value="Teacher">Teacher</option>
+               <option value="Researcher">Researcher</option>
+               <option value="Teacher Educator">Teacher Educator</option>
+               <option value="Citizen Scientist">Citizen Scientist</option>
+               <option value="STEM Activist">STEM Activist</option>
+               <option value="Administrator">Administrator</option>
+               <option value="Social Worker">Social Worker</option>
+               <option value="Home Schooling Parent">Home Schooling Parent</option>
+              </select>
+            </div>
+          </div>
             <div className="row">
             <div className="col">
               <div className="progress" style={{marginTop:'10px',height:'0.7em'}}>

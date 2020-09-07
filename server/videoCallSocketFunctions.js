@@ -4,13 +4,13 @@ module.exports={
   getCallUserList:getCallUserList,
   getCallMessages:getCallMessages
 }
-function removeFromCall(url,email){
-  var callInfo=func.getCallUserList(url);
+async function removeFromCall(url,username){
+  var callInfo=await func.getCallUserList(url);
   if(callInfo.validUrl===true){
       var userList=callInfo.users;
       var found=false;
       for(var j=0;j<userList.length;j++){
-        if(userList[j].email===email){
+        if(userList[j].username===username){
           found=true;
           break;
         }
@@ -20,7 +20,7 @@ function removeFromCall(url,email){
       }
     for(var i=0;i<func.calls.length;i++){
       if(func.calls[i].url===url){
-        func.calls[i].users=func.calls[i].users.filter(user_email=>user_email!==email);
+        func.calls[i].users=func.calls[i].users.filter(user_name=>user_name!==username);
         if(func.calls[i].users.length===0){
           func.calls[i].chats=[];
         }
@@ -32,10 +32,11 @@ function removeFromCall(url,email){
     return {status:false,message:"No Such Call exists"}
   }
 }
-function getCallUserList(url){
-  return func.getCallUserList(url);
+async function getCallUserList(url){
+  return await func.getCallUserList(url);
 }
-function getCallMessages(url){
+
+async function getCallMessages(url){
   var calls=func.calls;
 
   var found=-1;
@@ -49,7 +50,7 @@ function getCallMessages(url){
     chats.sort(function (a,b){return a.time.getTime()-b.time.getTime()});
     var chatList=[]
     for(var i=0;i<chats.length;i++){
-      chatList.push({user:func.getUserInfo(chats[i].user_email).info,message:chats[i].message,time:chats[i].time});
+      chatList.push({user: (await func.getUserInfo(chats[i].username)).info,message:chats[i].message,time:chats[i].time});
     }
     return {chats:chatList,status:true,message:"Successfully retrieved"}
   }else{

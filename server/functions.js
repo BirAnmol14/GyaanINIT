@@ -2,10 +2,10 @@ const https = require('https');
 const querystring = require('querystring');
 const md5=require('md5');
 const zxcvbn=require('zxcvbn');
-
-const registered_users=[];//{email,name,uid,password,profilePic}
-const calls=[];//{url,password,admin_email,users(only emails),chats}
-//chats  -> [{user_email,message,time}]
+const discourseFunctions=require('./discourseFunctions.js');
+const registered_users=[];//{email,name,username,password,profilePic}
+const calls=[];//{url,password,admin_username,users(only usernames),chats}
+//chats  -> [{username,message,time}]
 module.exports={
   register_user:register_user,
   login:login,
@@ -22,60 +22,49 @@ module.exports={
   verifyInCall:verifyInCall,
   postMessageInCall:postMessageInCall,
   getCallChat:getCallChat,
-  calls:calls
+  calls:calls,
+  getDetailedUserInfo:getDetailedUserInfo
 }
 
-function User(name,email,password){
+function User(name,email,password,username,identity){
   this.name=name;
   this.email=email.toLowerCase();
-  this.password=md5(password);
-  this.uid=this.email.split('@')[0];
+  this.password=password;
+  this.username=username;
+  this.identity=identity;
   this.profilePic='https://ui-avatars.com/api/?rounded=true&name='+this.name.split(' ').join('+');//Default profile pic
 }
 
-function register_user(body,res){
-
-  var newUser=new User(body.name,body.email,body.password);
-  const found = registered_users.find(user=>user.email===newUser.email.toLowerCase());
-  if(found){
-    res.json({status:false,message:"User with same Email already present"});
-  }else{
-    //USE EMAIL VERIFYING API HERE
-    registered_users.push(newUser);
-    res.send({status:true,message:'Successfully registered'});
-  }
+async function register_user(body){
+  return await discourseFunctions.register(body.name,body.email,body.password,body.username,body.identity);
 }
 
-function login(req,body,res){
+async function login(req,body){
   const present=isLoggedIn(req);
   if(present.status){
     return {status:true,message:'Already Logged In',user:present.user};
   }else{
-    const found=registered_users.find(user=>user.email===body.email.toLowerCase());
-    if(found && found.password===md5(body.password)){
-      const data=getUserInfo(body.email).info;
-      req.session.user=data;
-      return {status:true,message:"successfully logged in",user:data};
-    }
-    else if (found && found.password!==md5(body.password)){
-      return {status:false,message:"Incorrect Password"} ;
-    }
-    else{
-      return {status:false,message:"User not registered"};
-    }
+    return await discourseFunctions.login(req,body.username,body.password);
   }
 }
 
-function getUserInfo(email){
-  const found=registered_users.find(user=>user.email===email.toLowerCase());
-  if(found){
-    return {status:true,info:{name:found.name,email:found.email,uid:found.uid,profilePic:found.profilePic}};
-  }
-  else{
-    return {status:false,info:{}};
+async function getUserInfo(username){
+  const user=await discourseFunctions.getUserInfo(username,0);
+  if (user){
+    return {status:true, info:user.user}
+  }else{
+    return {status:false, info:null}
   }
 }
 
+async function getDetailedUserInfo(username){
+  const user=await discourseFunctions.getUserInfo(username,1);
+  if (user){
+    return {status:true, info:user.user}
+  }else{
+    return {status:false, info:null}
+  }
+}
 function isLoggedIn(req){
   var found=false;
   var user=null;
@@ -104,9 +93,10 @@ function logout(req){
 }
 
 function getAllUsers(){
+  //to be re coded
   const users=[];
   for(var i=0;i<registered_users.length;i++){
-    users.push(getUserInfo(registered_users[i].email).info);
+    users.push(getUserInfo(registered_users[i].username).info);
   }
   return users;
 }
@@ -116,7 +106,7 @@ function search(text){
   const search_obj={users:[],articles:[],posts:[],videos:[]}
   const users=getAllUsers();
   for(var i=0;i<users.length;i++){
-    if(users[i].name.toLowerCase().includes(text.toLowerCase())||users[i].uid.toLowerCase().includes(text.toLowerCase())){
+    if(users[i].name.toLowerCase().includes(text.toLowerCase())||users[i].username.toLowerCase().includes(text.toLowerCase())){
       search_obj.users.push(users[i]);
     }
   }
@@ -131,7 +121,7 @@ function check_strength(password){
   return {strength:score/4*100};
 }
 
-function generateCall(url,password,admin_email,req){
+function generateCall(url,password,admin_username,req){
   if(isLoggedIn(req).status===true){
     const found=calls.find(call=>call.url===url);
     var temp=url;
@@ -144,10 +134,10 @@ function generateCall(url,password,admin_email,req){
         }
       }
       url+=(count);
-      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[],chats:[]});
+      calls.push({url:url,password:md5(password),admin_username:admin_username,users:[],chats:[]});
       return {status:true,url:url}
     }else{
-      calls.push({url:url,password:md5(password),admin_email:admin_email,users:[],chats:[]});
+      calls.push({url:url,password:md5(password),admin_username:admin_username,users:[],chats:[]});
       return {status:true,url:url}
     }
   }
@@ -156,7 +146,7 @@ function generateCall(url,password,admin_email,req){
   }
 }
 
-function joinCall(url,password,user_email,req){
+function joinCall(url,password,user_name,req){
   if(isLoggedIn(req).status===true){
     var index=-1;
     for(var i=0;i<calls.length;i++){
@@ -169,11 +159,9 @@ function joinCall(url,password,user_email,req){
       return {status:false,url:null,message:'No such call found'}
     }else{
       if(calls[index].password===md5(password)){
-        var arr=calls[index].users.filter((email)=>(email!=user_email));
-        arr.push(user_email);
+        var arr=calls[index].users.filter((username)=>(username!==user_name));
         calls[index].users=arr;
-       // console.log(calls[index]);
-       // calls[index].users.push(user_email);
+        calls[index].users.push(user_name);
         return {status:true,url:url,message:'Successfully Joined'}
       }else{
         return {status:false,url:url,message:'Incorrect Password'}
@@ -185,17 +173,16 @@ function joinCall(url,password,user_email,req){
   }
 }
 
-function getCallUserList(url){
+async function getCallUserList(url){
   var urlValid=false;
-  var admin_email='';
+  var admin_username='';
   var users=[];
   for(var i=0;i<calls.length;i++){
     if(calls[i].url===url){
       urlValid=true;
-      admin_email=calls[i].admin_email;
-      //console.log(calls[i].users);
+      admin_username=calls[i].admin_username;
       for(var j=0;j<calls[i].users.length;j++){
-        var temp=getUserInfo(calls[i].users[j]);
+        var temp=await getUserInfo(calls[i].users[j]);
         if(temp.status===true){
           users.push(temp.info);
         }
@@ -206,11 +193,11 @@ function getCallUserList(url){
     if(users.length!==0){
       users.sort(function(a,b){return a.name.toLowerCase().localeCompare(b.name.toLowerCase())});
     }
-    return {validUrl:urlValid,admin_email:admin_email,users:users};
+    return {validUrl:urlValid,admin_username:admin_username,users:users};
 }
 
-function endCall(req,callUrl){
-  var callInfo=getCallUserList(callUrl);
+async function endCall(req,callUrl){
+  var callInfo=await getCallUserList(callUrl);
   if(callInfo.validUrl===true){
       var userList=callInfo.users;
       let currUser=req.session.user;
@@ -219,7 +206,7 @@ function endCall(req,callUrl){
       }
       var found=false;
       for(var j=0;j<userList.length;j++){
-        if(userList[j].email===currUser.email){
+        if(userList[j].username===currUser.username){
           found=true;
           break;
         }
@@ -229,7 +216,7 @@ function endCall(req,callUrl){
       }
     for(var i=0;i<calls.length;i++){
       if(calls[i].url===callUrl){
-        calls[i].users=calls[i].users.filter(user_email=>user_email!==currUser.email);
+        calls[i].users=calls[i].users.filter(user_name=>user_name!==currUser.username);
         if(calls[i].users.length===0){
           calls[i].chats=[];
         }
@@ -242,8 +229,8 @@ function endCall(req,callUrl){
   }
 }
 
-function verifyInCall(req,callUrl){
-  var callInfo=getCallUserList(callUrl);
+async function verifyInCall(req,callUrl){
+  var callInfo=await getCallUserList(callUrl);
   if(callInfo.validUrl===true){
     var userList=callInfo.users;
     let currUser=req.session.user;
@@ -252,7 +239,7 @@ function verifyInCall(req,callUrl){
     }
     var found=false;
     for(var j=0;j<userList.length;j++){
-      if(userList[j].email===currUser.email){
+      if(userList[j].username===currUser.username){
         found=true;
         break;
       }
@@ -262,7 +249,6 @@ function verifyInCall(req,callUrl){
     }
     else{
       return {status:true,message:"User can access the call"};
-
     }
   }
   else{
@@ -270,8 +256,8 @@ function verifyInCall(req,callUrl){
   }
 }
 
-function postMessageInCall(req,callUrl,message){
-  var test=verifyInCall(req,callUrl);
+async function postMessageInCall(req,callUrl,message){
+  var test=await verifyInCall(req,callUrl);
   if(test.status===false){
     return {status:false,message:test.message}
   }else{
@@ -290,15 +276,15 @@ function postMessageInCall(req,callUrl,message){
       if(found===-1){
         return {status:false,message:"No Such Call exists"}
       }else{
-        calls[found].chats.push({user_email:user.email,message:message,time: new Date()});
+        calls[found].chats.push({username:user.username,message:message,time: new Date()});
         return {status:true, message:"Message Successfully Posted"}
       }
     }
   }
 }
 
-function getCallChat(req,url){
-  let test=verifyInCall(req,url);
+async function getCallChat(req,url){
+  let test=await verifyInCall(req,url);
   if(test.status===false){
     return {status:false,chats:[],message:test.message}
   }
@@ -317,7 +303,7 @@ function getCallChat(req,url){
       chats.sort(function (a,b){return a.time.getTime()-b.time.getTime()});
       var chatList=[]
       for(var i=0;i<chats.length;i++){
-        chatList.push({user:getUserInfo(chats[i].user_email).info,message:chats[i].message,time:chats[i].time});
+        chatList.push({user:await getUserInfo(chats[i].username).info,message:chats[i].message,time:chats[i].time});
       }
       return {status:true, message:"success",chats:chatList}
     }
