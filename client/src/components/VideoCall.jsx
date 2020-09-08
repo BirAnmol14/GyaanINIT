@@ -298,8 +298,9 @@ function VideoCall(props) {
 
   function SetUserList(res) {
     if (res.validUrl) {
-      setAdmin(res.users.filter(user => user.username === res.admin_username));
-      setList(res.users.filter(user => user.username !== res.admin_username));
+      var adminArr=[res.admin]
+      setAdmin(adminArr);
+      setList(res.users.filter(user => user.username !== res.admin.username));
     }
   }
 
@@ -433,7 +434,7 @@ function VideoCall(props) {
     if (status === 200) {
       const res = await response.json();
       if (res.validUrl) {
-        checkAdmin(res.admin_username);
+        checkAdmin(res.admin.username);
       }
     }
     else {
@@ -462,7 +463,9 @@ function VideoCall(props) {
    async function runner() {
         await check_Admin();
     }
-      runner();
+    if(props.logged.status){
+        runner();
+    }
   }, [props.logged]);
 React.useEffect(() => {
    checkAdminHelper(admin_helper());
@@ -473,7 +476,7 @@ React.useEffect(() => {
       const socket = socketIOClient(ServerRoutes.socketEndpoint);
       setAppSocket(socket);
       var callUrl = window.location.href.split('/');
-      socket.emit('join', { user: props.logged.user.username, callUrl: callUrl[callUrl.length - 1] });
+      socket.emit('join', { user: props.logged.user, callUrl: callUrl[callUrl.length - 1] });
       socket.on('join', (data) => {
         setToastMsg(data.message);
         //Listen to all other joining messages
@@ -647,7 +650,7 @@ React.useEffect(() => {
                   >
 
                     <div style={{ padding: "2px" }}><p style={{ marginBottom: '0.1rem', fontSize: '20px' }}>  <div className="btn-group dropleft">
-                      <a href="#" style={{ padding: "0px", color: "#000000" }} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon>
+                      <a href="#" style={darkMode?{ padding: "0px", color:"#FFFFFF"}:{ padding: "0px", color:"#000000"}} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon>
                       </a>
                       <div className={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
                         <div>

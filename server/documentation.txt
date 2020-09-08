@@ -1,7 +1,7 @@
 DOCUMENTATION FOR USING GyaanINIT API
 
 GET requests
-1. Get User Information
+1. Get Short User Information
   -END POINT: /api/users/getinfo?username={username}&short=true
   -METHOD:'GET'
   -RESPONSE:
@@ -11,8 +11,17 @@ GET requests
       - status: boolean
       - info: User Object
 
+2. Get Detailed User Information
+  -END POINT: /api/users/getinfo?username={username}
+  -METHOD:'GET'
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - info: User Object
 
-2. Verifying LoggedIn status
+3. Verifying LoggedIn status
   -END POINT: /api/account/verifyLoginStatus
   -METHOD: 'GET'
   -RESPONSE:
@@ -27,7 +36,7 @@ GET requests
                 profilePic:String
               }
 
-3. Logout
+4. Logout
   -END POINT: /api/account/logout
   -METHOD: 'GET'
   -RESPONSE:
@@ -37,7 +46,7 @@ GET requests
       - status: boolean
       - message: String
 
-4. Get A List Of All Registered Users
+5. Get A List Of All Registered Users
   -END POINT: /api/users/getAllUsers
   -METHOD: 'GET'
   -RESPONSE:
@@ -52,7 +61,7 @@ GET requests
           },...
         ]
 
-5. Search
+6. Search
   -END POINT: /api/tools/search?find={your query}
   -METHOD: 'GET'
   -RESPONSE:
@@ -84,7 +93,7 @@ GET requests
           ]
         }
 
-6. Get all users present in a call
+7. Get all users present in a call
   -END POINT: /api/tools/getCallUserList?url={meet url}
   -METHOD: 'GET'
   -RESPONSE:
@@ -93,7 +102,7 @@ GET requests
     - SCHEMA: An Object
       {
           validUrl: boolean ,
-          admin_email:String ,
+          admin: User Object{  -name:String,  -username:String,-profilePic:String} ,
           users:[
                   {
                     User object in the Call,
@@ -104,7 +113,7 @@ GET requests
                 ] - a list of user objects sorted by lexicographic order on Name
       }
 
-7. Get Chat in a call
+8. Get Chat in a call
   -END POINT: /api/call/getCallChat?url={meet url}
   -METHOD: 'GET'
   -RESPONSE:
@@ -117,7 +126,7 @@ GET requests
           chats:[
                   {
                     Chat object
-                    -user: Object {name: String, uid: String ,profilePic: String},
+                    -user: Object {name: String, username: String ,profilePic: String},
                     -message: String,
                     -time: JavaScript Date Object
                   }, ...
@@ -179,7 +188,7 @@ POST requests
   -BODY/PAYLOAD SCHEMA:
     - meetUrl: String(mandatory)
     - password: String(mandatory)
-    - admin_email: String(mandatory)
+    - admin_username: String(mandatory)
   -RESPONSE:
     - statusCode:200
     - Content-Type:JSON
@@ -194,7 +203,7 @@ POST requests
   -BODY/PAYLOAD SCHEMA:
     - meetUrl: String(mandatory)
     - password: String(mandatory)
-    - user_email: String(mandatory)
+    - user_name: String(mandatory-username)
   -RESPONSE:
     - statusCode:200
     - Content-Type:JSON
