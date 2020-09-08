@@ -129,6 +129,9 @@ function VideoCall(props) {
   const [openWindows, setOpenWindows] = React.useState([]);
   const [toastMsg, setToastMsg] = React.useState(" ");
   const [pvtChatDisplay,setPvtChatDisplay]=React.useState("None");
+  const [pvtChats,setPvtChats]=React.useState([]);
+  const [pvtChatWith,setPvtChatWith]=React.useState({name:"",username:"",profilePic:""});
+  const [pvtChatText,setPvtChatText]=React.useState("");
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
@@ -295,11 +298,14 @@ function VideoCall(props) {
       width: "0px"
     }))
   }
-
+React.useEffect(()=>{
+  if(toggle.width!=='0px'){
+    setPvtChatDisplay('None');
+  }
+},[toggle.width]);
   function SetUserList(res) {
     if (res.validUrl) {
-      var adminArr=[res.admin]
-      setAdmin(adminArr);
+      setAdmin(res.users.filter(user => user.username === res.admin.username));
       setList(res.users.filter(user => user.username !== res.admin.username));
     }
   }
@@ -310,6 +316,7 @@ function VideoCall(props) {
         ...prevState,
         width: "0px"
       }));
+      setPvtChatDisplay("None");
     }
     toggle6.width === "0px" ? changeToggle6((prevState) => ({
       ...prevState,
@@ -491,6 +498,9 @@ React.useEffect(() => {
       socket.on('chatList', (data) => {
          setCallChat(data);
       });
+      socket.on('getPrivateMessage',(data)=>{
+        setToastMsg('Private Message\nFrom: '+data.user.name+"\nMessaage: "+data.message);
+      });
     }
   },[adminBoolHelper]);
 
@@ -514,51 +524,30 @@ React.useEffect(() => {
     setDivWidth("100%");
     setDivDisplay("block");
   }
-
-
+  function postPvtChatMessage(eve){
+    eve.preventDefault();
+    let socket=appSocket;
+    if(socket && pvtChatText.length>0){
+      socket.emit('sendPrivateMessage',{to:pvtChatWith,message:pvtChatText});
+    }
+    setPvtChatText("");
+  }
+React.useEffect(()=>{
+  if(pvtChatDisplay==='block'){
+    changeToggle_();
+    let socket=appSocket;
+    if(socket){
+      // socket.emit('getPrivateMessage',{with:pvtChatWith});
+      // socket.on('getPrivateMessage',(data)=>{
+      //   setPvtChats(data);
+      // });
+    }
+  }
+},[pvtChatDisplay]);
   return (
 
     inCall === false ? <div /> :
       <div className="full-height">
-        <div style={{display:pvtChatDisplay,position:"fixed",right:"70px",bottom:"50px"}}>
-                  <p>
-
- <button className="btn btn-primary" type="button" data-toggle="collapse" data-target="#collapseExample" aria-expanded="false" aria-controls="collapseExample" >
-   Name of guy
- </button>
-</p>
-<div className="collapse" id="collapseExample" >
-
- <div style={{border:"2px", zIndex:"1",backgroundColor:"wheat", width:"250px",height:"25%"}}>
-          <div style={{maxHeight:"200px",overflowY:"scroll"}} className={darkMode ? "list-group chat-list dark-mode" : "list-group chat-list"} id="chatsDiv2">
-              {
-
-                chats.map((chat, index) => {
-                  return <div id={index} key={index} style={darkMode ? { borderBottom: '1px solid white', padding: '1em' } : { borderBottom: '1px solid black', padding: '1emm' }} className={darkMode ? "list-group-item dark-mode list-group-item-action flex-column align-items-start" : "list-group-item list-group-item-action flex-column align-items-start"} >
-                    <div className="d-flex">
-                      <img src={chat.user.profilePic} alt="profile" style={{ height: '1.5rem', width: '1.5rem', marginLeft: '0px', marginRight: '5px', display: "inline", verticalAlign: "middle" }} />
-                      <small style={{ display: "inline", verticalAlign: "middle" }}>{chat.user.name}</small>
-                    </div>
-                    <p className="">{chat.message}</p>
-                    <small>{new Date(chat.time).toLocaleString()}</small>
-                  </div>
-                }
-                )
-
-              }
-            </div>
-
-
-
-   <div style={{ bottom: "20%", marginBottom: "1.5%", backgroundColor: "", position: "relative", zIndex: "2", height: "5%" }} className={darkMode ? "dark-mode" : null}>
-              <p style={{height:"50px"}}><textarea className="textarea_custom" placeholder="Type message.." name="msg" required style={{ width: "70%" }} value={chatText} onChange={(eve) => { const { value } = eve.target; setChatText(value) }}></textarea>
-                <button type="button" className={"btn btn-primary  ml-1"} onClick={postChatMessage} style={{ marginBottom: "20%" }} ><SendIcon style={{ display: "inline", verticalAlign: "middle" }} /></button>
-              </p>
-            </div>
- </div>
-</div>
-</div>
-
         <Toast message={toastMsg} />
         <audio src={audioSrc} style={{ display: "none" }} id="noti_audio" />
         <div style={{ right: "0", top: "0", position: "fixed" }}><div className="card" style={{ padding: "2px", margin: "1px" }}><SignalCellular4BarIcon />{}</div></div>
@@ -653,14 +642,15 @@ React.useEffect(() => {
                       <a href="#" style={darkMode?{ padding: "0px", color:"#FFFFFF"}:{ padding: "0px", color:"#000000"}} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon>
                       </a>
                       <div className={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
-                        <div>
-                          <button type="button" onClick={()=>setPvtChatDisplay("block")} className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><QuestionAnswerRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></QuestionAnswerRoundedIcon>Personal Chat</button>
-                        </div>
+                      {props.logged.user.username===user.username?null:<div>
+                        <button type="button" onClick={()=>{setPvtChatDisplay("block");setPvtChatWith(user)}} className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><QuestionAnswerRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></QuestionAnswerRoundedIcon>Personal Chat</button>
                         <div className="dropdown-divider"></div>
-                        <div>
-                          <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><VoiceOverOffIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></VoiceOverOffIcon>Force Mute</button>
-                        </div>
+                      </div>}
+                      {props.logged.user.username===user.username||props.logged.user.username!==adminUser[0].username?null:<div>
+                        <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><VoiceOverOffIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></VoiceOverOffIcon>Force Mute</button>
                         <div className="dropdown-divider"></div>
+                      </div>
+                    }
                         <div>
                           <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><NetworkCellIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></NetworkCellIcon>Network Speed</button>
                         </div>
@@ -685,12 +675,17 @@ React.useEffect(() => {
                   >
                     <div style={{ padding: "2px" }}><p style={{ marginBottom: '0.1rem', fontSize: '20px' }}>
                       <div className="btn-group dropleft">
-                        <a href="#" style={{ padding: "0px", color: "#000000" }} data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon></a>
+                        <a href="#" style={darkMode?{ padding: "0px", color:"#FFFFFF"}:{ padding: "0px", color:"#000000"}}  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><MoreVertIcon style={{ margin: "0px" }}></MoreVertIcon></a>
                         <div className={darkMode ? "dropdown-menu dark-mode" : "dropdown-menu"}>
-                          <div>
-                            <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><QuestionAnswerRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></QuestionAnswerRoundedIcon>Personal Chat</button>
-                          </div>
+                        {props.logged.user.username===user.username?null:<div>
+                          <button type="button" onClick={()=>{setPvtChatDisplay("block");setPvtChatWith(user);}} className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"} ><QuestionAnswerRoundedIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></QuestionAnswerRoundedIcon>Personal Chat</button>
                           <div className="dropdown-divider"></div>
+                        </div>}
+                        {props.logged.user.username===user.username||props.logged.user.username!==adminUser[0].username?null:<div>
+                          <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><VoiceOverOffIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></VoiceOverOffIcon>Force Mute</button>
+                          <div className="dropdown-divider"></div>
+                        </div>
+                        }
                           <div>
                             <button type="button" className={darkMode ? "dropdown-item dark-mode" : "dropdown-item"}><NetworkCellIcon style={{ display: "inline", verticalAlign: "middle", marginRight: '5px' }}></NetworkCellIcon>Network Speed</button>
                           </div>
@@ -731,6 +726,18 @@ React.useEffect(() => {
             </div>
           </div>
         </div>
+
+        <div style={{display:pvtChatDisplay,...toggle6,width:"250px"}}>
+        <div style={darkMode ? { backgroundColor: " #343A40", height: "100%" } : { backgroundColor: "white", height: "100%" }}>
+        <div className={darkMode?"dark-mode":""}><center><h1>Private Chat</h1><h3>With {pvtChatWith.name}</h3></center></div>
+          <div style={{ bottom: "5%", marginBottom: "1.5%", backgroundColor: "", position: "fixed", zIndex: "2", height: "10%" }} className={darkMode ? "dark-mode" : null}>
+            <p><textarea className="textarea_custom" placeholder="Type message.." name="msg" required style={{ width: "70%" }} value={pvtChatText} onChange={(eve) => { const { value } = eve.target; setPvtChatText(value) }}></textarea>
+              <button type="button" className={"btn btn-primary  ml-1"} onClick={postPvtChatMessage} style={{ marginBottom: "20%" }} ><SendIcon style={{ display: "inline", verticalAlign: "middle" }} /></button>
+            </p>
+          </div>
+        </div>
+        </div>
+
         <nav className={darkMode ? "navbar fixed-bottom navbar-dark bg-dark" : "navbar fixed-bottom navbar-light bg-light"} id="bottomNav">
           {adminBoolHelper === true ? <div className="d-flex justify-content-start">
             {darkMode ? <button type='button' className={darkMode ? "btn btn-dark  ml-2" : "btn btn-light  ml-2"} onClick={toggleDarkMode}><WbSunnyRoundedIcon style={{ display: "inline", verticalAlign: "middle" }} /></button> : <button type='button' className={darkMode ? "btn btn-dark  ml-2" : "btn btn-light  ml-2"} onClick={toggleDarkMode}><Brightness2RoundedIcon style={{ display: "inline", verticalAlign: "middle" }} /> </button>}

@@ -161,10 +161,12 @@ app.post('/api/call/postMessage',(req,res)=>{
 
 //Socket namespace for videoCall
 var map=new Map();
+var map2=new Map();
 var nsp = io.of('/api/videoCallSocket');
 nsp.on('connection', function(socket) {
    socket.on('join',(object)=>{
      map.set(socket.id,object);
+     map2.set(object.user.username,socket.id);
      socket.join(object.callUrl);
      nsp.to(object.callUrl).emit('userList',videoCallFunc.getCallUserList(object.callUrl));
      socket.emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
@@ -174,12 +176,24 @@ nsp.on('connection', function(socket) {
      var obj=map.get(socket.id);
      nsp.to(obj.callUrl).emit('chatList',videoCallFunc.getCallMessages(obj.callUrl));
    });
+   socket.on('getPrivateMessage',(object)=>{
+     socket.emit('getPrivateMessage',[]);
+   });
+   socket.on('sendPrivateMessage',(object)=>{
+     let user2=object.to;
+     let socketId=map2.get(user2.username);
+     if(socketId){
+        var messageObj={user:map.get(socket.id).user,message:object.message,time:new Date()}
+        nsp.to(socketId).emit('getPrivateMessage',messageObj);
+     }
+   });
    socket.on('disconnect',()=>{
      var obj=map.get(socket.id);
      if(obj){
        videoCallFunc.removeFromCall(obj.callUrl,obj.user.username);
        nsp.to(obj.callUrl).emit('userList',videoCallFunc.getCallUserList(obj.callUrl));
        nsp.to(obj.callUrl).emit('left',{message:obj.user.name+" has left"});
+       map2.delete(obj.username);
    }
      map.delete(socket.id);
    })
