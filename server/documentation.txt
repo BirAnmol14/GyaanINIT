@@ -132,7 +132,24 @@ GET requests
                   }, ...
                 ] - a list of Chat objects sorted by timestamp in ascending order
       }
-
+(new)
+9. Get posts in a topic
+  -END POINT: /posts/:url1/:url2/:url3
+  -METHOD: 'GET'
+  -RESPONSE:
+    -statusCode: 200
+    - Content-Type:JSON
+    - SCHEMA: An Object
+      {
+          status: boolean ,
+          message: String ,
+          chats:[
+                  {
+                    Posts object
+                    {poststream...}
+                  }, ...
+                ] - a list of Posts for a particulat topic identified by t/topic-slug/topic-id
+      }
 
 POST requests
 1. Registering a User
@@ -244,6 +261,34 @@ POST requests
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:
     - callUrl: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+
+(new)
+9.Create Topic/Private Message
+-END POINT: /create/t/:url1/:url2
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - callUrl: String(mandatory)[..to be updated]
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+
+(new)
+10.Create New Post under a Topic
+-END POINT: /makepost/t/:url1/:url2
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - callUrl: String(mandatory)[..to be updated]
   -RESPONSE:
     - statusCode:200
     - Content-Type:JSON

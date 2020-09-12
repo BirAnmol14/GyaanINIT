@@ -49,6 +49,7 @@ app.get('/api/',(req,res)=>{
 
 app.get('/api/users/getinfo',async (req,res)=>{
   if(req.query.username){
+    console.log(req.query.username);
     if(req.query.short){
       res.json(await func.getUserInfo(req.query.username));
     }else{
@@ -96,6 +97,25 @@ app.get('/api/call/getCallChat',(req,res)=>{
     res.statusCode=400;
     res.json({message:'bad query, url query parameter missing in url'});
   }
+});
+ ////////
+  //////
+  /////
+  //////
+  ///////
+app.get('/posts/:url1/:url2/:url3', async (req, res)=> {
+  //pass t/topic_name/topic_id here ; see example below.
+  var url = "https://t2.metastudio.org/"+req.params.url1+"/"+req.params.url2+"/"+req.params.url3+".json";
+  res.json( await func.getPosts(url));
+});
+
+app.get('/create/t/:url1/:url2', async (req, res)=> {
+  //pass t/topic_name/topic_id here ; see example below.
+ res.json(await func.createTopic(req, res));
+});
+app.get('/makepost/t/:url1/:url2', async (req, res)=> {
+  //pass t/topic_name/topic_id here ; see example below.
+ res.json(await func.makePost(req, res));
 });
 
 //POST requests

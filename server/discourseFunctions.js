@@ -5,7 +5,10 @@ const fetch = require('node-fetch');
 module.exports = {
   register: register,
   login: login,
-  getUserInfo: getUserInfo
+  getUserInfo: getUserInfo,
+  fetchPosts:fetchPosts,
+  createTopic:createTopic,
+  makePost:makePost
 }
 
 function TruncateUser(body) {
@@ -190,4 +193,114 @@ async function getUserInfo(userName, mode) {
       user: null
     }
   }
+}
+async function fetchPosts(urid) {
+   var url = urid;
+  var options = {
+    method: 'GET',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system'
+    }
+  };
+  const response=await fetch(url,options);
+  console.log(options.headers);
+  const status=await response.status;
+if(status===200){
+     const res=await response.json();
+     console.log(res);
+     return res;
+    //res has all posts, check terminal.
+  
+  }
+  else {
+    return {
+      status: false,
+      message: null
+    }
+  }
+}
+
+async function createTopic(req) {
+ // console.log(req.session);             //currently sending pvt_messages.
+  var title = "new_topic_testing";
+  var category = "14";          //read from req when passed from client
+  var desc = "read from req when passed from client";
+ // var user="G_N";
+  var url = secrets.discourse_url + '/posts.json';
+ var data = {
+    "title": title,
+    "raw": desc,
+    "category": Number(category),
+    'target_recipients': "gyaanTester99",//recepirnt here
+    "archetype": "regular",
+    
+  };
+  data=JSON.stringify(data);
+  var options = {
+    method: "POST",
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system',             //to be changed at delivery   
+      'Content-Type': 'application/json'
+    },
+    body:data
+  };
+  const response=await fetch(url,options);
+  const status=await response.status;
+  console.log(status);
+  console.log(options);
+  if(status===200){
+   const result=await response.json();
+   return result;
+
+  }
+  else{
+    return{
+      status: false,
+      message: null
+    }
+
+  }
+}
+
+//posting inside topic
+async function makePost(req){
+  var topic_id = 3324;
+  var raw = "testing some random testing texts Gyaan_init";          //read from req when passed from client
+  var url = secrets.discourse_url + '/posts.json';
+  var data={
+    "topic_id": topic_id,
+    "raw": raw,
+   'target_recipients':'system',
+    "archetype": "regular",
+  };
+data=JSON.stringify(data);
+  var options = {
+    method: 'POST',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system',             //to be changed at delivery   
+      'Content-Type': 'application/json'
+    },
+    body:data
+  };
+
+const response=await fetch(url,options);
+  const status=await response.status;
+  console.log(status);
+  console.log(options);
+  if(status===200){
+   const result=await response.json();
+   return result;
+
+  }
+  else{
+    return{
+      status: false,
+      message: null
+    }
+
+  }
+
 }

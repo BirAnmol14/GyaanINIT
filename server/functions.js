@@ -23,7 +23,10 @@ module.exports = {
   postMessageInCall: postMessageInCall,
   getCallChat: getCallChat,
   calls: calls,
-  getDetailedUserInfo: getDetailedUserInfo
+  getDetailedUserInfo: getDetailedUserInfo,
+  getPosts:getPosts,
+  createTopic:createTopic,
+  makePost:makePost
 }
 
 function User(name, email, password, username, identity) {
@@ -66,6 +69,16 @@ async function getUserInfo(username) {
     }
   }
 }
+async function getPosts(url){
+  if(url!=null){
+  return await discourseFunctions.fetchPosts(url);
+  }
+  else{
+    return{
+      status:false
+    }
+  }
+}
 
 async function getDetailedUserInfo(username) {
   const user = await discourseFunctions.getUserInfo(username, 1);
@@ -80,6 +93,13 @@ async function getDetailedUserInfo(username) {
       info: null
     }
   }
+}
+async function createTopic(req){
+  return await discourseFunctions.createTopic(req);
+}
+
+async function makePost(req){
+  return await discourseFunctions.makePost(req);
 }
 
 function isLoggedIn(req) {
