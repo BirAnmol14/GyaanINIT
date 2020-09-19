@@ -103,10 +103,18 @@ app.get('/api/call/getCallChat',(req,res)=>{
   /////
   //////
   ///////
-app.get('/posts/:url1/:url2/:url3', async (req, res)=> {
-  //pass t/topic_name/topic_id here ; see example below.
-  var url = "https://t2.metastudio.org/"+req.params.url1+"/"+req.params.url2+"/"+req.params.url3+".json";
-  res.json( await func.getPosts(url));
+app.get('/api/groups',async (req,res)=>{
+  res.json(await func.getGroups());
+});
+
+app.get("/api/groups/group/:topic/:id", async  (req, res)=> {
+  var topic = req.params.topic;
+  var id = req.params.id;
+  res.json(await func.getGroup(topic,id));
+});
+
+app.get('/api/posts/:url1/:url2/:url3', async (req, res)=> {
+  res.json( await func.getPosts(req.params.url1,req.params.url2,req.params.url3));
 });
 
 app.get('/create/t/:url1/:url2', async (req, res)=> {

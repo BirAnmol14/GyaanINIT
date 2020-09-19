@@ -485,12 +485,12 @@ React.useEffect(() => {
       var callUrl = window.location.href.split('/');
       socket.emit('join', { user: props.logged.user, callUrl: callUrl[callUrl.length - 1] });
       socket.on('join', (data) => {
-        setToastMsg(data.message);
+        setToastMsg("<p>"+data.message+"</p>");
         //Listen to all other joining messages
       })
       socket.on('left', (data) => {
         //Listen to all other leaving messages
-         setToastMsg(data.message);
+         setToastMsg("<p>"+data.message+"</p>");
       });
       socket.on('userList', (data) => {
          SetUserList(data);
@@ -499,7 +499,7 @@ React.useEffect(() => {
          setCallChat(data);
       });
       socket.on('getPrivateMessage',(data)=>{
-        setToastMsg('Private Message\nFrom: '+data.user.name+"\nMessaage: "+data.message);
+        setToastMsg('<p>Private Message</p><p>From: '+data.user.name+"</p><p>Messaage: "+data.message+"</p>");
       });
     }
   },[adminBoolHelper]);

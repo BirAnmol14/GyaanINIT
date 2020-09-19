@@ -24,7 +24,6 @@ function Login(props){
       const res=await loginApi();
       if(res.status===true){
         alert(res.message);
-        alert(JSON.stringify(res.user));
         const url=getNextUrl();
         window.location.href=url;
       }else{

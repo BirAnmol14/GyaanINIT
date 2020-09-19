@@ -26,7 +26,9 @@ module.exports = {
   getDetailedUserInfo: getDetailedUserInfo,
   getPosts:getPosts,
   createTopic:createTopic,
-  makePost:makePost
+  makePost:makePost,
+  getGroups:getGroups,
+  getGroup:getGroup
 }
 
 function User(name, email, password, username, identity) {
@@ -69,15 +71,8 @@ async function getUserInfo(username) {
     }
   }
 }
-async function getPosts(url){
-  if(url!=null){
-  return await discourseFunctions.fetchPosts(url);
-  }
-  else{
-    return{
-      status:false
-    }
-  }
+async function getPosts(url1,url2,url3){
+  return await discourseFunctions.fetchPosts(url1,url2,url3);
 }
 
 async function getDetailedUserInfo(username) {
@@ -465,4 +460,12 @@ function getCallChat(req, url) {
       }
     }
   }
+}
+
+async function getGroups(){
+  return await discourseFunctions.fetchGroups();
+}
+
+async function getGroup(topic,id){
+  return await discourseFunctions.fetchGroup(topic,id);
 }

@@ -8,7 +8,9 @@ module.exports = {
   getUserInfo: getUserInfo,
   fetchPosts:fetchPosts,
   createTopic:createTopic,
-  makePost:makePost
+  makePost:makePost,
+  fetchGroups:fetchGroups,
+  fetchGroup:fetchGroup
 }
 
 function TruncateUser(body) {
@@ -194,9 +196,9 @@ async function getUserInfo(userName, mode) {
     }
   }
 }
-async function fetchPosts(urid) {
-   var url = urid;
-  var options = {
+async function fetchPosts(url1,url2,url3) {
+   var url = secrets.discourse_url+url1+'/'+url2+'/'+url3+'.json';
+   var options = {
     method: 'GET',
     headers: {
       'Api-Key': secrets.discourse_key,
@@ -204,19 +206,44 @@ async function fetchPosts(urid) {
     }
   };
   const response=await fetch(url,options);
-  console.log(options.headers);
   const status=await response.status;
-if(status===200){
+  if(status===200){
      const res=await response.json();
-     console.log(res);
-     return res;
-    //res has all posts, check terminal.
-  
+     const cat_id=res.category_id;
+     const res1= await fetch(secrets.discourse_url+'categories.json',options);
+     if(await res1.status===200){
+       const result=await res1.json();
+       const categories=result.category_list.categories;
+       var category={};
+       for(var i=0;i<categories.length;i++){
+         if(categories[i].id===cat_id){
+           category=categories[i];break;
+         }
+       }
+       return {
+         status:true,
+         message:"Success",
+         body:res,
+         category:category,
+         url:secrets.discourse_url
+       }
+     }else{
+       return {
+         status:true,
+         message:"Success",
+         body:res,
+         category:{},
+         url:secrets.discourse_url
+       }
+     }
   }
   else {
     return {
       status: false,
-      message: null
+      message: "Failed to fetch post",
+      body:null,
+      category:{},
+      url:secrets.discourse_url
     }
   }
 }
@@ -234,14 +261,14 @@ async function createTopic(req) {
     "category": Number(category),
     'target_recipients': "gyaanTester99",//recepirnt here
     "archetype": "regular",
-    
+
   };
   data=JSON.stringify(data);
   var options = {
     method: "POST",
     headers: {
       'Api-Key': secrets.discourse_key,
-      'Api-Username': 'system',             //to be changed at delivery   
+      'Api-Username': 'system',             //to be changed at delivery
       'Content-Type': 'application/json'
     },
     body:data
@@ -280,7 +307,7 @@ data=JSON.stringify(data);
     method: 'POST',
     headers: {
       'Api-Key': secrets.discourse_key,
-      'Api-Username': 'system',             //to be changed at delivery   
+      'Api-Username': 'system',             //to be changed at delivery
       'Content-Type': 'application/json'
     },
     body:data
@@ -288,8 +315,6 @@ data=JSON.stringify(data);
 
 const response=await fetch(url,options);
   const status=await response.status;
-  console.log(status);
-  console.log(options);
   if(status===200){
    const result=await response.json();
    return result;
@@ -303,4 +328,90 @@ const response=await fetch(url,options);
 
   }
 
+}
+
+async function fetchGroups() {
+  var body = '';
+  var url1=secrets.discourse_url + 'latest.json';
+  var url2 = secrets.discourse_url + 'categories.json';
+  var options = {
+    method: 'GET',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system'
+    }
+  };
+  const res1=await fetch(url1,options);
+  const status1= await res1.status;
+  if(status1===200){
+    const result1=await res1.json();
+    if(result1 && result1.topic_list && result1.topic_list.topics){
+    var topics = result1.topic_list.topics;
+    const res2=await fetch(url2,options);
+    const status2= await res2.status;
+    if(status2===200){
+      const result2=await res2.json();
+      var groups = [];
+      groups = result2.category_list.categories;
+      return {
+        status:true,
+        message: "success",
+        topics: topics,
+        groups:groups,
+        url:secrets.discourse_url
+        }
+      }
+    }
+  }
+  return {
+    status:false,
+    message:"error",
+    topics: [],
+    groups:[],
+    url:secrets.discourse_url
+  }
+}
+
+async function fetchGroup(topic,id) {
+  var topic_head = '';
+  var url = secrets.discourse_url + 'categories.json';
+  var url3 = secrets.discourse_url + 'c/' + topic + "/" + id + '.json';
+  var options = {
+    method: 'GET',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system'
+    }
+  };
+  const res1= await fetch(url,options);
+  const status1=await res1.status;
+  if(status1===200){
+    const result1=await res1.json();
+    var list = result1.category_list.categories;
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].slug === topic) {
+        topic_head = list[i];
+        break;
+      }
+    }
+    const res2=await fetch(url3,options);
+    const status2 = await res2.status;
+    if(status2===200){
+      const result2=await res2.json();
+      return {
+        status:true,
+        message:'Success',
+        topic_head:topic_head,
+        body:result2,
+        url:secrets.discourse_url
+      }
+    }
+  }
+  return {
+    status:false,
+    message:'Failed to fetch data',
+    topic_head:'',
+    body:'',
+    url:secrets.discourse_url
+  }
 }

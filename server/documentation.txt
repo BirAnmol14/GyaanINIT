@@ -134,7 +134,7 @@ GET requests
       }
 (new)
 9. Get posts in a topic
-  -END POINT: /posts/:url1/:url2/:url3
+  -END POINT: /api/posts/:url1/:url2/:url3
   -METHOD: 'GET'
   -RESPONSE:
     -statusCode: 200
@@ -143,13 +143,53 @@ GET requests
       {
           status: boolean ,
           message: String ,
-          chats:[
-                  {
-                    Posts object
-                    {poststream...}
-                  }, ...
-                ] - a list of Posts for a particulat topic identified by t/topic-slug/topic-id
+          body:{
+
+          }- a list of Posts for a particulat topic identified by t/topic-slug/topic-id
+          category:{
+
+          }-object, category info of the post
       }
+
+10. Get Categories and Latest posts
+  -END POINT: /api/groups
+  -METHOD: 'GET'
+  -RESPONSE:
+    -statusCode: 200
+    - Content-Type:JSON
+    - SCHEMA: An Object
+      {
+          status: boolean ,
+          message: String ,
+          topics:[
+                    {...}...
+                  ]
+          groups:[
+                  {
+                    ...
+                  }, ...
+                ]
+          url:string
+      }
+11. Get Information about a groups
+-END POINT: /api/groups/group/:topic/:id
+-METHOD: 'GET'
+-RESPONSE:
+  -statusCode: 200
+  - Content-Type:JSON
+  - SCHEMA: An Object
+    {
+        status: boolean ,
+        message: String ,
+        topic_head:{
+
+                  }--Object with Group Category Information
+        body:{
+
+        } -Object with group specific information
+        url:string
+    }
+
 
 POST requests
 1. Registering a User

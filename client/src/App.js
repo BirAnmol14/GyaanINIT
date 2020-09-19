@@ -19,6 +19,8 @@ import ServerRoutes from './components/ServerRoutes.js';
 import Presentations from './components/presentations';
 import queryString from 'query-string';
 import VideoCall from './components/VideoCall.jsx';
+import Group from './components/group/group.jsx';
+import Post from './components/posts/posts.jsx';
 function App() {
   function getNextUrl(){
     const obj=queryString.parse(window.location.search);
@@ -61,16 +63,18 @@ function App() {
     }
 
   }
- 
+
   React.useEffect(() => {
     loggedStatus();
-    
+
   },[]);
 
   return (
     <Router>
     <Route exact path="/" render={(props) => <Home {...props} logged={logged} />}/>
     <Route path="/videoCall" render={(props) => <VideoCall {...props} logged={logged} />}/>
+    <Route path="/group" render={(props) => <Group {...props} logged={logged} />}/>
+    <Route path="/post" render={(props) => <Post {...props} logged={logged} />}/>
     <Route exact path="/pastmeets"  render={(props) => <PastMeets {...props} logged={logged} />}/>
     <Route exact path="/login"  render={(props) => <Login {...props} logged={logged} />}/>
     <Route exact path='/join'  render={(props) => <Join {...props} logged={logged} />}/>

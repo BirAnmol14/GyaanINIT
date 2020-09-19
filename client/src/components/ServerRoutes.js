@@ -14,6 +14,9 @@
   const postCallMessage_endpoint='/api/call/postMessage';
   const getCallMessageList_endpoint='/api/call/getCallChat?url=';
   const socketVideoCall_Endpoint=serverUrl+'/api/videoCallSocket';
+  const latestTopics_endpoint='/api/groups';
+  const getGroup_endpoint='/api/groups/group/';
+  const getPosts_endpoint='/api/posts/';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -28,5 +31,9 @@
     verifyUserInCall:verifyInCall_endpoint,
     postChatMessage:postCallMessage_endpoint,
     getCallChat:getCallMessageList_endpoint,
-    socketEndpoint:socketVideoCall_Endpoint
+    socketEndpoint:socketVideoCall_Endpoint,
+    latestTopics:latestTopics_endpoint,
+    serverUrl:serverUrl,
+    getGroup:getGroup_endpoint,
+    getPosts:getPosts_endpoint
    }
