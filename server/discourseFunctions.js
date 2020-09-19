@@ -10,7 +10,10 @@ module.exports = {
   createTopic:createTopic,
   makePost:makePost,
   fetchGroups:fetchGroups,
-  fetchGroup:fetchGroup
+  fetchGroup:fetchGroup,
+  fetchCategories:fetchCategories,
+  search:search,
+  fetchBadges:fetchBadges
 }
 
 function TruncateUser(body) {
@@ -413,5 +416,83 @@ async function fetchGroup(topic,id) {
     topic_head:'',
     body:'',
     url:secrets.discourse_url
+  }
+}
+
+async function fetchCategories(){
+    var url = secrets.discourse_url + 'categories.json';
+    var options = {
+      method: 'GET',
+      headers: {
+        'Api-Key': secrets.discourse_key,
+        'Api-Username': 'system'
+      }
+    };
+    const res=await fetch(url,options);
+    if(await res.status === 200){
+      const data=await res.json();
+      return {
+        status:true,message:"success",categories:data.category_list.categories
+      }
+    }else{
+      return {
+        status:false,message:"failed to fetch categories",categories:[]
+      }
+    }
+}
+
+async function search(text){
+  var url = secrets.discourse_url + "/search/query?term=" + text + "&include_blurbs=true";
+  var options = {
+    method: 'GET',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system',
+      'Accept': 'application/json, text/javascript, */*; q=0.01',
+      'Discourse-Visible': true,
+      'DNT': 1,
+      'Referer': secrets.url,
+      'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Mobile Safari/537.36',
+      'X-CSRF-Token': 'undefined',
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  };
+  const res=await fetch(url,options);
+  if(await res.status===200){
+    const result=await res.json();
+    if(result.grouped_search_result){
+      return {
+        users: result.users,
+        posts: result.posts,
+        groups: result.categories,
+        topics: result.topics,
+        url:secrets.discourse_url
+      }
+    }
+  }
+  return {
+    users: [],
+    posts: [],
+    groups: [],
+    topics: [],
+    url:secrets.discourse_url
+  }
+}
+
+async function fetchBadges(username){
+  var url = secrets.discourse_url + 'user-badges/' +username + '.json';
+  var options = {
+    method: 'GET',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system'
+    }
+  };
+  const res=await fetch(url,options);
+  if(await res.status===200){
+    const result=await res.json();
+    return {status:true,badges:result.badges}
+  }else{
+    return {status:false,badges:[]}
   }
 }

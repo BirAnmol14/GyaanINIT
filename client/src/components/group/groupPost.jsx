@@ -8,19 +8,19 @@ import FavoriteIcon from '@material-ui/icons/Favorite';
 function GroupPost(props){
   return (
       <div id="layout" className="pure-g">
-        <div className="sidebar pure-u-1 pure-u-md-1-4">
+        <div className="sidebar pure-u-1 pure-u-md-1-4" style={{maxWidth:"15%"}}>
             <div className="header">
-                <h1 className="brand-title">{props.topicHead.name}</h1>
+                <h1 className="brand-title">{props.topicHead.name.split('_').join(' ')}</h1>
                 <h2 className="brand-tagline"><img style={{height:"80px",width:"80px",borderRadius:'100px'}} className="post-avatar" src={props.topicHead.uploaded_logo?(props.url.toString()+props.topicHead.uploaded_logo.url.toString()):logo} alt='thumbnail'/></h2>
             </div>
         </div>
-         <div style={{backgroundColor:'#343A40'}} className="content pure-u-1 pure-u-md-3-4">
-         <ul className="nav nav-tabs" id="myTab" role="tablist">
+         <div  className="content pure-u-1 pure-u-md-3-4" style={{backgroundColor:"#000",opacity:'0.9'}}>
+         <ul className="nav nav-pills" id="myTab" role="tablist">
           <li className="nav-item">
-            <a className="nav-link active" id="topic-tab" data-toggle="tab" href="#topics" role="tab" aria-controls="topics" aria-selected="true">Topics</a>
+            <a className="nav-link active" style={{color:'white'}} id="topic-tab" data-toggle="tab" href="#topics" role="tab" aria-controls="topics" aria-selected="true">Topics</a>
           </li>
           <li className="nav-item">
-            <a className="nav-link" id="home-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Users</a>
+            <a className="nav-link" style={{color:'white'}} id="home-tab" data-toggle="tab" href="#users" role="tab" aria-controls="users" aria-selected="false">Users</a>
           </li>
         </ul>
         <div className="tab-content" id="myTabContent" style={{color:'white'}}>
@@ -32,7 +32,7 @@ function GroupPost(props){
                         <header className="post-header">
                             <p className="post-meta" style={{color:"white"}}>
                             <img style={{height:"50px",width:"50px",borderRadius:'100px',marginRight:"10px"}} src={props.url.substring(0,props.url.length-1)+user.avatar_template.replace("{size}","80")} alt='user profile'/>
-                            {user.name} (@ {user.username})
+                            {user.name} (<a href={'/u/'+user.username}>@{user.username}</a>)
                             </p>
                         </header>
                   </section>

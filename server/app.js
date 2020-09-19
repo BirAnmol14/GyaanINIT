@@ -49,7 +49,6 @@ app.get('/api/',(req,res)=>{
 
 app.get('/api/users/getinfo',async (req,res)=>{
   if(req.query.username){
-    console.log(req.query.username);
     if(req.query.short){
       res.json(await func.getUserInfo(req.query.username));
     }else{
@@ -62,6 +61,15 @@ app.get('/api/users/getinfo',async (req,res)=>{
   }
 });
 
+app.get('/api/users/getBadges',async (req,res)=>{
+  if(req.query.username){
+    res.json(await func.getBadges(req.query.username));
+  }
+  else{
+    res.statusCode=400;
+    res.json({message:'bad query, email query missing in url'});
+  }
+});
 app.get('/api/account/verifyLoginStatus',(req,res)=>{
   res.json(func.isLoggedIn(req));
 });
@@ -75,9 +83,9 @@ app.get('/api/account/logout', (req,res)=>{
   res.json(func.logout(req));
 });
 
-app.get('/api/tools/search',(req,res)=>{
+app.get('/api/tools/search',async (req,res)=>{
   if(req.query && req.query.find){
-    res.json(func.search(req.query.find));
+    res.json(await func.search(req.query.find));
   }else{
     res.status(400).send('Bad Query');
   }
@@ -112,7 +120,9 @@ app.get("/api/groups/group/:topic/:id", async  (req, res)=> {
   var id = req.params.id;
   res.json(await func.getGroup(topic,id));
 });
-
+app.get('/api/categories.json',async(req,res)=>{
+  res.json(await func.getCategories());
+})
 app.get('/api/posts/:url1/:url2/:url3', async (req, res)=> {
   res.json( await func.getPosts(req.params.url1,req.params.url2,req.params.url3));
 });

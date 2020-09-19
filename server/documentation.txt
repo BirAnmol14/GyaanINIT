@@ -10,6 +10,7 @@ GET requests
     - SCHEMA:
       - status: boolean
       - info: User Object
+      -url: String
 
 2. Get Detailed User Information
   -END POINT: /api/users/getinfo?username={username}
@@ -20,6 +21,7 @@ GET requests
     - SCHEMA:
       - status: boolean
       - info: User Object
+      -url: String
 
 3. Verifying LoggedIn status
   -END POINT: /api/account/verifyLoginStatus
@@ -31,9 +33,9 @@ GET requests
       - status: boolean
       - user: Object
               {
-                -name:String,
-                -username:String,
-                profilePic:String
+                -name: String,
+                -username: String,
+                profilePic: String
               }
 
 4. Logout
@@ -189,7 +191,35 @@ GET requests
         } -Object with group specific information
         url:string
     }
+12. Get categories
+-END POINT: /api/categories.json
+-METHOD: 'GET'
+-RESPONSE:
+  -statusCode: 200
+  - Content-Type:JSON
+  - SCHEMA: An Object
+    {
+        status: boolean ,
+        message: String ,
+        categories: {
 
+        }
+    }
+
+13. Get User Badges
+-END POINT: /api/users/getBadges?username={username}
+-METHOD: 'GET'
+-RESPONSE:
+  -statusCode: 200
+  - Content-Type:JSON
+  - SCHEMA: An Object
+    {
+        status: boolean ,
+        message: String ,
+        badges:{
+        
+        }
+    }
 
 POST requests
 1. Registering a User

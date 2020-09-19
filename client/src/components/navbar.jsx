@@ -6,20 +6,38 @@ import SearchIcon from '@material-ui/icons/Search';
 import AccountBoxIcon from '@material-ui/icons/AccountBox';
 function Navbar(props) {
   const [search, setSearch] = React.useState({ text: '' });
-  const [search_results,setResults]=React.useState({});
+  const [search_results,setResults]=React.useState(null);
+  const [categories,setCategories]=React.useState([]);
+  async function fetchCategories(){
+    const response = await fetch(ServerRoutes.getCategories, {
+    method: 'GET',
+    credentials: 'include'
+  });
+  const status=await response.status;
+    if(status===200){
+      const data = await response.json();
+      if(data.status===true){
+        setCategories(data.categories);
+      }else{
+        alert(data.message);
+      }
+    }else{
+      alert("Error "+status);
+    }
+  }
   function changeSearch(event) {
     setSearch({ text: event.target.value });
   }
-  function submitSearch(e) {
-    e.preventDefault();
-    alert('Trying to search: ' + search.text);
-    if(search.text.length>0 ){
-    fetchResults();
-  }else{
-    alert('Please make a valid search');
-  }
-    setSearch({ text: '' });
-  }
+  React.useEffect(()=>{
+    if(search.text.length>0){
+      async function runner(){
+        await fetchResults();
+      }
+      runner();
+    }else{
+      setResults(null);
+    }
+  },[search.text.length]);
   async function fetchResults(){
     const url=ServerRoutes.search+"?find="+search.text;
     const response=await fetch(url,{
@@ -29,7 +47,6 @@ function Navbar(props) {
     const status=await response.status;
     if(status===200){
       const res=await response.json();
-      alert(JSON.stringify(res));
       setResults(res);//Actually sets the state, can be tested by using react dev tools and viewing state of navbar
     }else{
       alert('Error Occurred '+ status);
@@ -53,6 +70,12 @@ function Navbar(props) {
       alert('Error '+status);
     }
   }
+  React.useEffect(()=>{
+    async function runner(){
+      await fetchCategories();
+    }
+    runner();
+  },[]);
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
       <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarTogglerDemo03" aria-controls="navbarTogglerDemo03" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,7 +99,7 @@ function Navbar(props) {
           }
 
 
-          {props.discuss ? window.location.href.split('/').indexOf("discuss") !== -1 ? <li className="nav-item dropdown">
+          {props.discuss ? window.location.href.split('/').indexOf("discuss") !== -1 || props.links.active.name==='category'? <li className="nav-item dropdown">
             <a className="nav-link active dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
               Discuss
             </a>
@@ -88,7 +111,10 @@ function Navbar(props) {
               <a className="dropdown-item" href="/discuss/JEE">JEE</a>
               <a className="dropdown-item" href="/discuss/NEET">NEET</a>
               <a className="dropdown-item" href="/discuss/School">School</a>
-
+              <div className="dropdown-divider"></div>
+              {
+                categories.length!==0?categories.map((category,index)=>{return (<a key={category.id} className="dropdown-item" href={'/group/'+category.slug+'/'+category.id}>{category.name.split("_").join(" ")}</a>);}):null
+              }
             </div>
 
           </li> : <li className="nav-item dropdown">
@@ -103,7 +129,10 @@ function Navbar(props) {
                 <a className="dropdown-item" href="/discuss/JEE">JEE</a>
                 <a className="dropdown-item" href="/discuss/NEET">NEET</a>
                 <a className="dropdown-item" href="/discuss/School">School</a>
-
+                <div className="dropdown-divider"></div>
+                {
+                  categories.length!==0?categories.map((category,index)=>{return (<a key={category.id} className="dropdown-item" href={'/group/'+category.slug+'/'+category.id}>{category.name.split("_").join(" ")}</a>);}):null
+                }
               </div>
 
             </li> : null}
@@ -117,10 +146,42 @@ function Navbar(props) {
 
         </ul>
 
-        {props.search ? <form className="form-inline my-2 my-lg-0" onSubmit={submitSearch}>
-          <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={search.text} onChange={changeSearch} />
-          <button className="btn btn-outline-primary my-2 my-sm-0" type="submit" ><SearchIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
-        </form> : null}
+        {props.search ? <form className="form-inline my-2 my-lg-0">
+        <div className="dropdown">
+          <input className="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" value={search.text} onChange={changeSearch} aria-haspopup="true"/>
+
+            {search_results&&search_results.users&&search_results.groups?<div className="dropdown-menu" aria-labelledby="Search" style={search_results.users.length>0||search_results.groups.length>0?{display:"block",maxWidth:'180%'}:{display:"none"}}>
+              {
+                search_results.users&&search_results.users.length>0?<div><h6 className="dropdown-header">Users</h6>
+                  {
+                    search_results.users.map((user,index)=>{
+                      return (<a key={user.username} className="dropdown-item" href={"/u/"+user.username}>{user.avatar_template?<img style={{height:'20px',width:'20px',borderRadius:'100px',marginRight:'3px'}} src={search_results.url.substring(0,search_results.url.length-1)+user.avatar_template.replace('{size}','40')} alt="user img"/>:null}{user.name} (@{user.username})</a>);
+                    })
+                  }
+
+                <div className="dropdown-divider"></div>
+                </div>:null
+              }
+              {
+                search_results.groups&&search_results.groups.length>0?<div><h6 className="dropdown-header">Groups</h6>
+                  {search_results.groups.map((group,index)=>{return (
+                    <div key={group.id}>
+                    <a key={group.id} className="dropdown-item" href={"/group/"+group.slug+"/"+group.id}>{group.name}
+                    <p style={{fontSize:'10px',wordBreak:"breakAll"}}>
+                      {group.description?group.description.substring(0,61)+"...":null}
+                    </p>
+                    </a>
+                    </div>
+                  )
+                })
+                }
+                <div className="dropdown-divider"></div>
+                </div>:null
+              }
+            </div>:null}
+        </div>
+          <button className="btn btn-outline-primary my-2 my-sm-0" type="button" ><SearchIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
+      </form> : null}
 
 
         {(props.login !== true) ? <form className="form-inline my-2 my-sm-0" style={{ margin: '10px' }}>

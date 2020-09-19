@@ -17,6 +17,9 @@
   const latestTopics_endpoint='/api/groups';
   const getGroup_endpoint='/api/groups/group/';
   const getPosts_endpoint='/api/posts/';
+  const getCategories_endpoint='/api/categories.json';
+  const getUserProfile_endpoint='/api/users/getinfo?username=';
+  const getBadges_endpoint='/api/users/getBadges?username=';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -35,5 +38,8 @@
     latestTopics:latestTopics_endpoint,
     serverUrl:serverUrl,
     getGroup:getGroup_endpoint,
-    getPosts:getPosts_endpoint
+    getPosts:getPosts_endpoint,
+    getCategories:getCategories_endpoint,
+    getUserProfile:getUserProfile_endpoint,
+    getBadges:getBadges_endpoint
    }

@@ -38,7 +38,7 @@ const status=await response.status;
     runner();
   },[]);
   return(
-      topicHead&&body&&url.length>0?<div><Navbar links={{active:{},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
+      topicHead&&body&&url.length>0?<div><Navbar links={{active:{name:'category',url:window.location.href},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
       <div style={{marginTop:"100px"}}><GroupPost topicHead={topicHead} body={body} url={url}/></div></div>:null
   );
 }

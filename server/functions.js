@@ -2,6 +2,7 @@ const https = require('https');
 const querystring = require('querystring');
 const md5 = require('md5');
 const zxcvbn = require('zxcvbn');
+const secrets = require('./secrets.js');
 const discourseFunctions = require('./discourseFunctions.js');
 const registered_users = []; //{email,name,username,password,profilePic}
 const calls = []; //{url,password,admin,users,chats}
@@ -28,7 +29,9 @@ module.exports = {
   createTopic:createTopic,
   makePost:makePost,
   getGroups:getGroups,
-  getGroup:getGroup
+  getGroup:getGroup,
+  getCategories:getCategories,
+  getBadges:getBadges,
 }
 
 function User(name, email, password, username, identity) {
@@ -59,15 +62,17 @@ async function login(req, body) {
 
 async function getUserInfo(username) {
   const user = await discourseFunctions.getUserInfo(username, 0);
-  if (user) {
+  if (user.user) {
     return {
       status: true,
-      info: user.user
+      info: user.user,
+      url:secrets.discourse_url
     }
   } else {
     return {
       status: false,
-      info: null
+      info: null,
+      url:secrets.discourse_url
     }
   }
 }
@@ -77,15 +82,17 @@ async function getPosts(url1,url2,url3){
 
 async function getDetailedUserInfo(username) {
   const user = await discourseFunctions.getUserInfo(username, 1);
-  if (user) {
+  if (user.user && user.user.id) {
     return {
       status: true,
-      info: user.user
+      info: user.user,
+      url:secrets.discourse_url
     }
   } else {
     return {
       status: false,
-      info: null
+      info: null,
+      url:secrets.discourse_url
     }
   }
 }
@@ -145,21 +152,8 @@ function getAllUsers() {
   return users;
 }
 
-function search(text) {
-  //Currently results will only have users
-  const search_obj = {
-    users: [],
-    articles: [],
-    posts: [],
-    videos: []
-  }
-  const users = getAllUsers();
-  for (var i = 0; i < users.length; i++) {
-    if (users[i].name.toLowerCase().includes(text.toLowerCase()) || users[i].username.toLowerCase().includes(text.toLowerCase())) {
-      search_obj.users.push(users[i]);
-    }
-  }
-  return search_obj;
+async function search(text) {
+  return await discourseFunctions.search(text);
 }
 
 function check_strength(password) {
@@ -468,4 +462,12 @@ async function getGroups(){
 
 async function getGroup(topic,id){
   return await discourseFunctions.fetchGroup(topic,id);
+}
+
+async function getCategories(){
+  return await discourseFunctions.fetchCategories();
+}
+
+async function getBadges(username){
+  return await discourseFunctions.fetchBadges(username);
 }

@@ -38,10 +38,10 @@ function LatestTopics(){
 
   return (
     <div id="layout" className="pure-g" >
-      {url?<h1>Categories</h1>:null}
+      {url?<h1 className="post"><center>Categories</center></h1>:null}
       {
         groups.map((group,index)=>{
-          return <div id={group.id} key={group.id} className="post">
+          return <div id={group.id} key={group.id} className="post" >
           <section>
                   <header className="post-header">
                       <img style={{height:"80px",width:"80px",borderRadius:'100px'}} className="post-avatar" src={group.uploaded_logo?(url.toString()+group.uploaded_logo.url.toString()):logo} alt='thumbnail'/>
@@ -62,10 +62,10 @@ function LatestTopics(){
           </div>
         })
       }
-      {url?<h1>Latest Topics</h1>:null}
+      {url?<h1 className="post"><center>Latest Topics</center></h1>:null}
       {
         topics.map((topic,index)=>{
-          return <div id={topic.id} key={topic.id}  className="post">
+          return <div id={topic.id} key={topic.id}  className="post" >
           {topic.pinned? <h1 className="content-subhead"><span role="img" aria-label="pinned">📌</span></h1>:null}
             <section>
                     <header className="post-header">
