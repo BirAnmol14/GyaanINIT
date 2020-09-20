@@ -15,13 +15,22 @@ function ChatBox(props){
   React.useEffect(()=>{
     if(activeChat){
       setHide(false);
+    }else{
+      setHide(true);
     }
   },[activeChat]);
   return(
     <div>
       {props.allChats?"To show all chats of "+props.of+" and to load message dialogue box on click":"Show message box for conversation between " + props.from + ' and '+props.to}
       <br/>
-      {props.allChats?  <div id="container">
+      {
+        //if props.allchats then you have props.for => load all chats for this user
+      }
+      {
+        //if not props.allchats then you have props.from(your id) props.to (receipient id)=> load all chats between these 2 users
+      }
+      {
+        props.allChats?  <div id="container">
   	<aside>
   		<div className="chatHeader">
   			<input type="text" placeholder="search"/>

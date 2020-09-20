@@ -86,7 +86,7 @@ function UserProfile(props){
                   {
                     profileData.website && profileData.website_name?<h6><LanguageIcon style={{display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Website: <a href={profileData.website}><CallMadeIcon style={{display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> (@{profileData.website_name})</a> </h6>:null
                   }
-                  <h6>Created: {profileData.created_at.split('T').join(', ').split('.')[0]}</h6>
+                  <h6>Created: {new Date(profileData.created_at).toLocaleString()}</h6>
                   <hr style={{display: 'block',backgroundColor:"white"}}/>
                   <h6><GroupIcon style={{display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Groups Joined</h6>
                   {
@@ -123,7 +123,7 @@ function UserProfile(props){
                 {
                   profileData.website && profileData.website_name?<h6><LanguageIcon style={{display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Website: <a href={profileData.website}><CallMadeIcon style={{display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> (@{profileData.website_name})</a> </h6>:null
                 }
-                <h6>Created: {profileData.created_at.split('T').join(', ').split('.')[0]}</h6>
+                <h6>Created: {new Date(profileData.created_at).toLocaleString()}</h6>
                 <hr style={{display: 'block',backgroundColor:"white"}}/>
                 <h6><EmojiEventsIcon style={{display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Badges</h6>
                 <h6>Badge Count: {profileData.badge_count}</h6>
