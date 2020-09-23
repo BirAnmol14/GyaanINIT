@@ -16,7 +16,7 @@ function Canvas() {
     const context = canvas.getContext("2d")
     context.scale(2,2)
     context.lineCap = "round"
-    context.strokeStyle = "black"
+    context.strokeStyle = "blue"
     context.lineWidth = 5
     contextRef.current = context;
   }, [])

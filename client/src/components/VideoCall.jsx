@@ -41,6 +41,10 @@ import NetworkCellIcon from '@material-ui/icons/NetworkCell';
 import QuestionAnswerRoundedIcon from '@material-ui/icons/QuestionAnswerRounded';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import Canvas from "./Canvas.jsx"
+import ReactPaint from './paint/react-paint.js';
+import { SketchField, Tools } from "react-sketch";
+import SketchFieldDemo from "./graph.jsx";
+
 
 function initDraw(canvas) {
   var mouse = {
@@ -141,7 +145,9 @@ function VideoCall(props) {
       border: '1px solid #dadde9',
     },
   }))(Tooltip);
-
+  const AppPaint = () => {
+    return <ReactPaint />;
+  };
   const divsadded = () => {
     console.log(openWindows);
 
@@ -193,7 +199,10 @@ function VideoCall(props) {
       case 4:
         return (
           <div style={toggle3}>
-            4th white board
+            <div>
+            <iframe src="http://tbolis.github.io/showcase/react-sketch/" width="100%" height="900">
+</iframe>
+             </div>
           </div>
         );
       case 5:
