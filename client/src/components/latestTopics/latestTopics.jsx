@@ -1,5 +1,5 @@
 import React from 'react';
-import pureCss from '../../css/pure.css';
+import '../../css/pure.css';
 import ServerRoutes from '../ServerRoutes.js';
 import logo from '../images/stemlogo.png';
 import parse from 'html-react-parser';

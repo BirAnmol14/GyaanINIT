@@ -3,7 +3,8 @@ const func=require('./functions.js');
 module.exports={
   removeFromCall:removeFromCall,
   getCallUserList:getCallUserList,
-  getCallMessages:getCallMessages
+  getCallMessages:getCallMessages,
+  postMessage:postMessage
 }
 function removeFromCall(url,username){
   var callInfo=func.getCallUserList(url);
@@ -56,5 +57,28 @@ function getCallMessages(url){
     return {chats:chatList,status:true,message:"Successfully retrieved"}
   }else{
     return {chats:[],status:false,message:"Call not found"}
+  }
+}
+function postMessage(callUrl,user,message){
+  var calls=func.calls;
+
+  var found=-1;
+  for(var i=0;i<calls.length;i++){
+    if(calls[i].url===callUrl){
+      found=i;break;
+    }
+  }
+  if(found!==-1){
+    func.calls[found].chats.push({user:user,message:message,time:new Date()});
+    return {
+      status: true,
+      message: "Message Successfully Posted"
+    }
+
+  }else{
+    return {
+      status: false,
+      message: "No such call exists"
+    }
   }
 }

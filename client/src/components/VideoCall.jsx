@@ -386,31 +386,19 @@ React.useEffect(()=>{
   }
 
   async function postChatMessage() {
-    if (chatText.length === 0) {
+    if (chatText.length < 10) {
+      alert('Chat text must be at least 10 characters long');
       return;
     }
-    const temp = window.location.href.split('/');
-    const body = JSON.stringify({ callUrl: temp[temp.length - 1], message: chatText });
-    const response = await fetch(ServerRoutes.postChatMessage, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: body
-    });
-    const status = await response.status;
-    if (status === 200) {
-      const res = await response.json();
-      if (res.status === true) {
-        let socket = appSocket;
-        if (socket) {
-          socket.emit('messagePosted');
+    const body = { message: chatText };
+    if(appSocket){
+      const socket=appSocket;
+      socket.emit('sendMessage',body);
+      socket.on('sendMessageReply',(data)=>{
+        if(!data.status){
+          alert(data.message);
         }
-      } else {
-        alert(res.message);
-        window.location.href = '/';
-      }
-    } else {
-      alert('Error ' + status);
+      });
     }
     setChatText("");
   }
@@ -494,12 +482,12 @@ React.useEffect(() => {
       var callUrl = window.location.href.split('/');
       socket.emit('join', { user: props.logged.user, callUrl: callUrl[callUrl.length - 1] });
       socket.on('join', (data) => {
-        setToastMsg("<p>"+data.message+"</p>");
+        setToastMsg({heading:"Join Message",user:null,image:null,message:data.message});
         //Listen to all other joining messages
       })
       socket.on('left', (data) => {
         //Listen to all other leaving messages
-         setToastMsg("<p>"+data.message+"</p>");
+        setToastMsg({heading:"Left Message",user:null,image:null,message:data.message});
       });
       socket.on('userList', (data) => {
          SetUserList(data);
@@ -508,7 +496,7 @@ React.useEffect(() => {
          setCallChat(data);
       });
       socket.on('getPrivateMessage',(data)=>{
-        setToastMsg('<p>Private Message</p><p>From: '+data.user.name+"</p><p>Messaage: "+data.message+"</p>");
+        setToastMsg({heading:"Private Message",user:data.user.name,image:data.user.profilePic,message:data.message});
       });
     }
   },[adminBoolHelper]);

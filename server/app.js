@@ -210,8 +210,10 @@ nsp.on('connection', function(socket) {
      socket.emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
      socket.broadcast.to(object.callUrl).emit('join',{message:object.user.name+" has joined"});
    });
-   socket.on('messagePosted',()=>{
+   socket.on('sendMessage',(body)=>{
      var obj=map.get(socket.id);
+     var result=videoCallFunc.postMessage(obj.callUrl,obj.user,body.message);
+     socket.emit('sendMessageReply',result);
      nsp.to(obj.callUrl).emit('chatList',videoCallFunc.getCallMessages(obj.callUrl));
    });
    socket.on('getPrivateMessage',(object)=>{
