@@ -1,7 +1,7 @@
 import React from 'react';
 import GetAppIcon from '@material-ui/icons/GetApp';
 import parse from 'html-react-parser';
-import  '../../css/pure.css';
+import pureCss from '../../css/pure.css';
 function PostPage(props){
   return (
       <div id="layout" className="pure-g">

@@ -1,5 +1,5 @@
 import React from 'react';
-import './chatBox.css';
+import chatBoxCSS from './chatBox.css';
 function ChatBox(props){
   const [hide,setHide]=React.useState(true);
   const [activeChat,setActiveChat]=React.useState(null);
