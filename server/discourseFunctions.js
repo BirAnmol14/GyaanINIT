@@ -201,6 +201,7 @@ async function getUserInfo(userName, mode) {
 }
 async function fetchPosts(url1,url2,url3) {
    var url = secrets.discourse_url+url1+'/'+url2+'/'+url3+'.json';
+   console.log(url);
    var options = {
     method: 'GET',
     headers: {

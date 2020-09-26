@@ -57,6 +57,7 @@ function UserProfile(props){
       window.location.href='/';
     }
   }
+ 
   React.useEffect(()=>{
     async function runner(){
       await getProfileData();
