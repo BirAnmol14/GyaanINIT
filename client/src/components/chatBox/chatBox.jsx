@@ -1,5 +1,5 @@
 import React from 'react';
-import chatBoxCSS from './chatBox.css';
+import './chatBox.css';
 import ReactHtmlParser from 'react-html-parser';
 import ServerRoutes from '../ServerRoutes.js';
 var parse = require('html-react-parser');
@@ -13,17 +13,18 @@ function ChatBox(props){
   async function activeChatClick(event){
     if(activeChat){
       if(activeChat!==event.target.id){
+        setPostsPrivate(null);
         setActiveChat(event.target.id);
       }
     }else{
       setActiveChat(event.target.id);
 	}
-	
-	await getMessages(event.target.id,event.target.slug)
-	
-	
+
   }
   async function getMessages(id,slug){
+    if(!id){
+      return
+    }
 	const loc=window.location.pathname.split('/');
 	if(loc.length!==3||loc[loc.length-1].length<0){
 	  window.location.href='/';
@@ -36,9 +37,9 @@ function ChatBox(props){
 	if(await res.status===200){
 	  const result=await res.json();
 	  if(result.status){
-		
+
 		setPostsPrivate(result.body);
-	   console.log(result.body);   //Posts by slug and id(page 1) only of  Messages
+	   //console.log(result.body);   //Posts by slug and id(page 1) only of  Messages
 	  }
 	}else{
 	  alert('Error '+await res.status);
@@ -50,7 +51,9 @@ function ChatBox(props){
     if(loc.length!==3||loc[loc.length-1].length<0){
       window.location.href='/';
     }
-    const url=ServerRoutes.getPosts+'topics/private-messages-sent/'+loc[loc.length-1]; //already the user is passed here
+    var id= props.allChats?props.of:props.from;
+    var url=ServerRoutes.getPosts+'topics/private-messages-sent/';
+    url+=id;
     const res=await fetch(url,{
     method: 'GET',
     credentials: 'include'
@@ -58,8 +61,8 @@ function ChatBox(props){
     if(await res.status===200){
       const result=await res.json();
       if(result.status){
-        
-        setSentTopicPrivate(result.body.topic_list.topics); 
+
+        setSentTopicPrivate(result.body.topic_list.topics);
        // console.log(result.body.topic_list.topics);   //Sent Topics of Private Messages
       }
     }else{
@@ -67,7 +70,9 @@ function ChatBox(props){
       window.location.href='/';
     }
 
-    const url2=ServerRoutes.getPosts+'topics/private-messages/'+'G_N';		//Repalce with user, G_N for testing
+    var url2=ServerRoutes.getPosts+'topics/private-messages/';		//Repalce with props.of/props.from depending on props.allChats, b123 for testing
+
+    url2= url2+id;
    // console.log("received");
     const res2=await fetch(url2,{
     method: 'GET',
@@ -76,12 +81,12 @@ function ChatBox(props){
     if(await res2.status===200){
       const result2=await res2.json();
       if(result2.status){
-        setRecvdTopicPrivate(result2.body.topic_list.topics); 
+        setRecvdTopicPrivate(result2.body.topic_list.topics);
     //   console.log(result2.body.topic_list.topics);   //Received Topics of Private Messages
       }
     }else{
       alert('Error '+await res2.status);
-      window.location.href='/';
+      //window.location.href='/';
     }
   }
   React.useEffect(()=>{
@@ -92,6 +97,7 @@ function ChatBox(props){
   },[]);
   React.useEffect(()=>{
     if(activeChat){
+      getMessages(activeChat,null);
       setHide(false);
     }else{
       setHide(true);
@@ -99,11 +105,10 @@ function ChatBox(props){
   },[activeChat]);
   return(
     <div>
-    
+
       {props.allChats?"To show all chats of "+props.of+" and to load message dialogue box on click":"Show message box for conversation between " + props.from + ' and '+props.to}
-      <br/>
       {
-        //if props.allchats then you have props.for => load all chats for this user
+        //if props.allchats then you have props.of => load all chats for this user
       }
       {
         //if not props.allchats then you have props.from(your id) props.to (receipient id)=> load all chats between these 2 users
@@ -115,17 +120,17 @@ function ChatBox(props){
   			<input type="text" placeholder="search"/>
   		</div>
   		<ul>
-      {recvdTopicsPrivate?recvdTopicsPrivate.map((topic)=>{return (<li id={topic.id} slug={topic.slug} className={activeChat&&activeChat===topic.id?"chatActive":null} onClick={activeChatClick}>
+      {recvdTopicsPrivate?recvdTopicsPrivate.map((topic)=>{return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat&&activeChat===topic.id.toString()?"chatActive":null} onClick={activeChatClick}>
         <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
         <div>
 	  <h2>{topic.last_poster_username}</h2>
           <h3>
-            <span class="status orange"></span>
+            <span className="status orange"></span>
             {topic.fancy_title}
           </h3>
         </div>
       </li>);}):null}
-	  
+
   		</ul>
   	</aside>
     {
@@ -140,19 +145,19 @@ function ChatBox(props){
     			<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt=""/>
     		</div>
     		<ul id="chat">
-    			{postsPrivate.post_stream.posts.map((post)=>{return(<li class="you">
-    				<div class="entete">
-    					<span class="status green"></span>
-    					<h2>{post.username}</h2>
+    			{postsPrivate.post_stream.posts.map((post)=>{return(<li key={post.id} className={props.allChats?post.username===props.of?"me":"you":post.username===props.from?"me":"you"}>
+    				<div className="entete">
+    					<span className="status green"></span>
+    					<h2 style={{marginRight:'5px'}}>{post.username}</h2>
     					<h3>{new Date(post.created_at).toLocaleString()}</h3>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
-					{ReactHtmlParser(post.cooked)}
+    				<div className="triangle"></div>
+    				<div className="message">
+					{parse(post.cooked)}
     				</div>
 	</li>);})
 	}
-    			
+
     		</ul>
     		<footer>
     			<textarea placeholder="Type your message"></textarea>
@@ -176,7 +181,7 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status orange"></span>
+  						<span className="status orange"></span>
   						Topic Name 1
   					</h3>
   				</div>
@@ -186,7 +191,7 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status green"></span>
+  						<span className="status green"></span>
   						Topic Name 2
   					</h3>
   				</div>
@@ -196,7 +201,7 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status green"></span>
+  						<span className="status green"></span>
   						Topic Name 2
   					</h3>
   				</div>
@@ -206,7 +211,7 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status green"></span>
+  						<span className="status green"></span>
   						Topic Name 2
   					</h3>
   				</div>
@@ -216,7 +221,7 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status green"></span>
+  						<span className="status green"></span>
   						Topic Name 2
   					</h3>
   				</div>
@@ -226,27 +231,7 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status orange"></span>
-  						Topic Name 2
-  					</h3>
-  				</div>
-  			</li>
-        <li>
-          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
-          <div>
-            <h2>Prénom Nom</h2>
-            <h3>
-              <span class="status green"></span>
-              Topic Name 2
-            </h3>
-          </div>
-        </li>
-        <li>
-  				<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
-  				<div>
-  					<h2>Prénom Nom</h2>
-  					<h3>
-  						<span class="status green"></span>
+  						<span className="status orange"></span>
   						Topic Name 2
   					</h3>
   				</div>
@@ -256,7 +241,7 @@ function ChatBox(props){
           <div>
             <h2>Prénom Nom</h2>
             <h3>
-              <span class="status green"></span>
+              <span className="status green"></span>
               Topic Name 2
             </h3>
           </div>
@@ -266,7 +251,27 @@ function ChatBox(props){
   				<div>
   					<h2>Prénom Nom</h2>
   					<h3>
-  						<span class="status green"></span>
+  						<span className="status green"></span>
+  						Topic Name 2
+  					</h3>
+  				</div>
+  			</li>
+        <li>
+          <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
+          <div>
+            <h2>Prénom Nom</h2>
+            <h3>
+              <span className="status green"></span>
+              Topic Name 2
+            </h3>
+          </div>
+        </li>
+        <li>
+  				<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
+  				<div>
+  					<h2>Prénom Nom</h2>
+  					<h3>
+  						<span className="status green"></span>
   						Topic Name 2
   					</h3>
   				</div>
@@ -285,69 +290,69 @@ function ChatBox(props){
     			<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt=""/>
     		</div>
     		<ul id="chat">
-    			<li class="you">
-    				<div class="entete">
-    					<span class="status green"></span>
+    			<li className="you">
+    				<div className="entete">
+    					<span className="status green"></span>
     					<h2>Vincent</h2>
     					<h3>10:12AM, Today</h3>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
+    				<div className="triangle"></div>
+    				<div className="message">
     					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
     				</div>
     			</li>
-    			<li class="me">
-    				<div class="entete">
+    			<li className="me">
+    				<div className="entete">
     					<h3>10:12AM, Today</h3>
     					<h2>Vincent</h2>
-    					<span class="status blue"></span>
+    					<span className="status blue"></span>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
+    				<div className="triangle"></div>
+    				<div className="message">
     					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
     				</div>
     			</li>
-    			<li class="me">
-    				<div class="entete">
+    			<li className="me">
+    				<div className="entete">
     					<h3>10:12AM, Today</h3>
     					<h2>Vincent</h2>
-    					<span class="status blue"></span>
+    					<span className="status blue"></span>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
+    				<div className="triangle"></div>
+    				<div className="message">
     					OK
     				</div>
     			</li>
-    			<li class="you">
-    				<div class="entete">
-    					<span class="status green"></span>
+    			<li className="you">
+    				<div className="entete">
+    					<span className="status green"></span>
     					<h2>Vincent</h2>
     					<h3>10:12AM, Today</h3>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
+    				<div className="triangle"></div>
+    				<div className="message">
     					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
     				</div>
     			</li>
-    			<li class="me">
-    				<div class="entete">
+    			<li className="me">
+    				<div className="entete">
     					<h3>10:12AM, Today</h3>
     					<h2>Vincent</h2>
-    					<span class="status blue"></span>
+    					<span className="status blue"></span>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
+    				<div className="triangle"></div>
+    				<div className="message">
     					Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.
     				</div>
     			</li>
-    			<li class="me">
-    				<div class="entete">
+    			<li className="me">
+    				<div className="entete">
     					<h3>10:12AM, Today</h3>
     					<h2>Vincent</h2>
-    					<span class="status blue"></span>
+    					<span className="status blue"></span>
     				</div>
-    				<div class="triangle"></div>
-    				<div class="message">
+    				<div className="triangle"></div>
+    				<div className="message">
     					OK
     				</div>
     			</li>

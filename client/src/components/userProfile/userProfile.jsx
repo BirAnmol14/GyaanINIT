@@ -16,6 +16,7 @@ function UserProfile(props){
   const [profileData,setProfileData]=React.useState(null);
   const [badges,setBagdes]=React.useState(null);
   const [url,setUrl]=React.useState('');
+  const [hide,setHide]=React.useState(false);
   async function getProfileData(){
     const loc=window.location.pathname.split('/');
     if(loc.length!==3||loc[loc.length-1].length<0){
@@ -57,7 +58,14 @@ function UserProfile(props){
       window.location.href='/';
     }
   }
- 
+  function hideNav(event){
+    if(event.target.id==='v-pills-messages-tab'){
+      setHide(prev=>{return !prev});
+    }
+    else{
+      setHide(false);
+    }
+  }
   React.useEffect(()=>{
     async function runner(){
       await getProfileData();
@@ -67,12 +75,12 @@ function UserProfile(props){
   },[]);
   return(
     <div>
-      <Navbar  links={{active:{},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}}  brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
-      <div style={{marginTop:'100px'}}>
-          <div className="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" style={{width:"10%",height:"855px",float:"left",backgroundColor:"#343a40",border:"0.5px solid white",padding:'5px'}}>
-              <a className="nav-link active" style={{color:"white",borderRadius:"30px"}} id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="true"><PersonIcon style={{ display: "inline", verticalAlign: "middle",marginRight:'3px'}}/> Profile</a>
-              <a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-badges-tab" data-toggle="pill" href="#v-pills-badges" role="tab" aria-controls="v-pills-badges" aria-selected="false"><EmojiEventsIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Badges</a>
-              {props.logged.status?<a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false"><SendIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Messages</a>:null}
+      {!hide?<Navbar links={{active:{},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}}  brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>:null}
+      <div style={!hide?{marginTop:'100px'}:{marginTop:"5px"}}>
+          <div className="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" style={{width:"10%",height:"100%",float:"left",backgroundColor:"#343a40",border:"0.5px solid white",padding:'5px'}}>
+              <a className="nav-link active" style={{color:"white",borderRadius:"30px"}} id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="true" onClick={hideNav}><PersonIcon style={{ display: "inline", verticalAlign: "middle",marginRight:'3px'}}/> Profile</a>
+              <a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-badges-tab" data-toggle="pill" href="#v-pills-badges" role="tab" aria-controls="v-pills-badges" aria-selected="false" onClick={hideNav}><EmojiEventsIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Badges</a>
+              {props.logged.status?<a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false" onClick={hideNav}><SendIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Messages</a>:null}
             </div>
           <div className="tab-content" id="v-pills-tabContent" style={{height:"100%", width:"89.9%",marginLeft:"10%",marginTop:"0%",padding:"5px",border:"0.5px solid white",color:"white",backgroundColor:"#343a40"}}>
             <div className="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
@@ -146,7 +154,7 @@ function UserProfile(props){
             }
             </div>
             {props.logged.status?<div className="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-              {props.logged.user&&profileData&&props.logged.user.username===profileData.username?<ChatBox allChats={true} of="logged in user username"/>:<ChatBox allChats={false} from="logged in user username" to="profile data user username"/>}
+              {props.logged.user&&profileData?props.logged.user.username===profileData.username?<ChatBox allChats={true} of={props.logged.user.username} />:<ChatBox allChats={false} from={props.logged.user.username} to={profileData.username} />:null}
             </div>:null}
 
           </div>
