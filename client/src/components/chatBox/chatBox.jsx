@@ -84,18 +84,18 @@ function ChatBox(props) {
 			if (result2.status) {
 				setRecvdTopicPrivate(result2.body.topic_list.topics);
 				setUsersMessaged(result2.body.users)	//List of all Users
-				console.log(result2.body.users);  
+				//console.log(result2.body.users);
 				 //Received Topics of Private Messages
 				 if(!props.allChats){
 					 setRecvdTopicPrivate([]);
 					let u_id = result2.body.users.find(o => o.username === props.to);
 					if(u_id){
-					console.log(u_id.id);
-					let relevantChats=result2.body.topic_list.topics.filter(o=>o.participants.find(k=>k.user_id==u_id.id));
-					console.log(relevantChats);
+					//console.log(u_id.id);
+					let relevantChats=result2.body.topic_list.topics.filter(o=>o.participants.find(k=>k.user_id===u_id.id));
+				//	console.log(relevantChats);
 					setRecvdTopicPrivate(relevantChats);
 					}
-					
+
 				 }
 			}
 		} else {
@@ -137,7 +137,7 @@ function ChatBox(props) {
 							{recvdTopicsPrivate ? recvdTopicsPrivate.map((topic) => {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
 									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
-									<div>
+									<div style={{pointerEvents:'none'}}>
 										<h2>{topic.last_poster_username}</h2>
 										<h3>
 											<span className="status orange"></span>
@@ -197,7 +197,7 @@ function ChatBox(props) {
 							{recvdTopicsPrivate ? recvdTopicsPrivate.map((topic) => {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
 									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
-									<div>
+									<div style={{pointerEvents:'none'}}>
 										<h2>{topic.last_poster_username}</h2>
 										<h3>
 											<span className="status orange"></span>
@@ -214,9 +214,9 @@ function ChatBox(props) {
 						<div className="chatHeader">
 							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
 							<div>
-								<h2>Chat with {props.to}</h2>
-								<h3>Name of topic with id: {activeChat}</h3>
-								<h3>already 1902 messages</h3>
+								<h2>{postsPrivate.fancy_title}</h2>
+								<h3>Chat with {props.to}</h3>
+								<h3>already {postsPrivate.posts_count} messages</h3>
 							</div>
 							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt="" />
 						</div>
