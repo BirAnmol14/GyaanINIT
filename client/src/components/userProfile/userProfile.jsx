@@ -154,7 +154,7 @@ function UserProfile(props){
             }
             </div>
             {props.logged.status?<div className="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab">
-              {props.logged.user&&profileData?props.logged.user.username===profileData.username?<ChatBox allChats={true} of={props.logged.user.username} />:<ChatBox allChats={false} from={props.logged.user.username} to={profileData.username} />:null}
+              {props.logged.user&&profileData?props.logged.user.username===profileData.username?<ChatBox allChats={true} of={'G_N'} />:<ChatBox allChats={false} from={'G_N'} to={profileData.username} />:null}
             </div>:null}
 
           </div>

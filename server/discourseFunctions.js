@@ -182,6 +182,7 @@ async function getUserInfo(userName, mode) {
   const status = await response.status;
   if (status === 200) {
     const res = await response.json();
+    //console.log(res.user.id);
     if (mode === 1) {
       return {
         user: res.user
