@@ -13,7 +13,9 @@ module.exports = {
   fetchGroup:fetchGroup,
   fetchCategories:fetchCategories,
   search:search,
-  fetchBadges:fetchBadges
+  fetchBadges:fetchBadges,
+  createPrivateTopic:createPrivateTopic,
+  makePrivatePost:makePrivatePost
 }
 
 function TruncateUser(body) {
@@ -202,7 +204,6 @@ async function getUserInfo(userName, mode) {
 }
 async function fetchPosts(url1,url2,url3) {
    var url = secrets.discourse_url+url1+'/'+url2+'/'+url3+'.json';
-   console.log(url);
    var options = {
     method: 'GET',
     headers: {
@@ -254,43 +255,95 @@ async function fetchPosts(url1,url2,url3) {
 }
 
 async function createTopic(req) {
- // console.log(req.session);             //currently sending pvt_messages.
-  var title = "new_topic_testing";
-  var category = "14";          //read from req when passed from client
-  var desc = "read from req when passed from client";
- // var user="G_N";
+  let user=req.session.user;
+  if(!user){
+    return{
+      status: false,
+      message: 'Kindly Login'
+    }
+  }
+  var title = req.body.title;
+  var category = req.body.categoryId;
+  var desc = req.body.description;
   var url = secrets.discourse_url + '/posts.json';
- var data = {
+  var data = {
     "title": title,
     "raw": desc,
     "category": Number(category),
-    'target_recipients': "gyaanTester99",//recepirnt here
     "archetype": "regular",
-
   };
   data=JSON.stringify(data);
   var options = {
     method: "POST",
     headers: {
       'Api-Key': secrets.discourse_key,
-      'Api-Username': 'system',             //to be changed at delivery
+      'Api-Username': user.username,
       'Content-Type': 'application/json'
     },
     body:data
   };
   const response=await fetch(url,options);
   const status=await response.status;
-  console.log(status);
-  console.log(options);
   if(status===200){
    const result=await response.json();
-   return result;
-
+   return {
+     status: true,
+     message: 'Topic Created successfully',
+     topic_id:result.topic_id,
+     topic_slug:result.topic_slug
+   };
   }
   else{
     return{
       status: false,
-      message: null
+      message: 'Failed to create Topic'
+    }
+
+  }
+}
+
+
+async function createPrivateTopic(req) {
+  let user=req.session.user;
+  if(!user){
+    return{
+      status: false,
+      message: 'Kindly Login'
+    }
+  }
+  var title = req.body.title;
+  var desc = req.body.message;
+  var target= req.body.otherUser;
+  var url = secrets.discourse_url + '/posts.json';
+  var data = {
+    "title": title,
+    "raw": desc,
+    "target_recipients":target,
+    "archetype": "private_message",
+  };
+  data=JSON.stringify(data);
+  var options = {
+    method: "POST",
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': user.username,
+      'Content-Type': 'application/json'
+    },
+    body:data
+  };
+  const response=await fetch(url,options);
+  const status=await response.status;
+  if(status===200){
+   const result=await response.json();
+   return {
+     status: true,
+     message: 'Topic Created successfully'
+   };
+  }
+  else{
+    return{
+      status: false,
+      message: 'Failed to create Topic'
     }
 
   }
@@ -298,21 +351,27 @@ async function createTopic(req) {
 
 //posting inside topic
 async function makePost(req){
-  var topic_id = 3324;
-  var raw = "testing some random testing texts Gyaan_init";          //read from req when passed from client
+  let user=req.session.user;
+  if(!user){
+    return{
+      status: false,
+      message: 'Kindly Login'
+    }
+  }
+  var topic_id = Number(req.body.topicId);
+  var raw = req.body.description;      //read from req when passed from client
   var url = secrets.discourse_url + '/posts.json';
   var data={
     "topic_id": topic_id,
     "raw": raw,
-   'target_recipients':'system',
-    "archetype": "regular",
+    "archetype": "regular"
   };
 data=JSON.stringify(data);
   var options = {
     method: 'POST',
     headers: {
       'Api-Key': secrets.discourse_key,
-      'Api-Username': 'system',             //to be changed at delivery
+      'Api-Username': user.username,             //to be changed at delivery
       'Content-Type': 'application/json'
     },
     body:data
@@ -322,17 +381,68 @@ const response=await fetch(url,options);
   const status=await response.status;
   if(status===200){
    const result=await response.json();
-   return result;
+   return {
+     status: true,
+     message: "Successfully posted"
+   };
 
   }
   else{
     return{
       status: false,
-      message: null
+      message: 'Failed to post'
     }
+  }
+}
+
+async function makePrivatePost(req){
+  let user=req.session.user;
+  if(!user){
+    return{
+      status: false,
+      message: 'Kindly Login'
+    }
+  }
+  var topic_id = Number(req.body.topicId);
+  var raw = req.body.message;      //read from req when passed from client
+  var target= req.body.otherUser;
+  var url = secrets.discourse_url + '/posts.json';
+  var data={
+    "topic_id": topic_id,
+    "raw": raw,
+    "target_recipients":target,
+    "archetype": "regular"
+  };
+data=JSON.stringify(data);
+
+  var options = {
+    method: 'POST',
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': user.username,             //to be changed at delivery
+      'Content-Type': 'application/json'
+    },
+    body:data
+  };
+
+const response=await fetch(url,options);
+  const status=await response.status;
+
+  if(status===200){
+   const result=await response.json();
+
+   return {
+     status: true,
+     message: "Successfully posted"
+   };
 
   }
-
+  else{
+    return{
+      status: false,
+      message: 'Failed to post'
+    }
+  }
 }
 
 async function fetchGroups() {

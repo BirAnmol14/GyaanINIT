@@ -1,7 +1,7 @@
 import React from 'react';
 import './chatBox.css';
-import ReactHtmlParser from 'react-html-parser';
 import ServerRoutes from '../ServerRoutes.js';
+import SendIcon from '@material-ui/icons/Send';
 var parse = require('html-react-parser');
 
 function ChatBox(props) {
@@ -11,6 +11,7 @@ function ChatBox(props) {
 	const [usersMessaged, setUsersMessaged] = React.useState(null);
 	const [recvdTopicsPrivate, setRecvdTopicPrivate] = React.useState(null);
 	const [postsPrivate, setPostsPrivate] = React.useState(null);
+	const [text,setText]=React.useState("");
 	async function activeChatClick(event) {
 		if (activeChat) {
 			if (activeChat !== event.target.id) {
@@ -103,6 +104,39 @@ function ChatBox(props) {
 			//window.location.href='/';
 		}
 	}
+	async function sendMessage(){
+		if(text.length<10){
+			alert('Message too short'); return;
+		}
+		var find=-1;
+		for(var i=0;i<postsPrivate.details.allowed_users.length;i++){
+			if(props.of&&postsPrivate.details.allowed_users[i].username!==props.of){
+				find=i;break;
+			}else if(props.from&&postsPrivate.details.allowed_users[i].username!==props.from){
+				find=i;break;
+			}
+		}
+		const body=JSON.stringify({topicId:Number(activeChat),message:text,otherUser:postsPrivate.details.allowed_users[find].username});
+    const response=await fetch(ServerRoutes.makePrivatePost,{
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: body
+    });
+    const status=await response.status;
+    if(status===200){
+      const res=await response.json();
+      if(res.status===true){
+        alert(res.message);
+      }else{
+        alert(res.message);
+      }
+    }else{
+      alert('Error '+status);
+    }
+		await getMessages(activeChat,null);
+		setText('');
+	}
 	React.useEffect(() => {
 		async function runner() {
 			await getPrivateMessages();
@@ -117,10 +151,18 @@ function ChatBox(props) {
 			setHide(true);
 		}
 	}, [activeChat]);
+	React.useEffect(()=>{
+		if(postsPrivate){
+			var elem=document.getElementById('chat');
+			if(elem){
+				elem.scrollTop=elem.scrollHeight;
+			}
+		}
+	},[postsPrivate]);
 	return (
 		<div>
 
-			{props.allChats ? "To show all chats of " + props.of + " and to load message dialogue box on click" : "Show message box for conversation between " + props.from + ' and ' + props.to}
+			{props.allChats ? "Showing all chats of " + props.of : "Showing messages between " + props.from + ' and ' + props.to}
 			{
 				//if props.allchats then you have props.of => load all chats for this user
 			}
@@ -138,10 +180,10 @@ function ChatBox(props) {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
 									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
 									<div style={{pointerEvents:'none'}}>
-										<h2>{topic.last_poster_username}</h2>
+										<h2>{topic.fancy_title}</h2>
 										<h3>
 											<span className="status orange"></span>
-											{topic.fancy_title}
+											{topic.last_poster_username}
 										</h3>
 									</div>
 								</li>);
@@ -155,7 +197,11 @@ function ChatBox(props) {
 								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
 								<div>
 									<h2>{postsPrivate.fancy_title}</h2>
-									<h3>Id: {activeChat}</h3>
+									<button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="right" title={
+										postsPrivate.details.allowed_users.map((user,index)=>{return(user.name)})
+									}>
+									Participants
+								</button>
 									<h3>already {postsPrivate.posts_count} messages</h3>
 								</div>
 								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt="" />
@@ -178,10 +224,10 @@ function ChatBox(props) {
 
 							</ul>
 							<footer>
-								<textarea placeholder="Type your message"></textarea>
+								<textarea placeholder="Type your message" value={text} onChange={(eve)=>{setText(eve.target.value)}}></textarea>
 								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="" />
 								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt="" />
-								<a href="#">Send</a>
+								<button className="btn btn-primary" style={{marginBottom:"2px"}} onClick={sendMessage}><SendIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Send</button>
 							</footer>
 						</main> : <main><div style={{ marginTop: "250px", marginLeft: "50px" }}>"Select a Chat Please"</div></main>
 					}
@@ -198,10 +244,10 @@ function ChatBox(props) {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
 									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
 									<div style={{pointerEvents:'none'}}>
-										<h2>{topic.last_poster_username}</h2>
+										<h2>{topic.fancy_title}</h2>
 										<h3>
 											<span className="status orange"></span>
-											{topic.fancy_title}
+											{topic.last_poster_username}
 										</h3>
 									</div>
 								</li>);
@@ -215,7 +261,11 @@ function ChatBox(props) {
 							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
 							<div>
 								<h2>{postsPrivate.fancy_title}</h2>
-								<h3>Chat with {props.to}</h3>
+								<button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="right" title={
+									postsPrivate.details.allowed_users.map((user,index)=>{return(user.name)})
+								}>
+								  Participants
+								</button>
 								<h3>already {postsPrivate.posts_count} messages</h3>
 							</div>
 							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_star.png" alt="" />
@@ -237,10 +287,10 @@ function ChatBox(props) {
 							}
 						</ul>
 						<footer>
-							<textarea placeholder="Type your message"></textarea>
+							<textarea placeholder="Type your message" value={text} onChange={(eve)=>{setText(eve.target.value)}}></textarea>
 							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_picture.png" alt="" />
 							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/ico_file.png" alt="" />
-							<a href="#">Send</a>
+							<button className="btn btn-primary" style={{marginBottom:"2px"}} onClick={sendMessage}><SendIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Send</button>
 						</footer>
 					</main> : <main><div style={{ marginTop: "250px", marginLeft: "50px" }}>"Select a Chat Please"</div></main>}
 

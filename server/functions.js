@@ -32,6 +32,8 @@ module.exports = {
   getGroup:getGroup,
   getCategories:getCategories,
   getBadges:getBadges,
+  createPrivateTopic:createPrivateTopic,
+  makePrivatePost:makePrivatePost
 }
 
 function User(name, email, password, username, identity) {
@@ -100,8 +102,17 @@ async function createTopic(req){
   return await discourseFunctions.createTopic(req);
 }
 
+async function createPrivateTopic(req){
+  return await discourseFunctions.createPrivateTopic(req);
+}
+
 async function makePost(req){
   return await discourseFunctions.makePost(req);
+}
+
+
+async function makePrivatePost(req){
+  return await discourseFunctions.makePrivatePost(req);
 }
 
 function isLoggedIn(req) {

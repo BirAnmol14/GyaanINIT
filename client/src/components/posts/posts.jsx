@@ -2,6 +2,9 @@ import React from 'react';
 import ServerRoutes from '../ServerRoutes.js';
 import Navbar from '../navbar.jsx';
 import PostPage from './postPage.jsx';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import ModalPost from '../Modal/modalPost.jsx';
 function Post(props){
   const [body,setBody]=React.useState(null);
   const [url,setUrl]=React.useState('');
@@ -42,6 +45,10 @@ function Post(props){
     {
         body&&url.length>0?<div><Navbar links={{active:{},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}} brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>
         <div style={{marginTop:"100px"}}><PostPage body={body} url={url} category={category}/></div>
+        <Fab color="primary" aria-label="add" style={{position: 'fixed',bottom: '1rem', right: '1.5rem',zIndex: 100}} data-toggle="modal" data-target="#ModalCenter">
+        <AddIcon />
+        </Fab>
+        <ModalPost category={""}/>
         </div>:null
     }
     </div>

@@ -201,9 +201,9 @@ GET requests
     {
         status: boolean ,
         message: String ,
-        categories: {
+        categories: [{
 
-        }
+        },...]
     }
 
 13. Get User Badges
@@ -217,7 +217,7 @@ GET requests
         status: boolean ,
         message: String ,
         badges:{
-        
+
         }
     }
 
@@ -339,12 +339,31 @@ POST requests
       - message: String
 
 (new)
-9.Create Topic/Private Message
--END POINT: /create/t/:url1/:url2
+9.Create Topic
+-END POINT: /api/create/topic/
   -HEADERS: "Content-Type": "application/json"
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:
-    - callUrl: String(mandatory)[..to be updated]
+    - title: string(mandatory)
+    - categoryId: Number(mandatory)
+    - description: String(mandatory)
+  -RESPONSE:
+    - statusCode:200
+    - Content-Type:JSON
+    - SCHEMA:
+      - status: boolean
+      - message: String
+      -topic_id: Number
+      -topic_slug: String
+
+(new)
+10.Create New Post under a Topic
+-END POINT: /api/makepost/
+  -HEADERS: "Content-Type": "application/json"
+  -METHOD: 'POST'
+  -BODY/PAYLOAD SCHEMA:
+    - topicId: String(mandatory)
+    - description: String (mandatory)
   -RESPONSE:
     - statusCode:200
     - Content-Type:JSON
@@ -352,13 +371,29 @@ POST requests
       - status: boolean
       - message: String
 
-(new)
-10.Create New Post under a Topic
--END POINT: /makepost/t/:url1/:url2
+11. Create Private Topic
+  -END POINT: /api/create/topic/privateMessage/
+    -HEADERS: "Content-Type": "application/json"
+    -METHOD: 'POST'
+    -BODY/PAYLOAD SCHEMA:
+      - title: string(mandatory)
+      - message: String (mandatory)
+      - otherUser: String(mandatory)
+    -RESPONSE:
+      - statusCode:200
+      - Content-Type:JSON
+      - SCHEMA:
+        - status: boolean
+        - message: String
+
+12.Create New Private Post under a Private Topic
+-END POINT: /api/makepost/privateMessage/
   -HEADERS: "Content-Type": "application/json"
   -METHOD: 'POST'
   -BODY/PAYLOAD SCHEMA:
-    - callUrl: String(mandatory)[..to be updated]
+    - topicId: String(mandatory)
+    - message: String (mandatory)
+    - otherUser: String(mandatory)
   -RESPONSE:
     - statusCode:200
     - Content-Type:JSON

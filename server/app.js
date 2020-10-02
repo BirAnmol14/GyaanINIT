@@ -127,14 +127,6 @@ app.get('/api/posts/:url1/:url2/:url3', async (req, res)=> {
   res.json( await func.getPosts(req.params.url1,req.params.url2,req.params.url3));
 });
 
-app.get('/create/t/:url1/:url2', async (req, res)=> {
-  //pass t/topic_name/topic_id here ; see example below.
- res.json(await func.createTopic(req, res));
-});
-app.get('/makepost/t/:url1/:url2', async (req, res)=> {
-  //pass t/topic_name/topic_id here ; see example below.
- res.json(await func.makePost(req, res));
-});
 
 //POST requests
 app.post('/api/account/register',async (req,res)=>{
@@ -196,6 +188,18 @@ app.post('/api/call/postMessage',(req,res)=>{
   }
 });
 
+app.post('/api/create/topic/', async (req, res)=> {
+ res.json(await func.createTopic(req));
+});
+app.post('/api/create/topic/privateMessage', async (req, res)=> {
+ res.json(await func.createPrivateTopic(req));
+});
+app.post('/api/makepost/', async (req, res)=> {
+ res.json(await func.makePost(req, res));
+});
+app.post('/api/makepost/privateMessage', async (req, res)=> {
+ res.json(await func.makePrivatePost(req, res));
+});
 
 //Socket namespace for videoCall
 var map=new Map();

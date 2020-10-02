@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from '../images/stemlogo.png';
 import GetAppIcon from '@material-ui/icons/GetApp';
-import pureCss from '../../css/pure.css';
+import '../../css/pure.css';
 import parse from 'html-react-parser';
 import LinkIcon from '@material-ui/icons/Link';
 import FavoriteIcon from '@material-ui/icons/Favorite';

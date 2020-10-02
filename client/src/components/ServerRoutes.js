@@ -20,6 +20,10 @@
   const getCategories_endpoint='/api/categories.json';
   const getUserProfile_endpoint='/api/users/getinfo?username=';
   const getBadges_endpoint='/api/users/getBadges?username=';
+  const createTopic_endpoint='/api/create/topic/';
+  const makePost_endpoint='/api/makepost/';
+  const createPrivateTopic_endpoint='/api/create/topic/privateMessage/';
+  const makePrivatePost_endpoint='/api/makepost/privateMessage/';
   module.exports={
     login: login_endpoint,
     register: register_endpoint,
@@ -41,5 +45,9 @@
     getPosts:getPosts_endpoint,
     getCategories:getCategories_endpoint,
     getUserProfile:getUserProfile_endpoint,
-    getBadges:getBadges_endpoint
+    getBadges:getBadges_endpoint,
+    createTopic:createTopic_endpoint,
+    makePost:makePost_endpoint,
+    createPrivateTopic:createPrivateTopic_endpoint,
+    makePrivatePost:makePrivatePost_endpoint
    }

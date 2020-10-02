@@ -1,10 +1,13 @@
 import React from 'react';
-import pureCss from '../../css/pure.css';
+import '../../css/pure.css';
 import ServerRoutes from '../ServerRoutes.js';
 import logo from '../images/stemlogo.png';
 import parse from 'html-react-parser';
 import LinkIcon from '@material-ui/icons/Link';
 import FavoriteIcon from '@material-ui/icons/Favorite';
+import Fab from '@material-ui/core/Fab';
+import AddIcon from '@material-ui/icons/Add';
+import ModalTopic from '../Modal/modalTopic.jsx';
 function LatestTopics(){
   const [topics,setTopics]=React.useState([]);
   const [groups,setGroups]=React.useState([]);
@@ -87,6 +90,10 @@ function LatestTopics(){
           </div>
         })
       }
+      <Fab color="primary" aria-label="add" style={{position: 'fixed',bottom: '1rem', right: '1.5rem',zIndex: 100}} data-toggle="modal" data-target="#ModalCenter">
+      <AddIcon />
+      </Fab>
+      <ModalTopic category={""}/>
     </div>
   );
 }
