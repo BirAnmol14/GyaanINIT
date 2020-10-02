@@ -1,0 +1,50 @@
+
+.bottomNav{
+    position:fixed;
+    bottom:2px;
+    width:100%;
+    z-index:1000;
+    background-color:#343a40;
+    border:0.5px solid white;
+    border-radius: 30px;
+    padding:5px;
+    align-items: center;
+    align-content: center;
+}
+.sideNav1{
+  width:10%;
+  height:100%;
+  float:left;
+  background-color:#343a40;
+  border:0.5px solid white;
+  padding:5px;
+}
+.dataHolder{
+  height:100%;
+  width:89.9%;
+  margin-left:10%;
+  margin-top:0%;
+  padding:5px;
+  border:0.5px solid white;
+  color:white;
+  background-color:#343a40;
+}
+#uimg{
+  height:80px;
+  width:80px;
+  margin:5px;
+  border-radius:200px;
+}
+@media screen and (min-width: 0px) and (max-width: 750px) {
+  .bottomNav { display: block; }  /* show it on small screens */
+  .sideNav1 { display: none; }  /* hide it elsewhere */
+  .dataHolder {  width:100%;margin-left:0%; height: 75vh;overflow-x: hidden; overflow-y: scroll;}
+  h3{font-size: 12px;}
+  h6{font-size: 10px;}
+  #uimg{height: 40px;width:40px;}
+}
+
+@media screen and (min-width: 751px) {
+  .bottomNav { display: none; }   /* hide it elsewhere */
+  .sideNav1 { display: block; }  /* show it on large screens */
+}

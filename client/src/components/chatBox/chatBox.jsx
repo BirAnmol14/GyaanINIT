@@ -160,7 +160,7 @@ function ChatBox(props) {
 		}
 	},[postsPrivate]);
 	return (
-		<div>
+		<div className="dataCont">
 
 			{props.allChats ? "Showing all chats of " + props.of : "Showing messages between " + props.from + ' and ' + props.to}
 			{
@@ -171,14 +171,14 @@ function ChatBox(props) {
 			}
 			{
 				props.allChats ? <div id="container">
-					<aside>
+					<aside style={activeChat?{display:'none'}:{display:'block'}}>
 						<div className="chatHeader">
 							<input type="text" placeholder="search" />
 						</div>
 						<ul>
 							{recvdTopicsPrivate ? recvdTopicsPrivate.map((topic) => {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
-									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
+									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
 									<div style={{pointerEvents:'none'}}>
 										<h2>{topic.fancy_title}</h2>
 										<h3>
@@ -190,11 +190,11 @@ function ChatBox(props) {
 							}) : null}
 
 						</ul>
-					</aside>
+					</aside >
 					{
-						postsPrivate && !hide ? <main>
+						postsPrivate && !hide ? <main style={activeChat?{display:'block'}:{display:'none'}}>
 							<div className="chatHeader">
-								<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
+								<img src="https://static.thenounproject.com/png/2916775-200.png" className="backImg" alt="" onClick={()=>{setPostsPrivate(null);setActiveChat(null)}}/>
 								<div>
 									<h2>{postsPrivate.fancy_title}</h2>
 									<button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="right" title={
@@ -235,7 +235,7 @@ function ChatBox(props) {
 				</div> : null}
 			{
 				!props.allChats ? <div id="container">
-					<aside>
+					<aside style={activeChat?{display:'none'}:{display:'block'}}>
 						<div className="chatHeader">
 							<input type="text" placeholder="search" />
 						</div>
@@ -256,9 +256,9 @@ function ChatBox(props) {
 						</ul>
 					</aside>
 
-					{postsPrivate && !hide ? <main>
+					{postsPrivate && !hide ? <main style={activeChat?{display:'block'}:{display:'none'}}>
 						<div className="chatHeader">
-							<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
+							<img src="https://static.thenounproject.com/png/2916775-200.png" alt="" className="backImg" onClick={()=>{setPostsPrivate(null);setActiveChat(null)}}/>
 							<div>
 								<h2>{postsPrivate.fancy_title}</h2>
 								<button type="button" class="btn btn-secondary btn-sm" data-toggle="tooltip" data-placement="right" title={

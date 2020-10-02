@@ -14,6 +14,7 @@ import MailIcon from '@material-ui/icons/Mail';
 import parse from 'html-react-parser';
 import ChatBox from '../chatBox/chatBox.jsx';
 import ModalCompose from '../Modal/modalCompose.jsx';
+import './userProfile.css';
 function UserProfile(props){
   const [profileData,setProfileData]=React.useState(null);
   const [badges,setBagdes]=React.useState(null);
@@ -77,19 +78,36 @@ function UserProfile(props){
   },[]);
   return(
     <div>
+
+    <div className="bottomNav">
+    <ul className="nav nav-pills justify-content-center" id="pills-tab" role="tablist">
+    <li className="nav-item" role="presentation">
+    <a className="nav-link active" style={{color:"white",borderRadius:"30px"}} id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="true" onClick={hideNav}><PersonIcon style={{ display: "inline", verticalAlign: "middle",margin:'0em 0.3em',pointerEvents:'none'}}/> </a>
+    </li>
+    <li className="nav-item" role="presentation">
+      <a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-badges-tab" data-toggle="pill" href="#v-pills-badges" role="tab" aria-controls="v-pills-badges" aria-selected="false" onClick={hideNav}><EmojiEventsIcon style={{ display: "inline", verticalAlign: "middle",margin:'0em 0.3em',pointerEvents:'none'}}/></a>
+    </li>
+    <li className="nav-item" role="presentation">
+    {props.logged.status?<a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false" onClick={hideNav}><MailIcon style={{ display: "inline", verticalAlign: "middle",margin:'0em 0.3em',pointerEvents:'none'}}/></a>:null}
+    </li>
+    <li className="nav-item" role="presentation">
+    {props.logged.status?<a className="nav-link" style={{color:"white",borderRadius:"30px"}} href="#ModalCenter" aria-label="add" data-toggle="modal" data-target="#ModalCenter"><SendIcon style={{ display: "inline", verticalAlign: "middle",margin:'0em 0.3em',pointerEvents:'none'}}/></a>:null}
+    </li>
+  </ul>
+    </div>
       {!hide?<Navbar links={{active:{},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}}  brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>:null}
       <div style={!hide?{marginTop:'100px'}:{marginTop:"5px"}}>
-          <div className="nav flex-column nav-pills" id="v-pills-tab" role="tablist" aria-orientation="vertical" style={{width:"10%",height:"100%",float:"left",backgroundColor:"#343a40",border:"0.5px solid white",padding:'5px'}}>
+          <div className="nav flex-column nav-pills sideNav1" id="v-pills-tab" role="tablist" aria-orientation="vertical">
               <a className="nav-link active" style={{color:"white",borderRadius:"30px"}} id="v-pills-profile-tab" data-toggle="pill" href="#v-pills-profile" role="tab" aria-controls="v-pills-profile" aria-selected="true" onClick={hideNav}><PersonIcon style={{ display: "inline", verticalAlign: "middle",marginRight:'3px'}}/> Profile</a>
               <a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-badges-tab" data-toggle="pill" href="#v-pills-badges" role="tab" aria-controls="v-pills-badges" aria-selected="false" onClick={hideNav}><EmojiEventsIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Badges</a>
               {props.logged.status?<a className="nav-link" style={{color:"white",borderRadius:"30px"}} id="v-pills-messages-tab" data-toggle="pill" href="#v-pills-messages" role="tab" aria-controls="v-pills-messages" aria-selected="false" onClick={hideNav}><MailIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Messages</a>:null}
               {props.logged.status?<a className="nav-link" style={{color:"white",borderRadius:"30px"}} href="#ModalCenter" aria-label="add" data-toggle="modal" data-target="#ModalCenter"><SendIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/> Compose</a>:null}
             </div>
-          <div className="tab-content" id="v-pills-tabContent" style={{height:"100%", width:"89.9%",marginLeft:"10%",marginTop:"0%",padding:"5px",border:"0.5px solid white",color:"white",backgroundColor:"#343a40"}}>
+          <div className="tab-content dataHolder" id="v-pills-tabContent">
             <div className="tab-pane fade show active" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab">
               {
                 profileData&&url?<div>
-                  <h3> <img src={url.substring(0,url.length-1)+profileData.avatar_template.replace('{size}','80')} alt="profile pic round" id='uimg'style={{height:'80px',width:'80px',margin:'5px',borderRadius:'200px'}}/><span>{profileData.name} (@{profileData.username})<br/><PersonPinIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/>{profileData.user_fields['1']}</span></h3>
+                  <h3> <img src={url.substring(0,url.length-1)+profileData.avatar_template.replace('{size}','80')} alt="profile pic round" id='uimg'/><span>{profileData.name} (@{profileData.username})<br/><PersonPinIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/>{profileData.user_fields['1']}</span></h3>
                   {profileData.bio_raw?<h6><InfoIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/>{parse(profileData.bio_raw)}</h6>:null}
                   <hr style={{display: 'block',backgroundColor:"white"}}/>
                   {
@@ -126,7 +144,7 @@ function UserProfile(props){
             <div className="tab-pane fade" id="v-pills-badges" role="tabpanel" aria-labelledby="v-pills-badges-tab">
             {
               profileData&&url?<div>
-                <h3> <img src={url.substring(0,url.length-1)+profileData.avatar_template.replace('{size}','80')} alt="profile pic round" id='uimg'style={{height:'80px',width:'80px',margin:'5px',borderRadius:'200px'}}/><span>{profileData.name} (@{profileData.username})<br/><PersonPinIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/>{profileData.user_fields['1']}</span></h3>
+                <h3> <img src={url.substring(0,url.length-1)+profileData.avatar_template.replace('{size}','80')} alt="profile pic round" id='uimg'/><span>{profileData.name} (@{profileData.username})<br/><PersonPinIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/>{profileData.user_fields['1']}</span></h3>
                 {profileData.bio_raw?<h6><InfoIcon style={{ display: "inline", verticalAlign: "middle" ,marginRight:'3px'}}/>{parse(profileData.bio_raw)}</h6>:null}
                 <hr style={{display: 'block',backgroundColor:"white"}}/>
                 {
@@ -142,7 +160,7 @@ function UserProfile(props){
                 {
                   badges?<ul>{badges.map((badge,index)=>{return (
                     <li key={badge.id}>
-                    <h6 style={{display:"inline"}}><img src={badge.image} alt="badge_img" style={{height:'80px',width:'80px',margin:'5px',borderRadius:'200px'}}/>
+                    <h6 style={{display:"inline"}}><img id='uimg' src={badge.image} alt="badge_img"/>
                     <span>{badge.name}
                     {badge.description?": "+badge.description.replace( /(<([^>]+)>)/ig, ''):null}
                     </span>
