@@ -1,10 +1,37 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
 import ServerRoutes from './ServerRoutes.js';
+import AddUser from './addUser.jsx';
 function Create(props){
   const [meetDetails,setDetails]=React.useState({meetUrl:'',meetPass:''});
   const [generatedUrl,setUrl]=React.useState('');
   const [pass,setPass]=React.useState('');
+  const [participants,setParticipants]=React.useState([]);
+  const [cat,setCat]=React.useState([]);
+  const [pub,setPublic]=React.useState(false);
+  async function getCategories(){
+    const response = await fetch(ServerRoutes.getCategories, {
+    method: 'GET',
+    credentials: 'include'
+  });
+  const status=await response.status;
+    if(status===200){
+      const data = await response.json();
+      if(data.status===true){
+        setCat(data.categories);
+      }else{
+        alert(data.message);
+      }
+    }else{
+      alert("Error "+status);
+    }
+  }
+  function addParticipant(participant){
+    setParticipants([...participants,participant]);
+  }
+  function removeParticipant(index){
+    setParticipants(participants.filter((p,i)=>{return i!==index;}));
+  }
   function detailsChange(event){
     const {name,value}=event.target;
     setDetails(prev=>{return({...prev,[name]:value})});
@@ -33,6 +60,7 @@ function Create(props){
     }
     setDetails({meetUrl:'',meetPass:''});
   }
+  React.useEffect(()=>{getCategories();},[]);
   function joinCall(){
     window.location.href='/join';
   }
@@ -54,14 +82,26 @@ function Create(props){
       </div>
       <div className="row">
         <div className="col">
-          <label htmlFor = "content">Content</label>
-          <select class = "form-control">
-            <option>Content</option>
+          <label htmlFor = "category">Category</label>
+          <select className="form-control" id = "multi-role" name='category' required placeholder='Select a Category' style={{overflowY:'scroll'}}>
+              <option value="" disabled selected>Select your Category</option>
+              {
+                cat.map((category,index)=>{return(<option key={category.id} id={index} value={category.id}>{category.name}</option>)})
+              }
           </select>
         </div>
         <div className="col">
-          <label htmlFor="upload-file">Upload</label>
-          <input type="file" className="form-control" id='upload-file' name='uploadFile' />
+          <label htmlFor="details">Meet Details</label>
+          <input type="text" className="form-control" id='detials' name='details' placeholder="Please Enter Reason for the meeting"/>
+        </div>
+      </div>
+      <div className="row">
+      <div className="col">
+      <div className="form-check" style={{marginLeft:'0px',marginTop:"10px",padding:'0px'}}>
+      <input className="form-check-input" type="checkbox" value={pub} id="defaultCheck1" onChange={()=>{setPublic(!pub);setParticipants([])}}/>
+      <label className="form-check-label" for="defaultCheck1">Make Public?</label>
+      </div>
+        {!pub?<AddUser participants={participants} addParticipant={addParticipant} removeParticipant={removeParticipant} />:null}
         </div>
       </div>
       <div className="row">

@@ -38,23 +38,23 @@ function ModalPost(props){
   React.useEffect(()=>{
     resetPost();
   },[]);
-  return (<div class="modal fade" id="ModalCenter" tabIndex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Compose Post</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+  return (<div className="modal fade" id="ModalCenter" tabIndex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+    <div className="modal-dialog modal-dialog-centered" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title" id="exampleModalLongTitle">Compose Post</h5>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <form onSubmit={postNow}>
-        <div class="modal-body">
+        <div className="modal-body">
         <label htmlFor="post">Post</label>
         <textarea id="post" className="form-control" name="description" required autoComplete="off" value={post.description} onChange={modifyPost}></textarea>
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary"><SendIcon style = {{display: "inline",verticalAlign:"middle"}}/> Post</button>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" className="btn btn-primary"><SendIcon style = {{display: "inline",verticalAlign:"middle"}}/> Post</button>
         </div>
         </form>
       </div>

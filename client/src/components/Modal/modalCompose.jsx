@@ -78,17 +78,17 @@ function ModalCompose(props){
     setOtherUser(props.otherUser);
     setUrl(props.url);
   },[]);
-  return (<div class="modal fade" id="ModalCenter" tabIndex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Create New Private Message</h5>
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" onClick={()=>{setOtherUser(props.otherUser)}}>
+  return (<div className="modal fade" id="ModalCenter" tabIndex="-1" role="dialog" aria-labelledby="ModalCenterTitle" aria-hidden="true">
+    <div className="modal-dialog modal-dialog-centered" role="document">
+      <div className="modal-content">
+        <div className="modal-header">
+          <h5 className="modal-title" id="exampleModalLongTitle">Create New Private Message</h5>
+          <button type="button" className="close" data-dismiss="modal" aria-label="Close" onClick={()=>{setOtherUser(props.otherUser)}}>
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
         <form onSubmit={postPvtMessage}>
-        <div class="modal-body">
+        <div className="modal-body">
         <input className="form-control" type="text" name="title" required autoComplete="off" placeholder="Title" value={postData.title} onChange={changePostData}/>
         <br/>
         <textarea className="form-control" name="message" required autoComplete="off" placeholder="message" value={postData.message} onChange={changePostData}></textarea>
@@ -112,17 +112,17 @@ function ModalCompose(props){
         </div>
           <button className="btn btn-outline-primary my-2 my-sm-0" type="button" ><SearchIcon style = {{display: "inline",verticalAlign:"middle"}}/></button>
       </form>
-      {otherUser&&url?<div class="card" style={{width: "20rem",marginLeft:'0px'}}>
-      {otherUser.avatar_template?<img class="card-img-top" style={{height:'100px',width:'100px'}} src={url.substring(0,url.length-1)+otherUser.avatar_template.replace('{size}','40')} alt="user img"/>:null}
-        <div class="card-body">
-          <h5 class="card-title">Message To {otherUser.name}</h5>
-          <a href={"/u/"+otherUser.username} class="btn btn-primary">@{otherUser.username}</a>
+      {otherUser&&url?<div className="card" style={{width: "20rem",marginLeft:'0px'}}>
+      {otherUser.avatar_template?<img className="card-img-top" style={{height:'100px',width:'100px'}} src={url.substring(0,url.length-1)+otherUser.avatar_template.replace('{size}','40')} alt="user img"/>:null}
+        <div className="card-body">
+          <h5 className="card-title">Message To {otherUser.name}</h5>
+          <a href={"/u/"+otherUser.username} className="btn btn-primary">@{otherUser.username}</a>
         </div>
       </div>:null}
         </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" onClick={()=>{setOtherUser(props.otherUser)}}>Close</button>
-          <button type="submit" class="btn btn-primary">Send</button>
+        <div className="modal-footer">
+          <button type="button" className="btn btn-secondary" data-dismiss="modal" onClick={()=>{setOtherUser(props.otherUser)}}>Close</button>
+          <button type="submit" className="btn btn-primary">Send</button>
         </div>
         </form>
       </div>
