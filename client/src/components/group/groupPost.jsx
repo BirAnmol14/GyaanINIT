@@ -7,13 +7,15 @@ import LinkIcon from '@material-ui/icons/Link';
 import FavoriteIcon from '@material-ui/icons/Favorite';
 function GroupPost(props){
   return (
-      <div id="layout" className="pure-g">
-        <div className="sidebar pure-u-1 pure-u-md-1-4" style={{maxWidth:"15%"}}>
-            <div className="header">
-                <h1 className="brand-title">{props.topicHead.name.split('_').join(' ')}</h1>
-                <h2 className="brand-tagline"><img style={{height:"80px",width:"80px",borderRadius:'100px'}} className="post-avatar" src={props.topicHead.uploaded_logo?(props.url.toString()+props.topicHead.uploaded_logo.url.toString()):logo} alt='thumbnail'/></h2>
-            </div>
+    <div>
+    <div className="sidebar pure-u-1 pure-u-md-1-4">
+        <div className="header">
+            <h1 className="brand-title">{props.topicHead.name.split('_').join(' ')}</h1>
+            <h2 className="brand-tagline"><img style={{height:"80px",width:"80px",borderRadius:'100px'}} className="post-avatar" src={props.topicHead.uploaded_logo?(props.url.toString()+props.topicHead.uploaded_logo.url.toString()):logo} alt='thumbnail'/></h2>
         </div>
+    </div>
+      <div id="layout" className="pure-g">
+
          <div  className="content pure-u-1 pure-u-md-3-4" style={{backgroundColor:"#000",opacity:'0.9'}}>
          <ul className="nav nav-pills" id="myTab" role="tablist">
           <li className="nav-item">
@@ -72,6 +74,7 @@ function GroupPost(props){
           </div>
         </div>
         </div>
+      </div>
       </div>
   )
 }

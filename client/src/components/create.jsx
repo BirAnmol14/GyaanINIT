@@ -57,7 +57,7 @@ function Create(props){
     if(status === 200){
       const res=await response.json();
       if(res.status===true){
-        alert('URL: '+res.url);
+        //alert('URL: '+res.url);
         setUrl(window.location.href.substr(0,window.location.href.indexOf(window.location.pathname))+'/videoCall/'+res.url);
         setPass(meetDetails.meetPass);
       }else{

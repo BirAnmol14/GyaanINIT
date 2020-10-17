@@ -1,6 +1,7 @@
 import React from 'react';
 import Navbar from './navbar.jsx';
 import ServerRoutes from './ServerRoutes.js';
+import queryString from 'query-string';
 function Join(props){
   const [meetDetails,setDetails]=React.useState({meetUrl:'',meetPass:''});
   function detailsChange(event){
@@ -30,6 +31,12 @@ function Join(props){
     }
     setDetails({meetUrl:'',meetPass:''});
   }
+  React.useEffect(()=>{
+    const obj=queryString.parse(props.location.search);
+    if(obj && obj.url && obj.pass){
+      setDetails(prev=>{return({...prev,meetUrl:obj.url,meetPass:obj.pass})});
+    }
+  },[]);
   return(props.logged.status===true?
     <div>
     <Navbar  links={{active:{name:'Join Meet',url:'/join'},other:[{name:'Home',url:'/'},{name:'Past Meets',url:'/pastmeets'},{name:'Join Meet',url:'/join'},{name:'Create Meet',url:'/create'}]}}  brand='true' discuss='true' search='true' login={props.logged.status} pic={props.logged.status?props.logged.user.profilePic:null}/>

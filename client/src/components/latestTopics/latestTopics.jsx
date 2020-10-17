@@ -40,6 +40,7 @@ function LatestTopics(){
   },[]);
 
   return (
+
     <div id="layout" className="pure-g" >
       {url?<h1 className="post"><center>Categories</center></h1>:null}
       {
@@ -90,11 +91,12 @@ function LatestTopics(){
           </div>
         })
       }
-      <Fab color="primary" aria-label="add" style={{position: 'fixed',bottom: '1rem', right: '1.5rem',zIndex: 100}} data-toggle="modal" data-target="#ModalCenter">
+      <Fab color="primary" aria-label="add" style={{position: 'fixed',bottom: '1rem', right: '2rem',zIndex: 100}} data-toggle="modal" data-target="#ModalCenter">
       <AddIcon />
       </Fab>
       <ModalTopic category={""}/>
     </div>
+
   );
 }
 

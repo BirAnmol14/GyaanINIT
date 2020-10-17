@@ -624,8 +624,9 @@ async function createTopicForCall(url, password, admin_name,category,categoryNam
     var title1 = "Invite for Meet by "+admin_name+", created on "+new Date().toLocaleDateString();
     var desc2=  "Meet Nickname: "+url;
     desc2+="\nMeet Password: "+password;
+    desc2+="\n<a href='/join?url="+url+"&pass="+password+"'>Link</a>"
     desc2+="\nMeet Details: "+details;
-    desc2+="\nMeet Category: "+category;
+    desc2+="\nMeet Category: "+categoryName;
     var target=user.username+',';
     for(var i=0;i<members.length;i++){
       target+=members[i]+",";
@@ -669,9 +670,8 @@ async function createTopicForCall(url, password, admin_name,category,categoryNam
   if(public){
   var title = "Meet-"+url+" by "+admin_name+", created on "+new Date().toLocaleDateString();
   var desc = "Meet Nickname: "+url;
-  if(public){
-    desc+="\nMeet Password: "+password;
-  }
+  desc+="\nMeet Password: "+password;
+  desc+="\n<a href='/join?url="+url+"&pass="+password+"'>Link</a>"
   desc+="\nMeet Details: "+details;
   desc+="\nMeet Category: "+categoryName;
 

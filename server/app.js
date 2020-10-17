@@ -204,6 +204,7 @@ app.post('/api/makepost/privateMessage', async (req, res)=> {
 //Socket namespace for videoCall
 var map=new Map();
 var map2=new Map();
+var videos=[];
 var nsp = io.of('/api/videoCallSocket');
 nsp.on('connection', function(socket) {
    socket.on('join',(object)=>{
@@ -211,6 +212,7 @@ nsp.on('connection', function(socket) {
      map2.set(object.user.username,socket.id);
      socket.join(object.callUrl);
      nsp.to(object.callUrl).emit('userList',videoCallFunc.getCallUserList(object.callUrl));
+     nsp.to(object.callUrl).emit('incomingStream',{videos:videos});
      socket.emit('chatList',videoCallFunc.getCallMessages(object.callUrl));
      socket.broadcast.to(object.callUrl).emit('join',{message:object.user.name+" has joined"});
    });
@@ -228,6 +230,17 @@ nsp.on('connection', function(socket) {
         var messageObj={user:map.get(socket.id).user,message:object.message,time:new Date()}
         nsp.to(socketId).emit('getPrivateMessage',messageObj);
      }
+   });
+   socket.on('streamVideo',(object)=>{
+     var obj=map.get(socket.id);
+     videos.push({id:obj.user.username,name:obj.user.name,videoObj:object.videoObj});
+     nsp.to(obj.callUrl).emit('incomingStream',{videos:videos});
+   });
+   socket.on('removeStream',()=>{
+     var obj=map.get(socket.id);
+     var videos1=videos.filter((video)=>video.id!==obj.user.username);
+     videos=videos1;
+     nsp.to(obj.callUrl).emit('incomingStream',{videos:videos1});
    });
    socket.on('disconnect',()=>{
      var obj=map.get(socket.id);

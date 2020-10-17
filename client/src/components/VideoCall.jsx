@@ -137,6 +137,7 @@ function VideoCall(props) {
   const [pvtChatWith,setPvtChatWith]=React.useState({name:"",username:"",profilePic:""});
   const [pvtChatText,setPvtChatText]=React.useState("");
   const [meetDetails,setMeetDetails]=React.useState(null);
+  const [stream,setStream]=React.useState([]);
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
@@ -239,6 +240,10 @@ function VideoCall(props) {
       webcam.stream()
      .then(result =>{
         console.log("webcam started");
+        let socket = appSocket;
+        if (socket) {
+          socket.emit('streamVideo',{videoObj:webcamElement.srcObject});
+        }
      })
      .catch(err => {
          console.log(err);
@@ -247,6 +252,10 @@ function VideoCall(props) {
     else{
       if(webcamera){
         webcamera.stop();
+        let socket = appSocket;
+        if (socket) {
+          socket.emit('removeStream');
+        }
       }
     }
   },[video]);
@@ -528,6 +537,9 @@ React.useEffect(() => {
       socket.on('chatList', (data) => {
          setCallChat(data);
       });
+      socket.on('incomingStream',(videos)=>{
+        setStream(videos.videos);
+      });
       socket.on('getPrivateMessage',(data)=>{
         setToastMsg('<p>Private Message</p><p>From: '+data.user.name+"</p><p>Messaage: "+data.message+"</p>");
       });
@@ -593,7 +605,7 @@ React.useEffect(()=>{
 
     inCall === false ? <div /> :
       <div className="full-height">
-        {video?<VideoCard name={props.logged.user.name}/>:null}
+        <VideoCard name={props.logged.user.name} username={props.logged.user.username} stream={stream} video={video}/>
         <Toast message={toastMsg} />
         <audio src={audioSrc} style={{ display: "none" }} id="noti_audio" />
         <div style={{ right: "0", top: "0", position: "fixed" }}><div className="card" style={{ padding: "2px", margin: "1px" }}><SignalCellular4BarIcon />{}</div></div>
