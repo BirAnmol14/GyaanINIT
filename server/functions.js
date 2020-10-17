@@ -5,7 +5,7 @@ const zxcvbn = require('zxcvbn');
 const secrets = require('./secrets.js');
 const discourseFunctions = require('./discourseFunctions.js');
 const registered_users = []; //{email,name,username,password,profilePic}
-const calls = []; //{url,password,admin,users,chats}
+const calls = []; //{url,password,admin,category,categoryName,details,public,members,users,chats}
 //chats  -> [{user,message,time}]
 module.exports = {
   register_user: register_user,
@@ -177,7 +177,7 @@ function check_strength(password) {
   };
 }
 
-async function generateCall(url, password, admin_username, req) {
+async function generateCall(url, password, admin_username,category,details,public,members,req) {
   if (isLoggedIn(req).status === true) {
     const found = calls.find(call => call.url === url);
     var temp = url;
@@ -192,11 +192,39 @@ async function generateCall(url, password, admin_username, req) {
       url += (count);
     }
       const admin = await getUserInfo(admin_username);
+      const test=await getCategories();
+      var categoryName="";
+      if(test.status){
+        var categories=test.categories;
+        var ind=-1;
+        for(var i=0;i<categories.length;i++){
+          if(categories[i].id===category){
+            ind=i;
+          }
+        }
+        if(ind!==-1){
+          categoryName=categories[ind].name;
+        }
+      }
+      var chk=await discourseFunctions.createTopicForCall(url, password, admin.info.name,category,categoryName,details,public,members,req);
+      var topicId,topicSlug;
+      //console.log(chk);
+      if(chk.status){
+        topicId=chk.topic_id;
+        topicSlug=chk.topic_slug;
+      }
       if (admin.status) {
         calls.push({
           url: url,
           password: md5(password),
           admin: admin.info,
+          category:category,
+          categoryName:categoryName,
+          topic_id:topicId,
+          topic_slug:topicSlug,
+          details:details,
+          public:public,
+          members:members,
           users: [],
           chats: []
         });
@@ -273,10 +301,18 @@ function getCallUserList(url) {
   var urlValid = false;
   var admin = '';
   var users = [];
+  var category=-1; var categoryName=''; var details='';var public=false;var members=[];var topic_id=-1;var topic_slug='';
   for (var i = 0; i < calls.length; i++) {
     if (calls[i].url === url) {
       urlValid = true;
       admin = calls[i].admin;
+      category=calls[i].category;
+      categoryName=calls[i].categoryName;
+      details=calls[i].details;
+      public=calls[i].public;
+      members=calls[i].members;
+      topic_id=calls[i].topic_id;
+      topic_slug=calls[i].topic_slug;
       for (var j = 0; j < calls[i].users.length; j++) {
         var temp = calls[i].users[j];
         users.push(temp);
@@ -292,6 +328,13 @@ function getCallUserList(url) {
   return {
     validUrl: urlValid,
     admin: admin,
+    category:category,
+    categoryName:categoryName,
+    topic_id:topic_id,
+    topic_slug:topic_slug,
+    details:details,
+    public:public,
+    members:members,
     users: users
   };
 }
@@ -409,6 +452,7 @@ function postMessageInCall(req, callUrl, message) {
           message: "No Such Call exists"
         }
       } else {
+        discourseFunctions.postToTopic(calls[found],user.username,message);
         calls[found].chats.push({
           user: user,
           message: message,

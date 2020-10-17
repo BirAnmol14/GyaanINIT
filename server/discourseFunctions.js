@@ -15,7 +15,9 @@ module.exports = {
   search:search,
   fetchBadges:fetchBadges,
   createPrivateTopic:createPrivateTopic,
-  makePrivatePost:makePrivatePost
+  makePrivatePost:makePrivatePost,
+  createTopicForCall:createTopicForCall,
+  postToTopic:postToTopic
 }
 
 function TruncateUser(body) {
@@ -419,7 +421,7 @@ data=JSON.stringify(data);
     method: 'POST',
     headers: {
       'Api-Key': secrets.discourse_key,
-      'Api-Username': user.username,             //to be changed at delivery
+      'Api-Username': user.username,
       'Content-Type': 'application/json'
     },
     body:data
@@ -606,5 +608,164 @@ async function fetchBadges(username){
     return {status:true,badges:result.badges}
   }else{
     return {status:false,badges:[]}
+  }
+}
+
+async function createTopicForCall(url, password, admin_name,category,categoryName,details,public,members,req){
+  let user=req.session.user;
+  if(!user){
+    return{
+      status: false,
+      message: 'Kindly Login'
+    }
+  }
+    var url1 = secrets.discourse_url + '/posts.json';
+  if(!public){
+    var title1 = "Invite for Meet by "+admin_name+", created on "+new Date().toLocaleDateString();
+    var desc2=  "Meet Nickname: "+url;
+    desc2+="\nMeet Password: "+password;
+    desc2+="\nMeet Details: "+details;
+    desc2+="\nMeet Category: "+category;
+    var target=user.username+',';
+    for(var i=0;i<members.length;i++){
+      target+=members[i]+",";
+    }
+    var data2 = {
+      "title": title1,
+      "raw": desc2,
+      "target_recipients":target,
+      "archetype": "private_message",
+    };
+    data2=JSON.stringify(data2);
+    var options2 = {
+      method: "POST",
+      headers: {
+        'Api-Key': secrets.discourse_key,
+        'Api-Username': 'system',
+        'Content-Type': 'application/json'
+      },
+      body:data2
+    };
+    //console.log(data2);
+    const response2=await fetch(url1,options2);
+    const status2=await response2.status;
+    if(status2===200){
+      const result2=await response2.json();
+      //console.log(result2);
+      return {
+        status: true,
+        message: 'Topic Created successfully',
+        topic_id:result2.topic_id,
+        topic_slug:result2.topic_slug
+      };
+     }
+     else{
+       return{
+         status: false,
+         message: 'Failed to create Topic'
+       }
+     }
+   }
+  if(public){
+  var title = "Meet-"+url+" by "+admin_name+", created on "+new Date().toLocaleDateString();
+  var desc = "Meet Nickname: "+url;
+  if(public){
+    desc+="\nMeet Password: "+password;
+  }
+  desc+="\nMeet Details: "+details;
+  desc+="\nMeet Category: "+categoryName;
+
+  var data = {
+    "title": title,
+    "raw": desc,
+    "category":Number(category),
+    "archetype": "regular",
+  };
+  data=JSON.stringify(data);
+  var options = {
+    method: "POST",
+    headers: {
+      'Api-Key': secrets.discourse_key,
+      'Api-Username': 'system',
+      'Content-Type': 'application/json'
+    },
+    body:data
+  };
+  const response=await fetch(url1,options);
+  const status=await response.status;
+  if(status===200){
+   const result=await response.json();
+   return {
+     status: true,
+     message: 'Topic Created successfully',
+     topic_id:result.topic_id,
+     topic_slug:result.topic_slug
+   };
+  }
+  else{
+    return{
+      status: false,
+      message: 'Failed to create Topic'
+    }
+  }
+}
+}
+async function postToTopic(call,username,message){
+  if(call.public){
+    var topic_id = Number(call.topic_id);
+    var raw = message;
+    var url = secrets.discourse_url + '/posts.json';
+    var data={
+      "topic_id": topic_id,
+      "raw": raw,
+      "archetype": "regular"
+    };
+  data=JSON.stringify(data);
+    var options = {
+      method: 'POST',
+      headers: {
+        'Api-Key': secrets.discourse_key,
+        'Api-Username': username,
+        'Content-Type': 'application/json'
+      },
+      body:data
+    };
+
+  const response=await fetch(url,options);
+    const status=await response.status;
+    if(status===200){
+     const result=await response.json();
+    }
+  }else{
+    var topic_id = Number(call.topic_id);
+    var raw = message;
+    var target= username+",";
+    for(var i=0;i<call.members.length;i++){
+      target+=call.members[i]+",";
+    }
+    var url = secrets.discourse_url + '/posts.json';
+    var data={
+      "topic_id": topic_id,
+      "raw": raw,
+      "target_recipients":target,
+      "archetype": "regular"
+    };
+  data=JSON.stringify(data);
+
+    var options = {
+      method: 'POST',
+      headers: {
+        'Api-Key': secrets.discourse_key,
+        'Api-Username': username,
+        'Content-Type': 'application/json'
+      },
+      body:data
+    };
+
+  const response=await fetch(url,options);
+    const status=await response.status;
+    if(status===200){
+     const result=await response.json();
+   }
   }
 }

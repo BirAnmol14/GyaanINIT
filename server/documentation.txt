@@ -105,6 +105,11 @@ GET requests
       {
           validUrl: boolean ,
           admin: User Object{  -name:String,  -username:String,-profilePic:String} ,
+          category:Number,
+          categoryName:String,
+          details: string
+          public:boolean,
+          members:[]
           users:[
                   {
                     User object in the Call,
@@ -276,6 +281,10 @@ POST requests
     - meetUrl: String(mandatory)
     - password: String(mandatory)
     - admin_username: String(mandatory)
+    - category : Number(mandatory)
+    - details : String (mandatory)
+    - public : boolean (mandatory)
+    - members : array of usernames (mandatory)
   -RESPONSE:
     - statusCode:200
     - Content-Type:JSON

@@ -3,12 +3,12 @@ import Navbar from './navbar.jsx';
 import ServerRoutes from './ServerRoutes.js';
 import AddUser from './addUser.jsx';
 function Create(props){
-  const [meetDetails,setDetails]=React.useState({meetUrl:'',meetPass:''});
   const [generatedUrl,setUrl]=React.useState('');
   const [pass,setPass]=React.useState('');
   const [participants,setParticipants]=React.useState([]);
   const [cat,setCat]=React.useState([]);
   const [pub,setPublic]=React.useState(false);
+  const [meetDetails,setDetails]=React.useState({meetUrl:'',meetPass:'',details:'',category:''});
   async function getCategories(){
     const response = await fetch(ServerRoutes.getCategories, {
     method: 'GET',
@@ -38,7 +38,15 @@ function Create(props){
   }
   async function submitDetails(event){
     event.preventDefault();
-    const body=JSON.stringify({meetUrl:meetDetails.meetUrl,password:meetDetails.meetPass,admin_username:props.logged.user.username});
+    if(meetDetails.details.length<10){
+      alert("Please make sure that details have at least 10 characters");
+      return;
+    }
+    var member=[];
+    for(var i=0;i<participants.length;i++){
+      member.push(participants[i].username);
+    }
+    const body=JSON.stringify({meetUrl:meetDetails.meetUrl,password:meetDetails.meetPass,admin_username:props.logged.user.username,category:Number(meetDetails.category),details:meetDetails.details,public:pub,members:member});
     const response=await fetch(ServerRoutes.generateCall,{
       method:'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -58,7 +66,8 @@ function Create(props){
     }else{
       alert('Error: '+status+'\nTry Again');
     }
-    setDetails({meetUrl:'',meetPass:''});
+    setDetails({meetUrl:'',meetPass:'',details:'',category:'',public:false,members:[]});
+    setParticipants([]);
   }
   React.useEffect(()=>{getCategories();},[]);
   function joinCall(){
@@ -83,7 +92,7 @@ function Create(props){
       <div className="row">
         <div className="col">
           <label htmlFor = "category">Category</label>
-          <select className="form-control" id = "multi-role" name='category' required placeholder='Select a Category' style={{overflowY:'scroll'}}>
+          <select className="form-control" id = "multi-role" name='category' required placeholder='Select a Category' style={{overflowY:'scroll'}} value={meetDetails.category} onChange={detailsChange}>
               <option value="" disabled selected>Select your Category</option>
               {
                 cat.map((category,index)=>{return(<option key={category.id} id={index} value={category.id}>{category.name}</option>)})
@@ -92,7 +101,7 @@ function Create(props){
         </div>
         <div className="col">
           <label htmlFor="details">Meet Details</label>
-          <input type="text" className="form-control" id='detials' name='details' placeholder="Please Enter Reason for the meeting"/>
+          <input type="text" className="form-control" id='detials' name='details' placeholder="Please Enter Reason for the meeting" value={meetDetails.details} onChange={detailsChange}/>
         </div>
       </div>
       <div className="row">

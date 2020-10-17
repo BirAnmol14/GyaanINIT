@@ -2,7 +2,7 @@ import React from 'react';
 import './VideoCall.css';
 import Toast from './toast/Toast.jsx';
 import audioSrc from './audio/sms-alert.mp3';
-
+import Webcam from 'webcam-easy';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -44,7 +44,7 @@ import Canvas from "./Canvas.jsx"
 import ReactPaint from './paint/react-paint.js';
 import { SketchField, Tools } from "react-sketch";
 import SketchFieldDemo from "./graph.jsx";
-
+import VideoCard from './videoCallCard/videoCallCard.jsx';
 
 function initDraw(canvas) {
   var mouse = {
@@ -136,6 +136,7 @@ function VideoCall(props) {
   const [pvtChats,setPvtChats]=React.useState([]);
   const [pvtChatWith,setPvtChatWith]=React.useState({name:"",username:"",profilePic:""});
   const [pvtChatText,setPvtChatText]=React.useState("");
+  const [meetDetails,setMeetDetails]=React.useState(null);
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
@@ -229,6 +230,26 @@ function VideoCall(props) {
     mic ? changeMicState(false) : changeMicState(true);
   }
   const [video, changeVideoState] = React.useState(false);
+  const [webcamera,setWebcam]=React.useState(null);
+  React.useEffect(()=>{
+    if(video){
+      const webcamElement = document.getElementById('webcam');
+      var webcam = new Webcam(webcamElement, 'user');
+      setWebcam(webcam);
+      webcam.stream()
+     .then(result =>{
+        console.log("webcam started");
+     })
+     .catch(err => {
+         console.log(err);
+     });
+    }
+    else{
+      if(webcamera){
+        webcamera.stop();
+      }
+    }
+  },[video]);
   function toggle_videoState() {
     video ? changeVideoState(false) : changeVideoState(true);
   }
@@ -553,10 +574,26 @@ React.useEffect(()=>{
     }
   }
 },[pvtChatDisplay]);
+async function getMeetDetails(){
+  var url=window.location.pathname.split('/');
+  url=url[url.length-1];
+  const response=await fetch(ServerRoutes.getVideoCallUsers+url,{method:'GET',credentials:'include'});
+  const status=await response.status;
+  if(status===200){
+    const res=await response.json();
+    if(res.validUrl){
+      setMeetDetails({details:res.details,category:res.category,categoryName:res.categoryName,topic_id:res.topic_id,topic_slug:res.topic_slug,public:res.public,members:res.members});
+    }
+  }
+}
+React.useEffect(()=>{
+  getMeetDetails();
+},[]);
   return (
 
     inCall === false ? <div /> :
       <div className="full-height">
+        {video?<VideoCard name={props.logged.user.name}/>:null}
         <Toast message={toastMsg} />
         <audio src={audioSrc} style={{ display: "none" }} id="noti_audio" />
         <div style={{ right: "0", top: "0", position: "fixed" }}><div className="card" style={{ padding: "2px", margin: "1px" }}><SignalCellular4BarIcon />{}</div></div>
@@ -796,7 +833,8 @@ React.useEffect(()=>{
                   <h5>{window.location.href}</h5>
                 </div>
                 <div>
-                  <h5>Description: Lorem Ipsum</h5>
+                  {meetDetails?<h5>Description: {meetDetails.details}</h5>:null }
+                  {meetDetails?<h5>Category: {meetDetails.categoryName}</h5>:null }
                 </div>
               </div>
             </div>

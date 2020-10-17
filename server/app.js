@@ -149,8 +149,8 @@ app.post('/api/tools/password_strength',(req,res)=>{
 });
 
 app.post('/api/call/generateCall',async (req,res)=>{
-  if(req.body && req.body.meetUrl && req.body.password && req.body.admin_username){
-    res.json(await func.generateCall(req.body.meetUrl,req.body.password,req.body.admin_username,req));
+  if(req.body && req.body.meetUrl && req.body.password && req.body.admin_username && req.body.category && req.body.details  && req.body.members){
+    res.json(await func.generateCall(req.body.meetUrl,req.body.password,req.body.admin_username,req.body.category, req.body.details, req.body.public,req.body.members,req));
   }else{
     res.status(400).send('Bad Query');
   }
