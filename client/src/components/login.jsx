@@ -27,7 +27,7 @@ function Login(props){
         const url=getNextUrl();
         window.location.href=url;
       }else{
-          alert(JSON.stringify(res));
+          alert(res.message);
           if(res.message==='User not registered'){
             document.getElementById('pills-register-tab').click();
           }

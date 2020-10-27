@@ -253,3 +253,41 @@ nsp.on('connection', function(socket) {
      map.delete(socket.id);
    })
 });
+
+
+var vmap=new Map();
+var vmap1=new Map();
+var ids=[];
+var socketToPeer=new Map();
+var nsp2=io.of('/api/videoCalls');
+nsp2.on('connection', function(socket) {
+  socket.on('join',(info)=>{
+    vmap.set(socket.id,info);
+    vmap1.set(info.user.username,socket.id);
+    socket.join(info.callUrl);
+  });
+  socket.on('setId',(peer)=>{
+    var info=vmap.get(socket.id);
+    ids.push({socketId:socket.id,peerId:peer.peerId,userDetails:info.user});
+    socketToPeer.set(socket.id,peer.peerId);
+    nsp2.to(info.callUrl).emit('peer-list',{peers:ids});
+    socket.broadcast.to(info.callUrl).emit('newUser',{peerId:peer.peerId});
+  });
+  socket.on('removeMyVideo',()=>{
+    var object=vmap.get(socket.id);
+    if(object){
+      socket.broadcast.to(object.callUrl).emit('removeVideo',{socketId:socket.id,peerId:socketToPeer.get(socket.id)});
+    }
+  })
+  socket.on('disconnect',()=>{
+    var obj=vmap.get(socket.id);
+    if(obj){
+      ids=ids.filter(obj=>obj.socketId!==socket.id);
+      nsp2.to(obj.callUrl).emit('peer-list',{peers:ids});
+      socket.broadcast.to(obj.callUrl).emit('removeVideo',{socketId:socket.id,peerId:socketToPeer.get(socket.id)});
+      vmap1.delete(obj.username);
+      socketToPeer.delete(socket.id);
+  }
+    vmap.delete(socket.id);
+  });
+});

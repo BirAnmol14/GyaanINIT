@@ -10,9 +10,12 @@
     "express-session": "^1.17.1",
     "md5": "^2.2.1",
     "node-fetch": "^2.6.1",
-    "nodemon": "^2.0.5",
+    "nodejs-bigbluebutton": "0.0.2",
+    "nodemon": "^2.0.6",
+    "peer": "^0.5.3",
     "querystring": "^0.2.0",
     "socket.io": "^2.3.0",
+    "socket.io-stream": "^0.9.1",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {},

@@ -175,7 +175,7 @@ function ChatBox(props) {
 						<div className="chatHeader">
 							<input type="text" placeholder="search" />
 						</div>
-						<ul>
+						<ul style={{overflowY:"scroll"}}>
 							{recvdTopicsPrivate ? recvdTopicsPrivate.map((topic) => {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
 									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt=""/>
@@ -239,7 +239,7 @@ function ChatBox(props) {
 						<div className="chatHeader">
 							<input type="text" placeholder="search" />
 						</div>
-						<ul>
+						<ul style={{overflowY:"scroll"}}>
 							{recvdTopicsPrivate ? recvdTopicsPrivate.map((topic) => {
 								return (<li key={topic.id} id={topic.id} slug={topic.slug} className={activeChat && activeChat === topic.id.toString() ? "chatActive" : null} onClick={activeChatClick}>
 									<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/1940306/chat_avatar_01.jpg" alt="" />
