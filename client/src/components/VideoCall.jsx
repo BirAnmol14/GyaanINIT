@@ -315,6 +315,7 @@ function VideoCall(props) {
   }
 
   async function endCall() {
+    videoSocket.emit('removeMyVideo');
     var temp = window.location.href.split('/');
     const body = JSON.stringify({ callUrl: temp[temp.length - 1] });
     const response = await fetch(ServerRoutes.endCall, {
