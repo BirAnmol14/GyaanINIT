@@ -10,7 +10,7 @@ const { verify } = require('crypto');
 const socketIo = require("socket.io");
 const server =require('http').createServer(app);
 const io = socketIo(server);
-
+const {spawn} = require('child_process');
 require('dotenv').config();
 
 app.use(express.json());
@@ -290,4 +290,33 @@ nsp2.on('connection', function(socket) {
   }
     vmap.delete(socket.id);
   });
+});
+
+app.get('/api/download/:id',(req,res)=>{
+	const id = req.params.id;
+  if(id === null){
+    res.status(400).send('Bad Query');
+  }else{
+    const file = `${__dirname}/`+'/Recordings/'+id;
+    if(file){
+      res.download(file);
+    }else{
+      res.status(404).send('File not found');
+    }
+  }
+});
+
+app.get('/api/record/',(req,res)=>{
+	//This will be a function triigered once the bbb returns the recording link
+  const python = spawn('python', ['logic.py','https://webinar.hbcse.tifr.res.in/recording/screenshare/1152c519a8b66332d287de7e22763f2ff631e28e-1597667170186/']);
+  var dataToSend;
+  python.stdout.on('data', function (data) {
+  console.log('Pipe data from python script ...');
+  dataToSend = data.toString();
+});
+  python.on('close', (code) => {
+  console.log(`child process close all stdio with code ${code}`);
+  res.json({src:dataToSend.trim()});
+  //Better will be to post the src via a system message in thread related to meet and on UI, link to /api/download/src
+});
 });
