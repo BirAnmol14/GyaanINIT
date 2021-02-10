@@ -1,5 +1,7 @@
 # Download All BBB videos at once
-
+### Update:
+- Use auto.py file for GUI free script
+- Selenium library and chromedriver no longer needed unless you use the GUI version of downloadAll.py
 ### Dependencies:
 - python 3
 - selenium library for python
