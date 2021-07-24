@@ -64,7 +64,7 @@ function Navbar(props) {
         alert(res.message);
         window.location.href='/';
       }else{
-          alert(JSON.stringify(res));
+          alert(res.message);
       }
     }else{
       alert('Error '+status);

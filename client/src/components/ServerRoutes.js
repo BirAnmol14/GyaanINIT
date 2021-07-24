@@ -14,6 +14,7 @@
   const postCallMessage_endpoint='/api/call/postMessage';
   const getCallMessageList_endpoint='/api/call/getCallChat?url=';
   const socketVideoCall_Endpoint=serverUrl+'/api/videoCallSocket';
+  const socketVideoCalling_Endpoint=serverUrl+'/api/videoCalls';
   const latestTopics_endpoint='/api/groups';
   const getGroup_endpoint='/api/groups/group/';
   const getPosts_endpoint='/api/posts/';
@@ -49,5 +50,6 @@
     createTopic:createTopic_endpoint,
     makePost:makePost_endpoint,
     createPrivateTopic:createPrivateTopic_endpoint,
-    makePrivatePost:makePrivatePost_endpoint
+    makePrivatePost:makePrivatePost_endpoint,
+    videoSocket: socketVideoCalling_Endpoint
    }

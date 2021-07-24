@@ -1,11 +1,43 @@
 import React from 'react';
 function VideoCard(props){
+  function getName(call){
+    for(var i=0;i<props.peers.length;i++){
+      if(props.peers[i].peerId===call.peer){
+        return props.peers[i].userDetails.name;
+      }
+    }
+    return "Unknown";
+  }
+  function getUserName(call){
+    for(var i=0;i<props.peers.length;i++){
+      if(props.peers[i].peerId===call.peer){
+        return props.peers[i].userDetails.username;
+      }
+    }
+    return "Unknown";
+  }
+  function getVideoId(call){
+    for(var i=0;i<props.peers.length;i++){
+      if(props.peers[i].peerId===call.peer){
+        return "OtherVideo"+props.peers[i].socketId;
+      }
+    }
+    return "Unknown";
+  }
+  function getDivId(call){
+    for(var i=0;i<props.peers.length;i++){
+      if(props.peers[i].peerId===call.peer){
+        return "OtherVid"+props.peers[i].socketId;
+      }
+    }
+    return "Unknown";
+  }
   function runVideo(){
     if(props.stream){
       for(var i=0;i<props.stream.length;i++){
-        var elem=document.getElementById('video'+props.stream[i].id);
+        var elem=document.getElementById(getVideoId(props.stream[i].call));
         if(elem){
-          //elem.srcObject=props.stream[i].videoObj;
+          elem.srcObject=props.stream[i].obj;
         }
       }
     }
@@ -22,10 +54,10 @@ function VideoCard(props){
     <p className="card-text" style={{position:'absolute',bottom:'0px'}}>{props.name}</p>
   </div>
   </div>:null}
-  {props.stream?props.stream.filter(stream=>stream.id!==props.username).map((stream,i)=>{return <div key={stream.id} id={stream.id} className="card bg-dark text-white">
-    <video className="card-img" id={"video"+stream.id} autoPlay playsInline style={{height:'100px',width:'100px'}}></video>
+  {props.stream?props.stream.map((stream,i)=>{return <div key={"other"+i} id={getDivId(stream.call)} className="card bg-dark text-white">
+    <video className="card-img" id={getVideoId(stream.call)} autoPlay playsInline style={{height:'100px',width:'100px'}}></video>
     <div className="card-img-overlay">
-      <p className="card-text" style={{position:'absolute',bottom:'0px'}}>{stream.name}</p>
+      <p className="card-text" style={{position:'absolute',bottom:'0px'}}>{getName(stream.call)}<br/>(@{getUserName(stream.call)})</p>
     </div>
     </div>}
   ):null}

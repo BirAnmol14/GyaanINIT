@@ -2,7 +2,6 @@ import React from 'react';
 import './VideoCall.css';
 import Toast from './toast/Toast.jsx';
 import audioSrc from './audio/sms-alert.mp3';
-import Webcam from 'webcam-easy';
 import { withStyles, makeStyles } from '@material-ui/core/styles';
 import Button from '@material-ui/core/Button';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -45,7 +44,7 @@ import ReactPaint from './paint/react-paint.js';
 import { SketchField, Tools } from "react-sketch";
 import SketchFieldDemo from "./graph.jsx";
 import VideoCard from './videoCallCard/videoCallCard.jsx';
-
+import Peer from 'peerjs';
 function initDraw(canvas) {
   var mouse = {
     x: 0,
@@ -133,11 +132,16 @@ function VideoCall(props) {
   const [openWindows, setOpenWindows] = React.useState([]);
   const [toastMsg, setToastMsg] = React.useState(" ");
   const [pvtChatDisplay,setPvtChatDisplay]=React.useState("None");
-  const [pvtChats,setPvtChats]=React.useState([]);
   const [pvtChatWith,setPvtChatWith]=React.useState({name:"",username:"",profilePic:""});
   const [pvtChatText,setPvtChatText]=React.useState("");
   const [meetDetails,setMeetDetails]=React.useState(null);
   const [stream,setStream]=React.useState([]);
+  const [recentStream,setRecentStream]=React.useState(null);
+  const [recentRemove,setRecentRemove]=React.useState(null);
+  const [videoSocket,setVideoSocket]=React.useState(null);
+  const [peerList,setPeerList]=React.useState([]);
+  const [myPeer,setMyPeer]=React.useState(null);
+  const [recentUser,setRecentUser]=React.useState(null);
   const HtmlTooltip = withStyles((theme) => ({
     tooltip: {
       backgroundColor: '#f5f5f9',
@@ -232,30 +236,46 @@ function VideoCall(props) {
   }
   const [video, changeVideoState] = React.useState(false);
   const [webcamera,setWebcam]=React.useState(null);
+  const [calls,setCalls]=React.useState([]);
   React.useEffect(()=>{
     if(video){
       const webcamElement = document.getElementById('webcam');
-      var webcam = new Webcam(webcamElement, 'user');
-      setWebcam(webcam);
-      webcam.stream()
-     .then(result =>{
-        console.log("webcam started");
-        let socket = appSocket;
-        if (socket) {
-          socket.emit('streamVideo',{videoObj:webcamElement.srcObject});
+      webcamElement.muted=true;
+      navigator.mediaDevices.getUserMedia({
+        video:true,
+        audio:false
+      }).then(stream=>{
+        setWebcam(stream);
+        webcamElement.srcObject=stream;
+        webcamElement.addEventListener('loadedmetadata',()=>{
+          webcamElement.play();
+        });
+        var cs=[];
+        for(var i=0;i<peerList.length;i++){
+          var call = myPeer.call(peerList[i].peerId, stream);
+          call.on('error',(err)=>{
+            console.log(err);
+          })
+
+          call.on('stream',(otherStream)=>{
+            //Do do anything when they accept your call
+          });
+          cs.push(call);
         }
-     })
-     .catch(err => {
-         console.log(err);
-     });
+        setCalls(cs);
+      });
     }
     else{
       if(webcamera){
-        webcamera.stop();
-        let socket = appSocket;
-        if (socket) {
-          socket.emit('removeStream');
+        for(var i=0;i<calls.length;i++){
+          calls[i].close();
         }
+        videoSocket.emit('removeMyVideo');
+        setCalls([]);
+        webcamera.getTracks().forEach(function(track) {
+          track.stop();
+        });
+        setWebcam(null);
       }
     }
   },[video]);
@@ -295,6 +315,7 @@ function VideoCall(props) {
   }
 
   async function endCall() {
+    videoSocket.emit('removeMyVideo');
     var temp = window.location.href.split('/');
     const body = JSON.stringify({ callUrl: temp[temp.length - 1] });
     const response = await fetch(ServerRoutes.endCall, {
@@ -520,9 +541,12 @@ React.useEffect(() => {
   React.useEffect(()=>{
     if (props.logged.status === true) {
       const socket = socketIOClient(ServerRoutes.socketEndpoint);
+      const vsocket = socketIOClient(ServerRoutes.videoSocket);
+      setVideoSocket(vsocket);
       setAppSocket(socket);
       var callUrl = window.location.href.split('/');
       socket.emit('join', { user: props.logged.user, callUrl: callUrl[callUrl.length - 1] });
+      vsocket.emit('join',{ user: props.logged.user, callUrl: callUrl[callUrl.length - 1] });
       socket.on('join', (data) => {
         setToastMsg("<p>"+data.message+"</p>");
         //Listen to all other joining messages
@@ -537,15 +561,78 @@ React.useEffect(() => {
       socket.on('chatList', (data) => {
          setCallChat(data);
       });
-      socket.on('incomingStream',(videos)=>{
-        setStream(videos.videos);
-      });
       socket.on('getPrivateMessage',(data)=>{
         setToastMsg('<p>Private Message</p><p>From: '+data.user.name+"</p><p>Messaage: "+data.message+"</p>");
       });
+
+      vsocket.on('peer-list',(data)=>{
+        var list=data.peers;
+        list=list.filter(item=>item.socketId!==vsocket.id);
+        setPeerList(list);
+      });
+      vsocket.on('removeVideo',(data)=>{
+        setRecentRemove(data);
+      });
+      vsocket.on('newUser',(data)=>{
+          setRecentUser(data);
+      });
     }
   },[adminBoolHelper]);
+  React.useEffect(()=>{
+    if(recentRemove){
+      setStream(stream.filter((stream)=>{return stream.call.peer!==recentRemove.peerId}));
+    }
+  },[recentRemove]);
+  React.useEffect(()=>{
+    if(recentUser){
+      if(video && webcamera){
+        setTimeout(()=>{
+          var call1=myPeer.call(recentUser.peerId,webcamera);
+          call1.on('stream',()=>{
+            //Do nothing
+          });
+          setCalls([...calls,call1]);
+        }, 1500);
+      }
+    }
+  },[recentUser]);
+React.useEffect(()=>{
+  if(videoSocket){
+    const peer = new Peer();
+    peer.on('open',(id)=>{
+      videoSocket.emit('setId',{peerId:id});
+    })
+    async function set(){
+      setMyPeer(await peer);
+    }
+    set();
+  }
+},[videoSocket]);
+React.useEffect(()=>{
+  if(myPeer){
+    myPeer.on('call', (call) => {
+      call.answer();//Let them send you video
+      call.on('stream', (remoteStream) => {
+          if(remoteStream){
+            setRecentStream({call:call,obj:remoteStream});
+          }
+      });
+      call.on('close',()=>{
 
+      });
+    });
+  }
+},[myPeer]);
+React.useEffect(()=>{
+  if(recentStream){
+    setStream([...stream,recentStream]);
+  }
+},[recentStream]);
+React.useEffect(()=>{
+  if(stream){
+    console.log(stream);
+  }
+},[stream]);
   React.useEffect(() => {
     if (toastMsg.length !== 0) {
       display();
@@ -605,7 +692,7 @@ React.useEffect(()=>{
 
     inCall === false ? <div /> :
       <div className="full-height">
-        <VideoCard name={props.logged.user.name} username={props.logged.user.username} stream={stream} video={video}/>
+        <VideoCard name={props.logged.user.name} username={props.logged.user.username} stream={stream} video={video} peers={peerList}/>
         <Toast message={toastMsg} />
         <audio src={audioSrc} style={{ display: "none" }} id="noti_audio" />
         <div style={{ right: "0", top: "0", position: "fixed" }}><div className="card" style={{ padding: "2px", margin: "1px" }}><SignalCellular4BarIcon />{}</div></div>
